@@ -1,0 +1,47 @@
+/*
+  MeTube design tokens. Single source of truth for color and font.
+
+  Concept: the exact inverse of YouTube's LIGHT theme (255 minus each original value),
+  so MeTube is a dark site. Contrast ratios are against --bg (#000000).
+
+  RULES
+  1. No raw hex or rgb() outside this file. Use the variables.
+  2. Dark only. There is no light theme.
+  3. --accent is a fill. Put --on-accent text on it (9.8:1). Never use --accent for text
+     or thin icons on --bg (2.15:1 fails).
+  4. Primary text is --text (18.4:1). Secondary text is --text-2 (7.9:1). Links are --link (10.1:1).
+  5. Control borders (search box, Subscribed button) use --field-line (3.3:1).
+     Dividers use --line. Do not swap them.
+  6. Chip is --chip. Hover is --hover. Subscribed or pressed fill is --field-btn.
+  7. Selected chip and the Subscribe button: background --text, text --bg.
+  8. Keyboard focus is the ring at the bottom of this file. Do not remove it.
+  9. Text over a thumbnail sits on --scrim with --on-scrim.
+ 10. Thumbnails and avatars may use any color: they are content, not UI.
+*/
+
+:root {
+  /* name         MeTube      original (YouTube)   note */
+  --bg:           #000000;  /* #ffffff  light bg */
+  --chip:         #0d0d0d;  /* #f2f2f2  light chip */
+  --text:         #f0f0f0;  /* #0f0f0f  light text */
+  --text-2:       #9f9f9f;  /* #606060  light secondary text */
+  --accent:       #0013de;  /* #ff0033  brand red; team brand color, not the exact inverse */
+  --link:         #f9a02b;  /* #065fd4  link blue */
+
+  /* derived or chosen for contrast; not exact inverses */
+  --mint:         #00ffcc;  /* exact inverse of #ff0033, kept for gradients */
+  --on-accent:    #ffffff;  /* text on --accent */
+  --hover:        #262626;  /* exact inverse #0d0d0d was 1.08:1, invisible */
+  --field-line:   #606060;  /* exact inverse #333333 was 1.7:1; needs 3:1 */
+  --field-btn:    #1a1a1a;  /* search button, Subscribed button; lighter than inverse #070707 */
+  --line:         rgba(255, 255, 255, .1); /* inverse of rgba(0,0,0,.1) */
+  --scrim:        rgba(0, 0, 0, .8);       /* duration badge background */
+  --on-scrim:     #ffffff;
+
+  --font: Roboto, Arial, sans-serif; /* YouTube's measured font stack */
+}
+
+:focus-visible {
+  outline: 2px solid var(--text); /* 18:1; --accent would be 2.15:1 */
+  outline-offset: 2px;
+}

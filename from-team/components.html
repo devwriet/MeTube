@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeTube - Components</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+}
+a { color: inherit; text-decoration: none; }
+.icon { display: block; flex: none; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+/* header */
+.header {
+  height: 56px; position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 0 24px;
+  background: var(--bg);
+}
+.header-left, .header-right { display: flex; align-items: center; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 4px; font-size: 20px; font-weight: 700; letter-spacing: -1px; }
+.logo i {
+  background: var(--accent); color: var(--on-accent);
+  border-radius: 6px; padding: 4px 10px; font-style: normal;
+}
+.icon-button {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: transparent;
+  color: var(--text);
+}
+.icon-button:hover { background: var(--hover); }
+.search { width: min(640px, 100%); height: 40px; display: flex; }
+.header .search { flex: 0 1 640px; min-width: 120px; margin: 0 auto; }
+.search-input {
+  flex: 1; min-width: 0; padding: 0 18px;
+  color: var(--text); background: var(--bg);
+  border: 1px solid var(--field-line); border-radius: 22px 0 0 22px;
+}
+.search-button {
+  width: 64px; border: 1px solid var(--field-line);
+  border-left: 0; border-radius: 0 22px 22px 0;
+  color: var(--text); background: var(--field-btn);
+}
+.search-button:hover { background: var(--hover); }
+
+/* sidebar */
+main { display: flex; }
+.guide {
+  width: 240px; flex: 0 0 240px; height: calc(100vh - 56px);
+  position: sticky; top: 56px; padding: 12px;
+  overflow-y: auto; background: var(--bg);
+}
+.guide-item {
+  height: 40px; display: flex; align-items: center; gap: 22px;
+  padding: 0 14px; border-radius: 10px; color: var(--text);
+}
+.guide-item:hover { background: var(--hover); }
+.guide-item-active { background: var(--hover); font-weight: 700; }
+.guide hr { border: 0; border-top: 1px solid var(--line); margin: 12px 0; }
+
+/* page, chips, video grid */
+.page { min-width: 0; flex: 1; padding: 0 24px 48px; }
+.chips {
+  display: flex; gap: 12px; overflow-x: auto; padding: 12px 0;
+  position: sticky; top: 56px; z-index: 5;
+  background: var(--bg);
+}
+.chip {
+  height: 32px; padding: 0 14px; flex: 0 0 auto;
+  border: 0; border-radius: 8px; color: var(--text);
+  background: var(--chip); white-space: nowrap;
+}
+.chip:hover { background: var(--hover); }
+.chip-active { background: var(--text); color: var(--bg); font-weight: 700; }
+.chip-active:hover { background: var(--text); }
+.video-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 16px; padding-top: 12px; }
+.card { display: block; min-width: 0; border-radius: 12px; cursor: pointer; }
+.card-thumb, .related-thumb {
+  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  border-radius: 12px; background: var(--hover);
+}
+.card:hover .card-thumb { border-radius: 8px; }
+.card-duration {
+  position: absolute; right: 8px; bottom: 8px; padding: 3px 6px;
+  border-radius: 4px; background: var(--scrim); color: var(--on-scrim);
+  font-size: 12px; font-weight: 500;
+}
+.card-body { display: flex; gap: 12px; padding-top: 12px; }
+.card-avatar, .comment-avatar {
+  width: 36px; height: 36px; flex: 0 0 36px;
+  border-radius: 50%; background: var(--hover);
+}
+.card-title {
+  font-size: 16px; line-height: 22px; font-weight: 500; margin-bottom: 4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-channel, .card-stats, .related-channel, .related-stats { color: var(--text-2); font-size: 14px; line-height: 20px; }
+.card-channel:hover { color: var(--text); }
+
+/* component preview section (this file only) */
+.section-title { font-size: 21px; margin: 36px 0 18px; }
+.demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.demo-panel { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 14px; }
+.demo-panel h3 { margin-bottom: 14px; font-size: 16px; }
+.demo-panel .guide { position: static; height: auto; width: 100%; flex: none; overflow: visible; padding: 0; }
+.demo-note { color: var(--text-2); font-size: 12px; margin: 12px 0; }
+
+/* buttons */
+.button { height: 36px; padding: 0 16px; border: 0; border-radius: 999px; font-weight: 700; }
+.button-subscribe { background: var(--text); color: var(--bg); }
+.button-subscribe:hover { opacity: .85; }
+.button-subscribed { background: var(--field-btn); color: var(--text); box-shadow: inset 0 0 0 1px var(--field-line); }
+.button-subscribed:hover { background: var(--hover); }
+
+/* comment */
+.comment { display: flex; gap: 12px; }
+.comment-body { flex: 1; min-width: 0; }
+.comment-author { font-weight: 700; }
+.comment-time { color: var(--text-2); font-size: 12px; margin-left: 8px; }
+.comment-text { margin-top: 8px; line-height: 1.6; }
+.comment-like { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 6px 10px; border: 0; border-radius: 999px; background: var(--chip); color: var(--text); }
+.comment-like .icon { width: 18px; height: 18px; }
+.comment-like:hover { background: var(--hover); }
+
+/* related */
+.related-card { display: flex; color: inherit; gap: 12px; max-width: 440px; padding: 8px; border-radius: 12px; cursor: pointer; }
+.related-card:hover { background: var(--hover); }
+.related-thumb { width: 44%; flex: 0 0 44%; border-radius: 8px; }
+.related-title { font-size: 14px; font-weight: 500; line-height: 20px; margin-bottom: 4px; }
+
+@media (max-width: 1500px) {
+  .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1100px) {
+  main > .guide { width: 72px; flex-basis: 72px; padding: 4px; }
+  main > .guide .guide-item { justify-content: center; padding: 0; font-size: 0; }
+  .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+  .header { padding: 0 10px; gap: 8px; }
+  .logo { font-size: 0; }
+  .logo i { font-size: 15px; }
+  .header-left, .header-right { gap: 4px; }
+  main > .guide { display: none; }
+  .page { padding: 0 12px 32px; }
+  .video-grid, .demo-grid { grid-template-columns: 1fr; }
+  .search-button { width: 44px; }
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-left">
+    <button class="icon-button" type="button" aria-label="메뉴"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></button>
+    <a class="logo" href="#"><i>Me</i>Tube</a>
+  </div>
+  <form class="search" role="search" action="#">
+    <input class="search-input" type="search" placeholder="검색" aria-label="검색">
+    <button class="search-button" type="submit" aria-label="검색 버튼"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg></button>
+  </form>
+  <div class="header-right">
+    <button class="icon-button" type="button" aria-label="만들기"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></button>
+    <button class="icon-button" type="button" aria-label="알림"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg></button>
+    <button class="icon-button" type="button" aria-label="프로필"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <nav class="guide" aria-label="사이드바">
+    <a class="guide-item guide-item-active" href="#" aria-current="page"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg></span><span>홈</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="m380-300 280-180-280-180v360ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z"/></svg></span><span>Shorts</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M160-80q-33 0-56.5-23.5T80-160v-400q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v400q0 33-23.5 56.5T800-80H160Zm0-80h640v-400H160v400Zm240-40 240-160-240-160v320ZM160-680v-80h640v80H160Zm120-120v-80h400v80H280ZM160-160v-400 400Z"/></svg></span><span>구독</span></a>
+    <hr>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg></span><span>시청 기록</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="m460-380 280-180-280-180v360ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg></span><span>내 동영상</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="m612-292 56-56-148-148v-184h-80v216l172 172ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z"/></svg></span><span>나중에 볼 동영상</span></a>
+    <hr>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="m260-260 300-140 140-300-300 140-140 300Zm220-180q-17 0-28.5-11.5T440-480q0-17 11.5-28.5T480-520q17 0 28.5 11.5T520-480q0 17-11.5 28.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></span><span>탐색</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M400-120q-66 0-113-47t-47-113q0-66 47-113t113-47q23 0 42.5 5.5T480-418v-422h240v160H560v400q0 66-47 113t-113 47Z"/></svg></span><span>음악</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M182-200q-51 0-79-35.5T82-322l42-300q9-60 53.5-99T282-760h396q60 0 104.5 39t53.5 99l42 300q7 51-21 86.5T778-200q-21 0-39-7.5T706-230l-90-90H344l-90 90q-15 15-33 22.5t-39 7.5Zm16-86 114-114h336l114 114q2 2 16 6 11 0 17.5-6.5T800-304l-44-308q-4-29-26-48.5T678-680H282q-30 0-52 19.5T204-612l-44 308q-2 11 4.5 17.5T182-280q2 0 16-6Zm482-154q17 0 28.5-11.5T720-480q0-17-11.5-28.5T680-520q-17 0-28.5 11.5T640-480q0 17 11.5 28.5T680-440Zm-80-120q17 0 28.5-11.5T640-600q0-17-11.5-28.5T600-640q-17 0-28.5 11.5T560-600q0 17 11.5 28.5T600-560ZM310-440h60v-70h70v-60h-70v-70h-60v70h-70v60h70v70Zm170-40Z"/></svg></span><span>게임</span></a>
+  </nav>
+
+  <div class="page">
+    <div class="chips" aria-label="카테고리">
+      <button class="chip chip-active" type="button" aria-pressed="true">전체</button>
+      <button class="chip" type="button" aria-pressed="false">음악</button>
+      <button class="chip" type="button" aria-pressed="false">게임</button>
+      <button class="chip" type="button" aria-pressed="false">라이브</button>
+      <button class="chip" type="button" aria-pressed="false">믹스</button>
+      <button class="chip" type="button" aria-pressed="false">뉴스</button>
+      <button class="chip" type="button" aria-pressed="false">최근 업로드</button>
+      <button class="chip" type="button" aria-pressed="false">시청한 동영상</button>
+    </div>
+
+    <div class="video-grid">
+      <a class="card" href="#">
+        <div class="card-thumb"><span class="card-duration">12:35</span></div>
+        <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">MeTube 첫 번째 영상 테스트입니다</div><div class="card-channel">우피 채널</div><div class="card-stats">조회수 1.2만회 · 3일 전</div></div></div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-thumb"><span class="card-duration">08:42</span></div>
+        <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">집중할 때 듣기 좋은 잔잔한 음악 모음</div><div class="card-channel">Music Room</div><div class="card-stats">조회수 8.4만회 · 1주 전</div></div></div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-thumb"><span class="card-duration">21:06</span></div>
+        <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">게임 실력을 높이는 기본 설정과 팁</div><div class="card-channel">Play Lab</div><div class="card-stats">조회수 3.1만회 · 2일 전</div></div></div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-thumb"><span class="card-duration">15:18</span></div>
+        <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">하루를 정리하는 조용한 에세이</div><div class="card-channel">오늘의 기록</div><div class="card-stats">조회수 9,200회 · 5일 전</div></div></div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-thumb"><span class="card-duration">09:51</span></div>
+        <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">처음 시작하는 영상 편집 가이드</div><div class="card-channel">Creator Studio</div><div class="card-stats">조회수 2.7만회 · 4일 전</div></div></div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-thumb"><span class="card-duration">18:03</span></div>
+        <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">오늘의 주요 소식 한눈에 보기</div><div class="card-channel">Daily Brief</div><div class="card-stats">조회수 6.5만회 · 1일 전</div></div></div>
+      </a>
+    </div>
+
+    <h2 class="section-title">컴포넌트 상태 미리보기</h2>
+    <div class="demo-grid">
+      <section class="demo-panel">
+        <h3>1. 헤더 아이콘 버튼</h3>
+        <div class="header-left">
+          <button class="icon-button" type="button" aria-label="메뉴"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></button>
+          <button class="icon-button" type="button" aria-label="알림"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg></button>
+          <button class="icon-button" type="button" aria-label="프로필"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg></button>
+        </div>
+        <p class="demo-note">아이콘 위에 마우스를 올려보세요.</p>
+      </section>
+
+      <section class="demo-panel">
+        <h3>2. 검색창</h3>
+        <form class="search" role="search" action="#">
+          <input class="search-input" type="text" placeholder="클릭해서 입력해 보세요" aria-label="검색">
+          <button class="search-button" type="submit" aria-label="검색 버튼"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg></button>
+        </form>
+        <p class="demo-note">입력창을 클릭하면 포커스 상태가 표시됩니다.</p>
+      </section>
+
+      <section class="demo-panel">
+        <h3>3. 사이드바</h3>
+        <nav class="guide" aria-label="사이드바 상태 예시">
+          <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg></span><span>홈</span></a>
+          <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="m380-300 280-180-280-180v360ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z"/></svg></span><span>Shorts</span></a>
+          <a class="guide-item guide-item-active" href="#" aria-current="page"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M160-80q-33 0-56.5-23.5T80-160v-400q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v400q0 33-23.5 56.5T800-80H160Zm0-80h640v-400H160v400Zm240-40 240-160-240-160v320ZM160-680v-80h640v80H160Zm120-120v-80h400v80H280ZM160-160v-400 400Z"/></svg></span><span>구독 중</span></a>
+        </nav>
+      </section>
+
+      <section class="demo-panel">
+        <h3>4. 카테고리 칩</h3>
+        <button class="chip" type="button" aria-pressed="false">음악</button>
+        <button class="chip" type="button" aria-pressed="false">뉴스</button>
+        <button class="chip chip-active" type="button" aria-pressed="true">게임</button>
+        <p class="demo-note">평소 · 호버 · 선택 상태</p>
+      </section>
+
+      <section class="demo-panel">
+        <h3>5. 영상 카드</h3>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">10:00</span></div>
+          <div class="card-body"><div class="card-avatar"></div><div><div class="card-title">영상 카드 컴포넌트 예시</div><div class="card-channel">MeTube 채널</div><div class="card-stats">조회수 1만회 · 3일 전</div></div></div>
+        </a>
+      </section>
+
+      <section class="demo-panel">
+        <h3>6. 구독 버튼</h3>
+        <button class="button button-subscribe" type="button">Subscribe</button>
+        <button class="button button-subscribed" type="button">Subscribed</button>
+      </section>
+
+      <section class="demo-panel">
+        <h3>7. 댓글</h3>
+        <div class="comment">
+          <div class="comment-avatar"></div>
+          <div class="comment-body">
+            <span class="comment-author">woopi</span><span class="comment-time">2시간 전</span>
+            <p class="comment-text">컴포넌트 디자인이 깔끔하고 보기 좋네요!</p>
+            <button class="comment-like" type="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M720-120H280v-520l280-280 50 50q7 7 11.5 19t4.5 23v14l-44 174h258q32 0 56 24t24 56v80q0 7-2 15t-4 15L794-168q-9 20-30 34t-44 14Zm-360-80h360l120-280v-80H480l54-220-174 174v406Zm0-406v406-406Zm-80-34v80H160v360h120v80H80v-520h200Z"/></svg> 좋아요 12</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-panel">
+        <h3>8. 관련 영상</h3>
+        <a class="related-card" href="#">
+          <div class="related-thumb"></div>
+          <div><div class="related-title">관련 영상 카드 디자인 예시</div><div class="related-channel">Design Lab</div><div class="related-stats">조회수 4천회 · 2일 전</div></div>
+        </a>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
+</html>
