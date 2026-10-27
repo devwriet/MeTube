@@ -47,6 +47,10 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | Class | What it is | Size / note |
 | --- | --- | --- |
 | `video-grid` | Grid of cards | 4 columns wide, 3 medium, 2 small, 1 on phones (650 px or less); 16 px column gap, 40 px row gap |
+| `shorts-shelf` | Home Shorts section inside `video-grid` | spans every grid column |
+| `shorts-shelf-header` | Shorts header row: title left, ⋮ button right | 40 px high; 18 px below |
+| `shorts-shelf-title` | Shorts icon and title inside the header row | 20 px, bold; 24 px icon |
+| `shorts-row` | Row of Home Shorts tiles | One row: 6 / 5 / 3 / 2 columns at >=1912 / 946-1911 / 548-945 / <548 px; 16 px gap, 8 px below 600 px; extra items hidden |
 | `card` | One video box with separate video and channel links | |
 | `card-link` | Thumbnail link to the video | |
 | `card-thumb` | Thumbnail box | 16:9, 12 px radius |
@@ -150,13 +154,13 @@ Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` i
 | `chips-end` | Chip row pushed to the right (Playlists "Sort by") | add next to `chips` |
 | `profile-actions` | Row with Subscribe and Community | 8 px gap, buttons 40 px high |
 | `button-secondary` | Grey pill button (Community) | fill `--field-btn`, text `--text` |
-| `card-menu` | Button that opens the card action menu | 40 px round target, 24 px icon; hidden until hover on mouse devices |
+| `card-menu` | Button that opens the card action menu | 40 px round target, 24 px icon; hidden until hover on mouse devices, always visible on short tiles |
 | `menu` | Shared card action menu | Fixed overlay; max-height calc(100dvh - 16px), scrolls when needed; bottom sheet on phones |
 | `menu-item` | One action in the card menu | 36 px high; 48 px on phones |
 | `toast` | Action feedback message | Fixed near the bottom of the screen |
 | `toast-action` | Optional action in a toast | Accent-colored button |
 | `short-grid` | Shorts tab: grid of tiles | add next to `video-grid`; columns at least 200 px, 4 px gap, 2 columns on phones |
-| `short-tile` | One short in that grid | add next to `card`; thumbnail is 2:3 (as on youtube.com), 8 px radius |
+| `short-tile` | One short in Home or Profile | Thumbnail is 2:3 with 8 px radius everywhere |
 | `playlist-card` | Playlist card | add next to `card`; stacked lines above the thumbnail |
 | `about` | About tab text block | max 720 px |
 

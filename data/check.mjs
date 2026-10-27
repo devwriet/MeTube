@@ -19,7 +19,7 @@ if (!data || Object.keys(data).sort().join(',') !== 'channels,videos' || !Array.
   fail('top level must contain only channels and videos arrays');
 } else {
   if (data.channels.length !== 6) fail(`expected 6 channels, got ${data.channels.length}`);
-  if (data.videos.length !== 20) fail(`expected 20 videos, got ${data.videos.length}`);
+  if (data.videos.length !== 26) fail(`expected 26 videos, got ${data.videos.length}`);
   for (const [i, c] of data.channels.entries()) {
     if (!c || !keys(c, channelFields) || typeof c.id !== 'string' || typeof c.name !== 'string' || typeof c.handle !== 'string' || !integer(c.subscribers) || typeof c.avatarLetter !== 'string' || typeof c.bio !== 'string') { fail(`channel ${i}: missing field or wrong type`); continue; }
     if (!/^ch-[a-z]+$/.test(c.id)) fail(`channel ${i}: invalid id ${c.id}`);
@@ -55,7 +55,7 @@ if (!data || Object.keys(data).sort().join(',') !== 'channels,videos' || !Array.
       if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+09:00$/.test(c.time) || !date(c.time.slice(0, 10)) || Number.isNaN(Date.parse(c.time)) || c.time.slice(0, 10) < v.publishedAt || Date.parse(c.time) >= Date.parse('2026-10-26T12:00:00+09:00')) fail(`video ${v.id}: invalid comment time ${c.time}`);
     }
   }
-  if (counts.video !== 16 || counts.short !== 4) fail(`expected 16 video and 4 short, got ${counts.video} video and ${counts.short} short`);
+  if (counts.video !== 16 || counts.short !== 10) fail(`expected 16 video and 10 short, got ${counts.video} video and ${counts.short} short`);
   for (const category of categories) if (data.videos.filter((v) => v?.category === category).length < 2) fail(`category ${category} appears fewer than twice`);
   if (data.videos.filter((v) => v?.channelId === 'ch-woopi').length < 4) fail('ch-woopi must own at least 4 videos');
   if (data.videos.filter((v) => v?.comments?.length > 0).length < 15) fail('at least 15 videos need comments');

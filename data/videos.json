@@ -513,6 +513,150 @@
       "src": null,
       "hue": 28,
       "comments": []
+    },
+    {
+      "id": "MT000000021",
+      "title": "책상 위 10분 정리로 공부 시작하기",
+      "channelId": "ch-woopi",
+      "durationSeconds": 26,
+      "views": 48200,
+      "likes": 1930,
+      "dislikes": 29,
+      "publishedAt": "2026-10-12",
+      "category": "브이로그",
+      "type": "short",
+      "description": "어질러진 책상을 짧게 정리하고 오늘 할 일을 펼쳐 봤어요.",
+      "src": null,
+      "hue": 212,
+      "comments": [
+        {
+          "id": "c-1023",
+          "author": "서윤",
+          "text": "저도 타이머 켜고 같이 정리했어요!",
+          "time": "2026-10-12T19:10:00+09:00",
+          "likes": 18
+        }
+      ]
+    },
+    {
+      "id": "MT000000022",
+      "title": "세 번의 코드로 완성하는 포근한 기타 소리",
+      "channelId": "ch-sorim",
+      "durationSeconds": 32,
+      "views": 96500,
+      "likes": 3860,
+      "dislikes": 58,
+      "publishedAt": "2026-10-09",
+      "category": "음악",
+      "type": "short",
+      "description": "세 가지 코드만으로 포근한 분위기를 만들어 봤어요.",
+      "src": null,
+      "hue": 276,
+      "comments": [
+        {
+          "id": "c-1024",
+          "author": "다은",
+          "text": "코드가 단순해서 바로 따라 쳐보고 싶어요.",
+          "time": "2026-10-10T08:40:00+09:00",
+          "likes": 42
+        }
+      ]
+    },
+    {
+      "id": "MT000000023",
+      "title": "팀원과 딱 맞춘 마지막 퍼즐 한 조각",
+      "channelId": "ch-playzip",
+      "durationSeconds": 18,
+      "views": 321000,
+      "likes": 12800,
+      "dislikes": 192,
+      "publishedAt": "2026-10-03",
+      "category": "게임",
+      "type": "short",
+      "description": "마지막 조각을 맞추자 팀원들 반응이 터졌어요!",
+      "src": null,
+      "hue": 12,
+      "comments": [
+        {
+          "id": "c-1025",
+          "author": "현준",
+          "text": "합 맞을 때 쾌감 대박이네요 ㅋㅋ",
+          "time": "2026-10-03T22:05:00+09:00",
+          "likes": 116
+        }
+      ]
+    },
+    {
+      "id": "MT000000024",
+      "title": "외출 전 5초, 우산 챙길지 확인하는 법",
+      "channelId": "ch-harunews",
+      "durationSeconds": 24,
+      "views": 74000,
+      "likes": 2960,
+      "dislikes": 44,
+      "publishedAt": "2026-09-28",
+      "category": "뉴스",
+      "type": "short",
+      "description": "외출하기 전 강수 예보와 시간대를 함께 확인해 보세요.",
+      "src": null,
+      "hue": 44,
+      "comments": [
+        {
+          "id": "c-1026",
+          "author": "지호",
+          "text": "아침에 확인하는 습관 들여야겠어요!",
+          "time": "2026-09-28T17:35:00+09:00",
+          "likes": 36
+        }
+      ]
+    },
+    {
+      "id": "MT000000025",
+      "title": "헷갈리는 영어 단어, 그림으로 구분하기",
+      "channelId": "ch-studyon",
+      "durationSeconds": 41,
+      "views": 56200,
+      "likes": 2250,
+      "dislikes": 34,
+      "publishedAt": "2026-09-18",
+      "category": "교육",
+      "type": "short",
+      "description": "비슷하게 생긴 영어 단어를 간단한 그림으로 비교해요.",
+      "src": null,
+      "hue": 158,
+      "comments": [
+        {
+          "id": "c-1027",
+          "author": "유진",
+          "text": "그림으로 보니까 차이가 잘 보여요.",
+          "time": "2026-09-19T12:15:00+09:00",
+          "likes": 24
+        }
+      ]
+    },
+    {
+      "id": "MT000000026",
+      "title": "바삭한 감자전 뒤집기, 가장자리부터 살살",
+      "channelId": "ch-tableday",
+      "durationSeconds": 29,
+      "views": 18400,
+      "likes": 740,
+      "dislikes": 11,
+      "publishedAt": "2026-09-07",
+      "category": "요리",
+      "type": "short",
+      "description": "가장자리가 노릇해졌을 때 뒤집으면 감자전이 잘 모양을 잡아요.",
+      "src": null,
+      "hue": 66,
+      "comments": [
+        {
+          "id": "c-1028",
+          "author": "수아",
+          "text": "뒤집을 때 자꾸 부서졌는데 해볼게요!",
+          "time": "2026-09-08T18:25:00+09:00",
+          "likes": 15
+        }
+      ]
     }
   ]
 }

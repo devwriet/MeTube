@@ -67,6 +67,29 @@ export function videoCard(video, channel) {
   return card;
 }
 
+export function shortCard(video) {
+  const card = el('div', 'card short-tile');
+  card.dataset.video = video.id;
+  card.dataset.channel = video.channelId;
+  const link = el('a', 'card-link');
+  link.href = watchUrl(video.id);
+  link.tabIndex = -1;
+  link.setAttribute('aria-hidden', 'true');
+  link.append(thumb('card-thumb', video));
+
+  const titleLink = el('a', '', video.title);
+  titleLink.href = watchUrl(video.id);
+  titleLink.append(el('span', 'sr-only', ` · ${formatDuration(video.durationSeconds)}`));
+  const title = el('h3', 'card-title');
+  title.append(titleLink);
+  const text = el('div');
+  text.append(title, el('p', 'card-stats', formatViews(video.views)));
+  const body = el('div', 'card-body');
+  body.append(text, cardMenu(video));
+  card.append(link, body);
+  return card;
+}
+
 export function relatedCard(video, channel) {
   const card = el('div', 'related-card');
   card.dataset.video = video.id;

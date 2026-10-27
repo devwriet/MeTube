@@ -82,11 +82,8 @@
 
 /* Shorts tab: 2:3 tiles, at least 200px wide, 4px between columns */
 .profile-wrap .short-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 4px; }
-.short-tile .card-thumb { aspect-ratio: 2 / 3; border-radius: 8px; }
-.short-tile .card-body, .playlist-card .card-body { padding-top: 8px; }
-.short-tile .card-title { margin-bottom: 4px; }
-.short-tile .card-stats { font-size: 12px; line-height: 18px; }
-@media (min-width: 1024px) { .short-tile .card-stats { font-size: 14px; line-height: 20px; } }
+.profile-wrap .short-tile .card-thumb { aspect-ratio: 2 / 3; border-radius: 8px; }
+.playlist-card .card-body { padding-top: 8px; }
 @media (max-width: 670px) { .profile-wrap .short-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Playlists tab: 210px cards, 4px between columns, stacked lines above the thumbnail */

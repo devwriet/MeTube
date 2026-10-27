@@ -1,6 +1,8 @@
 import { renderLayout } from './layout.js';
 import { loadData, categories, matchesQuery } from './data.js';
-import { videoCard, el } from './render.js';
+import { videoCard, shortCard, el } from './render.js';
+import { icon } from './icons.js';
+import { soon } from './card-menu.js';
 import {
   subscriptions, history as watchHistory, watchLater, liked, hiddenVideos, hiddenChannels,
 } from './store.js';
@@ -37,6 +39,33 @@ function render() {
   list = list.filter((video) => matchesQuery(video, data.channel(video.channelId), q));
   if (category) list = list.filter((video) => video.category === category);
   grid.replaceChildren(...list.map((video) => videoCard(video, data.channel(video.channelId))));
+  if (feed === '' && q === '' && category === '') {
+    const hiddenVideoIds = new Set(hiddenVideos());
+    const hiddenChannelIds = new Set(hiddenChannels());
+    const shorts = data.videos
+      .filter((video) => video.type === 'short'
+        && !hiddenVideoIds.has(video.id)
+        && !hiddenChannelIds.has(video.channelId))
+      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    if (shorts.length) {
+      const shelf = el('section', 'shorts-shelf');
+      shelf.setAttribute('aria-labelledby', 'shorts-shelf-title');
+      const heading = el('h2', 'shorts-shelf-title');
+      heading.id = 'shorts-shelf-title';
+      heading.append(icon('smart_display'), document.createTextNode('Shorts'));
+      const header = el('div', 'shorts-shelf-header');
+      const menuButton = el('button', 'icon-button');
+      menuButton.type = 'button';
+      menuButton.setAttribute('aria-label', 'Shorts 메뉴');
+      menuButton.append(icon('more_vert'));
+      menuButton.addEventListener('click', soon);
+      header.append(heading, menuButton);
+      const row = el('div', 'shorts-row');
+      row.append(...shorts.map(shortCard));
+      shelf.append(header, row);
+      grid.insertBefore(shelf, grid.children[6] ?? null);
+    }
+  }
   message.textContent = list.length ? '' : q ? `'${q}'에 대한 검색 결과가 없습니다.`
     : feed === 'subscriptions' ? '구독한 채널의 동영상이 없습니다. 동영상 페이지에서 구독해 보세요.'
       : feed === 'history' ? '시청 기록이 없습니다.'
