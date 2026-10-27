@@ -144,7 +144,7 @@ card 안: card-thumb(16:9) > card-duration
 ```
 ┌─ header ──────────────────────────────────────────┐
 ├ guide-mini ┬ page ────────────────────────────────┤
-│ (72px)     │ banner (높이 138px)                   │
+│ (72px)     │ banner (가로세로 6.2:1)               │
 │            │ profile-header                        │
 │            │  profile-avatar | profile-name        │
 │            │                   profile-handle      │
@@ -169,7 +169,7 @@ card 안: card-thumb(16:9) > card-duration
 | 3 | 사이드바 | `guide`, `guide-item`, `guide-item-active` | 너비 240px, 항목 높이 40px | 평소, 마우스 올림, 선택됨 |
 | 4 | 카테고리 칩 | `chip`, `chip-active` | 높이 32px, 모서리 8px | 평소, 마우스 올림, 선택됨 |
 | 5 | 영상 카드 | `card`, `card-thumb`, `card-duration`, `card-body`, `card-avatar`, `card-title`, `card-channel`, `card-stats` | 썸네일 16:9, 모서리 12px | 평소, 마우스 올림 |
-| 6 | 버튼 | `button`, `button-subscribe`, `button-subscribed` | 높이 36px, 완전히 둥글게 | Subscribe, Subscribed |
+| 6 | 버튼 | `button`, `button-subscribe`, `button-subscribed` | 높이 40px, 완전히 둥글게 | Subscribe, Subscribed |
 | 7 | 댓글 한 줄 | `comment`, `comment-avatar`, `comment-body`, `comment-author`, `comment-time`, `comment-text`, `comment-like` | 사진 36px | 평소 |
 | 8 | 관련 영상 한 줄 | `related-card`, `related-thumb`, `related-title`, `related-channel`, `related-stats` | 가로로 썸네일과 글자 | 평소, 마우스 올림 |
 

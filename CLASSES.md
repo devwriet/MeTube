@@ -21,15 +21,17 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `header-right` | Create, bell, avatar | |
 | `logo` | "MeTube" text with the `Me` box | |
 | `search` | Search form (input and button) | centered, up to 640 px |
-| `search-input` | Text field | 40 px high, round left |
-| `search-button` | Magnifier button | 64 px wide (44 px on phones), round right |
+| `search-input` | Text field | 40 px high, 16 px text, round left |
+| `search-button` | Magnifier button | 64 px wide, icon centered, round right; on phones the field stays visible and the button is 44 px (youtube.com collapses it to a 40 px icon below 657 px; we keep the field for our own search feature) |
 | `icon-button` | Round icon-only button | 40 px |
 | `icon` | Inline SVG icon (copy from `media/icons/`) | 24 px, takes the text color; add `aria-hidden="true"` |
 | `avatar` | Round picture or letter | `avatar-sm` 32, `avatar-md` 36, `avatar-lg` 160 |
-| `guide` | Left sidebar | 240 px wide; `guide-mini` is 72 px |
-| `guide-item` | One sidebar link | 40 px high (64 px inside `guide-mini`, icon above label); `guide-item-active` for the current page |
+| `guide` | Left sidebar | 240 px wide; `guide-mini` is 72 px; hidden at 791 px or less (tablet and phone) |
+| `guide-item` | One sidebar link | 40 px high (76 px inside `guide-mini`, icon above an 11 px label; youtube.com uses 10 px, below our 11 px readability floor); `guide-item-active` for the current page |
 | `page` | Main area right of the sidebar | |
-| `button` | Base pill button | 36 px high |
+| `page-title` | The page's `h1` when the design shows no title (Home, Watch "not found") | hidden on screen, read by screen readers |
+| `page-message` | Message instead of content: no search results, video not found, data failed to load | centered, secondary color, 16 px |
+| `button` | Base pill button | 40 px high, bold 500 |
 | `button-subscribe` | Subscribe | fill `--text`, text `--bg` |
 | `button-subscribed` | Subscribed (after click) | fill `--field-btn`, border `--field-line` |
 
@@ -109,18 +111,42 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 
 | Class | What it is | Size / note |
 | --- | --- | --- |
-| `banner` | Wide picture at the top | 138 px high, 16 px radius |
+| `banner` | Wide picture at the top | ratio about 6.2 : 1 (1284 px wide = 207 px high, 374 px wide = 60 px high), 16 px radius (8 px on phones) |
 | `profile-header` | Avatar and text | |
-| `profile-avatar` | Big picture (`avatar-lg`) | 160 px (96 px on phones) |
-| `profile-name` | Channel name | 36 px, bold (28 px on phones) |
+| `profile-avatar` | Big picture (`avatar-lg`) | 160 px; 120 px at 839 px or less; 72 px at 599 px or less |
+| `profile-name` | Channel name | 36 px / 50 px line, bold (24 px / 32 px on phones) |
 | `profile-handle` | `@deepfake` | |
 | `profile-stats` | Subscribers and video count | secondary color |
 | `profile-bio` | Short text | |
-| `tabs` | Tab bar | 48 px high |
+| `tabs` | Tab bar | 48 px high, 24 px between tabs, 16 px labels |
 | `tab` | One tab | |
-| `tab-active` | Current tab | underline 2 px |
+| `tab-active` | Current tab | underline 2 px, `--text` color |
 
-Profile = `header` + `guide-mini` + `page` containing `banner`, `profile-header`, `tabs`, and a `video-grid` of `card`.
+Profile = `header` + `guide-mini` + `page` containing `banner`, `profile-header`, `tabs`, and one `tab-panel` per tab (only the selected one is shown).
+
+On Profile the `video-grid` is 3 columns from 1171 px, 2 from 671 to 1170 px, 1 below, with a 32 px row gap (the 4/3/2/1 rule above is for Home). The channel-search button next to the tabs is 48 px.
+
+Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` is a button with `role="tab"`.
+
+| Class | What it is | Size / note |
+| --- | --- | --- |
+| `profile-wrap` | Width wrapper for the whole profile | steps like youtube.com: 642 px from 671, 856 from 957, 1070 from 1171, 1284 from 1553; full width below 671 |
+| `profile-info` | Text column next to the avatar (name, meta, bio, button) | |
+| `profile-meta` | One line: `@handle · subscribers · videos` | holds `profile-handle` and `profile-stats` |
+| `tabs-bar` | Full-width sticky strip behind the tabs (draws the divider line across the page) | sticks 56 px from the top; holds one `profile-wrap tabs` |
+| `tablist` | Wrapper around the tab buttons (the search icon sits next to it inside `tabs`) | 24 px between tabs |
+| `playlist-grid` | Playlists tab: grid of 210 px cards | add next to `video-grid`; 4 px column gap |
+| `tab-panel` | Content of one tab | `hidden` on the others |
+| `section-heading` | Heading inside a panel ("Latest") | 20 px, bold |
+| `shelf` | Home tab: one row that scrolls sideways | cards 210 px wide; `shelf-wide` makes them 354 px, at most 85% of the row |
+| `chips-end` | Chip row pushed to the right (Playlists "Sort by") | add next to `chips` |
+| `profile-actions` | Row with Subscribe and Community | 8 px gap, buttons 40 px high |
+| `button-secondary` | Grey pill button (Community) | fill `--field-btn`, text `--text` |
+| `card-menu` | Three-dot icon on the right of a card text | 24 px icon, decorative |
+| `short-grid` | Shorts tab: grid of tiles | add next to `video-grid`; columns at least 200 px, 4 px gap, 2 columns on phones |
+| `short-tile` | One short in that grid | add next to `card`; thumbnail is 2:3 (as on youtube.com), 8 px radius |
+| `playlist-card` | Playlist card | add next to `card`; stacked lines above the thumbnail |
+| `about` | About tab text block | max 720 px |
 
 ## Not in this list on purpose
 
