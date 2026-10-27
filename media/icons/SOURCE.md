@@ -32,3 +32,16 @@ Files (no substitutions):
 - volume_up.svg
 - volume_off.svg
 - fullscreen.svg
+- chevron_right.svg
+- expand_more.svg
+- playlist_play.svg
+- movie.svg
+- sensors.svg
+- download.svg
+- flag.svg
+- account_box.svg
+- play_circle.svg
+- child_care.svg
+- newspaper.svg
+- block.svg
+- do_not_disturb_on.svg

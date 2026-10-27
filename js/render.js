@@ -1,6 +1,8 @@
 // DOM builders. Data only ever goes in through textContent and attributes, never as markup.
 import { icon } from './icons.js';
 import { formatViews, timeAgo, formatDuration, koCount } from './format.js';
+import { cardMenu } from './card-menu.js';
+import { isSubscribed, toggleSubscription } from './store.js';
 
 export function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -10,6 +12,7 @@ export function el(tag, className, text) {
 }
 
 export const watchUrl = (id) => `watch.html?v=${encodeURIComponent(id)}`;
+export const channelUrl = (id) => `profile.html?c=${encodeURIComponent(id)}`;
 export const videoStats = (video) => `${formatViews(video.views)} · ${timeAgo(video.publishedAt)}`;
 
 // Placeholder colour: hue 0-359 picks one of 6 token gradients in base.css ([data-tone]).
@@ -18,7 +21,7 @@ export function setTone(node, hue) {
   return node;
 }
 
-function thumb(className, video) {
+export function thumb(className, video) {
   const box = setTone(el('div', className), video.hue);
   box.append(el('span', 'card-duration', formatDuration(video.durationSeconds)));
   return box;
@@ -32,23 +35,78 @@ export function avatar(letter, size, extraClass) {
 }
 
 export function videoCard(video, channel) {
-  const card = el('a', 'card');
-  card.href = watchUrl(video.id);
+  const card = el('div', 'card');
+  card.dataset.video = video.id;
+  card.dataset.channel = channel.id;
+  const link = el('a', 'card-link');
+  link.href = watchUrl(video.id);
+  link.tabIndex = -1;
+  link.setAttribute('aria-hidden', 'true');
+  link.append(thumb('card-thumb', video));
+
+  const channelLink = el('a');
+  channelLink.href = channelUrl(channel.id);
+  channelLink.tabIndex = -1;
+  channelLink.setAttribute('aria-hidden', 'true');
+  channelLink.append(avatar(channel.avatarLetter, 'md', 'card-avatar'));
+
+  const titleLink = el('a', '', video.title);
+  titleLink.href = watchUrl(video.id);
+  titleLink.append(el('span', 'sr-only', ` · ${formatDuration(video.durationSeconds)}`));
+  const nameLink = el('a', '', channel.name);
+  nameLink.href = channelUrl(channel.id);
   const text = el('div');
-  text.append(el('h2', 'card-title', video.title), el('p', 'card-channel', channel.name), el('p', 'card-stats', videoStats(video)));
+  const title = el('h2', 'card-title');
+  title.append(titleLink);
+  const name = el('p', 'card-channel');
+  name.append(nameLink);
+  text.append(title, name, el('p', 'card-stats', videoStats(video)));
   const body = el('div', 'card-body');
-  body.append(avatar(channel.avatarLetter, 'md', 'card-avatar'), text);
-  card.append(thumb('card-thumb', video), body);
+  body.append(channelLink, text, cardMenu(video));
+  card.append(link, body);
   return card;
 }
 
 export function relatedCard(video, channel) {
-  const card = el('a', 'related-card');
-  card.href = watchUrl(video.id);
+  const card = el('div', 'related-card');
+  card.dataset.video = video.id;
+  card.dataset.channel = channel.id;
+  const link = el('a', 'card-link');
+  link.href = watchUrl(video.id);
+  link.tabIndex = -1;
+  link.setAttribute('aria-hidden', 'true');
+  link.append(thumb('related-thumb', video));
+
+  const titleLink = el('a', '', video.title);
+  titleLink.href = watchUrl(video.id);
+  titleLink.append(el('span', 'sr-only', ` · ${formatDuration(video.durationSeconds)}`));
+  const nameLink = el('a', '', channel.name);
+  nameLink.href = channelUrl(channel.id);
   const text = el('div');
-  text.append(el('h3', 'related-title', video.title), el('p', 'related-channel', channel.name), el('p', 'related-stats', videoStats(video)));
-  card.append(thumb('related-thumb', video), text);
+  const title = el('h3', 'related-title');
+  title.append(titleLink);
+  const name = el('p', 'related-channel');
+  name.append(nameLink);
+  text.append(title, name, el('p', 'related-stats', videoStats(video)));
+  card.append(link, text, cardMenu(video));
   return card;
+}
+
+export function subscribeButton(channelId) {
+  const button = el('button');
+  button.type = 'button';
+  const paint = () => {
+    const on = isSubscribed(channelId);
+    button.className = `button ${on ? 'button-subscribed' : 'button-subscribe'}`;
+    button.textContent = on ? '구독중' : '구독';
+    button.setAttribute('aria-pressed', String(on));
+  };
+  paint();
+  button.addEventListener('click', () => toggleSubscription(channelId));
+  document.addEventListener('metube:change', (event) => {
+    if (event.detail?.key === 'subscriptions' && button.isConnected) paint();
+  });
+  return button;
 }
 
 // comment: { author, text, time, likes? }. onLike() toggles in the store and returns the new state.

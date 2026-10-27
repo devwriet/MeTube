@@ -1,0 +1,99 @@
+/* Channel (Profile) page. Load after base.css. Sizes follow youtube.com, see CLASSES.md. */
+
+/* page column: width steps like youtube.com. From 1313px the wide sidebar takes room, so the column dips back to 856px. */
+.page { padding: 0 8px 48px; }
+.profile-wrap { width: 100%; margin: 0 auto; }
+@media (min-width: 671px) { .profile-wrap { width: 642px; } }
+@media (min-width: 957px) { .profile-wrap { width: 856px; } }
+@media (min-width: 1171px) { .profile-wrap { width: 1070px; } }
+@media (min-width: 1313px) { .profile-wrap { width: 856px; } }
+@media (min-width: 1339px) { .profile-wrap { width: 1070px; } }
+@media (min-width: 1553px) { .profile-wrap { width: 1284px; } }
+
+/* banner: colour from [data-tone] in base.css */
+.banner { aspect-ratio: 6.204 / 1; margin-top: 20px; border-radius: 8px; }
+@media (min-width: 451px) { .banner { margin-top: 24px; border-radius: 16px; } }
+@media (min-width: 702px) { .banner { margin-top: 0; } }
+
+/* profile header: avatar beside text, actions beside text from 840px */
+.profile-header { display: flex; gap: 16px; align-items: center; padding: 16px 0 4px; }
+.profile-name { font-size: 36px; line-height: 50px; font-weight: 700; overflow-wrap: anywhere; }
+.profile-meta { line-height: 20px; }
+.profile-handle { display: inline; color: var(--text); font-weight: 500; }
+.profile-stats { display: inline; color: var(--text-2); }
+.profile-stats::before { content: " \00b7  "; }
+.profile-bio { max-width: 600px; margin-top: 12px; color: var(--text-2); line-height: 20px; }
+.profile-actions { display: flex; gap: 8px; margin: 12px 0 8px; }
+
+@media (max-width: 839px) {
+  .profile-header { display: grid; grid-template-columns: 120px 1fr; gap: 0 16px; }
+  .profile-info { display: contents; }
+  .profile-avatar { width: 120px; height: 120px; grid-row: 1 / 4; font-size: 48px; }
+  .profile-meta, .profile-bio { grid-column: 2; font-size: 12px; line-height: 18px; }
+  .profile-bio { margin-top: 8px; }
+  .profile-actions { grid-column: 1 / -1; }
+  .profile-actions .button { flex: 1; justify-content: center; }
+}
+@media (max-width: 599px) {
+  .profile-header { grid-template-columns: 72px 1fr; }
+  .profile-avatar { width: 72px; height: 72px; grid-row: 1 / 3; font-size: 32px; }
+  .profile-name { font-size: 24px; line-height: 32px; }
+  .profile-handle, .profile-stats { display: block; }
+  .profile-stats::before { content: none; }
+  .profile-bio { grid-column: 1 / -1; }
+}
+
+/* tabs: sticky strip under the header; its divider spans the whole page */
+.tabs-bar {
+  position: sticky; top: 56px; z-index: 9;
+  margin: 0 -8px; padding: 0 8px;
+  background: var(--bg); box-shadow: inset 0 -1px 0 var(--line);
+}
+.tabs { display: flex; align-items: center; justify-content: space-between; height: 48px; overflow-x: auto; }
+.tablist { display: flex; flex: none; gap: 24px; }
+.tab {
+  flex: none; height: 48px; padding: 0;
+  background: none; border: 0; border-bottom: 2px solid transparent;
+  color: var(--text-2); font-size: 16px; line-height: 22px; font-weight: 500;
+}
+.tab:hover { color: var(--text); }
+.tab-active { color: var(--text); border-bottom-color: var(--text); }
+.tab:focus-visible { outline-offset: -2px; }
+.tabs > .icon-button { width: 48px; height: 48px; }
+.section-heading { margin-top: 24px; font-size: 20px; line-height: 28px; font-weight: 700; }
+.tab-panel .page-message { padding: 48px 16px; }
+
+/* sort chips (not sticky here) */
+.tab-panel .chips { position: static; gap: 8px; padding: 16px 8px 8px; }
+
+/* video grid and card (no avatar or channel name on a channel page): 3 / 2 / 1 columns */
+.profile-wrap .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 16px; padding-top: 16px; }
+@media (max-width: 1170px) { .profile-wrap .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 670px) { .profile-wrap .video-grid { grid-template-columns: 1fr; } }
+.profile-wrap .card-body { justify-content: space-between; gap: 4px; }
+.profile-wrap .card-title { margin-bottom: 2px; }
+
+/* Home tab: horizontal shelves */
+.shelf { display: flex; gap: 8px; padding-top: 12px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
+.shelf > .card { flex: none; width: 210px; scroll-snap-align: start; }
+.shelf-wide > .card { width: min(354px, 85%); }
+.shelf .card-thumb { border-radius: 8px; }
+.shelf .card-title, .playlist-card .card-title { font-size: 14px; line-height: 20px; }
+
+/* Shorts tab: 2:3 tiles, at least 200px wide, 4px between columns */
+.profile-wrap .short-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 4px; }
+.short-tile .card-thumb { aspect-ratio: 2 / 3; border-radius: 8px; }
+.short-tile .card-body, .playlist-card .card-body { padding-top: 8px; }
+.short-tile .card-title { margin-bottom: 4px; }
+.short-tile .card-stats { font-size: 12px; line-height: 18px; }
+@media (min-width: 1024px) { .short-tile .card-stats { font-size: 14px; line-height: 20px; } }
+@media (max-width: 670px) { .profile-wrap .short-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Playlists tab: 210px cards, 4px between columns, stacked lines above the thumbnail */
+.profile-wrap .playlist-grid { grid-template-columns: repeat(auto-fill, 210px); gap: 16px 4px; }
+@media (max-width: 670px) { .profile-wrap .playlist-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+.playlist-card .card-thumb { margin-top: 8px; border-radius: 8px; box-shadow: 0 -4px 0 -2px var(--text-2), 0 -8px 0 -4px var(--line); }
+
+/* About tab */
+.about { max-width: 720px; padding-top: 8px; }
+.about .card-stats { margin-top: 8px; }

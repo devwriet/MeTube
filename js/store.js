@@ -25,6 +25,9 @@ function write(key, value) {
   } catch {
     memory[key] = value; // storage unusable: keep it for this page view
   }
+  if (typeof document !== 'undefined') {
+    document.dispatchEvent(new CustomEvent('metube:change', { detail: { key } }));
+  }
 }
 
 // Arrays of ids used as sets. Returns the new "on" state.
@@ -44,8 +47,26 @@ export const watchLater = () => listOf('watch-later');
 export const isSaved = (videoId) => read('watch-later', []).includes(videoId);
 export const toggleSaved = (videoId) => toggleIn('watch-later', videoId);
 
+export const hiddenVideos = () => listOf('hidden-videos');
+export const isHiddenVideo = (videoId) => read('hidden-videos', []).includes(videoId);
+export function setHiddenVideo(videoId, on) {
+  const list = read('hidden-videos', []);
+  write('hidden-videos', on
+    ? (list.includes(videoId) ? list : [...list, videoId])
+    : list.filter((id) => id !== videoId));
+}
+export const hiddenChannels = () => listOf('hidden-channels');
+export const isHiddenChannel = (channelId) => read('hidden-channels', []).includes(channelId);
+export function setHiddenChannel(channelId, on) {
+  const list = read('hidden-channels', []);
+  write('hidden-channels', on
+    ? (list.includes(channelId) ? list : [...list, channelId])
+    : list.filter((id) => id !== channelId));
+}
+
 // Reaction per video: 'like' | 'dislike' | null. Clicking the current one clears it.
 export const reaction = (videoId) => read('reactions', {})[videoId] ?? null;
+export const liked = () => Object.entries(read('reactions', {})).filter(([, kind]) => kind === 'like').map(([id]) => id);
 export function toggleReaction(videoId, kind) {
   const all = { ...read('reactions', {}) };
   const next = all[videoId] === kind ? null : kind;

@@ -25,11 +25,18 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `search-button` | Magnifier button | 64 px wide, icon centered, round right; on phones the field stays visible and the button is 44 px (youtube.com collapses it to a 40 px icon below 657 px; we keep the field for our own search feature) |
 | `icon-button` | Round icon-only button | 40 px |
 | `icon` | Inline SVG icon (copy from `media/icons/`) | 24 px, takes the text color; add `aria-hidden="true"` |
-| `avatar` | Round picture or letter | `avatar-sm` 32, `avatar-md` 36, `avatar-lg` 160 |
-| `guide` | Left sidebar | 240 px wide; `guide-mini` is 72 px; hidden at 791 px or less (tablet and phone) |
+| `avatar` | Round picture or letter | `avatar-xs` 24 (sidebar channels), `avatar-sm` 32, `avatar-md` 36, `avatar-lg` 160 |
+| `guide` | Left sidebar | 240 px wide; `guide-mini` is 72 px; hidden at 791 px or less (tablet and phone). `guide-drawer` = always hidden (Watch); `guide-open` = the menu button shows it as a 240 px overlay at <=1312 px and on Watch at every width, with `guide-scrim` behind it |
 | `guide-item` | One sidebar link | 40 px high (76 px inside `guide-mini`, icon above an 11 px label; youtube.com uses 10 px, below our 11 px readability floor); `guide-item-active` for the current page |
+| `guide-more` | Everything below Home and Shorts in the wide sidebar | hidden in mini mode |
+| `guide-mini-only` | 구독 and 나 entries | shown only in mini mode |
+| `guide-heading` | Section title (구독, 나, 탐색) | 16 px, weight 500; a link with a chevron when it opens a page |
+| `guide-links` | Footer text links (소개, 저작권 ...) | 13 px, wraps |
+| `guide-link` | One footer text link | placeholder |
+| `guide-copy` | Footer copyright line | 12 px |
 | `page` | Main area right of the sidebar | |
 | `page-title` | The page's `h1` when the design shows no title (Home, Watch "not found") | hidden on screen, read by screen readers |
+| `sr-only` | Visually hidden text that remains available to screen readers | |
 | `page-message` | Message instead of content: no search results, video not found, data failed to load | centered, secondary color, 16 px |
 | `button` | Base pill button | 40 px high, bold 500 |
 | `button-subscribe` | Subscribe | fill `--text`, text `--bg` |
@@ -40,7 +47,8 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | Class | What it is | Size / note |
 | --- | --- | --- |
 | `video-grid` | Grid of cards | 4 columns wide, 3 medium, 2 small, 1 on phones (650 px or less); 16 px column gap, 40 px row gap |
-| `card` | One video (a link) | |
+| `card` | One video box with separate video and channel links | |
+| `card-link` | Thumbnail link to the video | |
 | `card-thumb` | Thumbnail box | 16:9, 12 px radius |
 | `card-duration` | Time badge on the thumbnail | bottom right |
 | `card-body` | Row under the thumbnail | avatar plus text |
@@ -65,7 +73,7 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | --- | --- | --- |
 | `watch-layout` | Two columns | |
 | `watch-primary` | Left column | player, info, comments |
-| `watch-secondary` | Right column | 320 px; related videos |
+| `watch-secondary` | Right column | max(402 px, 27.5vw); related videos; below 1000 px it goes under the player |
 | `player` | Video area | 16:9 |
 | `watch-title` | Video title | large |
 | `channel-row` | Avatar, name, subs, Subscribe | one line |
@@ -88,7 +96,7 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `comment-like` | Like button and count | |
 | `related-list` | List in the right column | |
 | `related-card` | One row | thumbnail left, text right |
-| `related-thumb` | Small thumbnail | 16:9 |
+| `related-thumb` | Thumbnail | 16:9; desktop width min(62%, 235 px); title up to 3 lines |
 | `related-title` | Title | |
 | `related-channel` | Channel name | |
 | `related-stats` | Views and age | |
@@ -122,7 +130,7 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `tab` | One tab | |
 | `tab-active` | Current tab | underline 2 px, `--text` color |
 
-Profile = `header` + `guide-mini` + `page` containing `banner`, `profile-header`, `tabs`, and one `tab-panel` per tab (only the selected one is shown).
+Profile (`profile.html?c=<channel id>`, built by `js/profile.js` from `data/videos.json`) = `header` + `guide` + `page` containing `banner`, `profile-header`, `tabs`, and one `tab-panel` per tab (only the selected one is shown).
 
 On Profile the `video-grid` is 3 columns from 1171 px, 2 from 671 to 1170 px, 1 below, with a 32 px row gap (the 4/3/2/1 rule above is for Home). The channel-search button next to the tabs is 48 px.
 
@@ -130,7 +138,7 @@ Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` i
 
 | Class | What it is | Size / note |
 | --- | --- | --- |
-| `profile-wrap` | Width wrapper for the whole profile | steps like youtube.com: 642 px from 671, 856 from 957, 1070 from 1171, 1284 from 1553; full width below 671 |
+| `profile-wrap` | Width wrapper for the whole profile | steps like youtube.com: 642 px from 671, 856 from 957, 1070 from 1171, back to 856 from 1313 (the wide sidebar takes room), 1070 from 1339, 1284 from 1553; full width below 671 |
 | `profile-info` | Text column next to the avatar (name, meta, bio, button) | |
 | `profile-meta` | One line: `@handle · subscribers · videos` | holds `profile-handle` and `profile-stats` |
 | `tabs-bar` | Full-width sticky strip behind the tabs (draws the divider line across the page) | sticks 56 px from the top; holds one `profile-wrap tabs` |
@@ -142,7 +150,11 @@ Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` i
 | `chips-end` | Chip row pushed to the right (Playlists "Sort by") | add next to `chips` |
 | `profile-actions` | Row with Subscribe and Community | 8 px gap, buttons 40 px high |
 | `button-secondary` | Grey pill button (Community) | fill `--field-btn`, text `--text` |
-| `card-menu` | Three-dot icon on the right of a card text | 24 px icon, decorative |
+| `card-menu` | Button that opens the card action menu | 40 px round target, 24 px icon; hidden until hover on mouse devices |
+| `menu` | Shared card action menu | Fixed overlay; max-height calc(100dvh - 16px), scrolls when needed; bottom sheet on phones |
+| `menu-item` | One action in the card menu | 36 px high; 48 px on phones |
+| `toast` | Action feedback message | Fixed near the bottom of the screen |
+| `toast-action` | Optional action in a toast | Accent-colored button |
 | `short-grid` | Shorts tab: grid of tiles | add next to `video-grid`; columns at least 200 px, 4 px gap, 2 columns on phones |
 | `short-tile` | One short in that grid | add next to `card`; thumbnail is 2:3 (as on youtube.com), 8 px radius |
 | `playlist-card` | Playlist card | add next to `card`; stacked lines above the thumbnail |

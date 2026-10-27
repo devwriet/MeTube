@@ -1,20 +1,9 @@
 // Shared header and sidebar, rendered into the page's empty <header class="header"> and <nav class="guide">.
 import { icon } from './icons.js';
-import { el } from './render.js';
-
-// [key, label, href, icon]; null draws a divider. guide-mini shows only the items before the first divider.
-const NAV = [
-  ['home', '홈', 'home.html', 'home'],
-  ['shorts', 'Shorts', 'shorts.html', 'smart_display'],
-  ['subscriptions', '구독', 'home.html?feed=subscriptions', 'subscriptions'],
-  ['profile', '나', 'from-team/profile.html', 'account_circle'],
-  null,
-  ['history', '시청 기록', 'home.html?feed=history', 'history'],
-  ['later', '나중에 볼 동영상', 'home.html?feed=later', 'schedule'],
-  null,
-  ['music', '음악', 'home.html?category=' + encodeURIComponent('음악'), 'music_note'],
-  ['games', '게임', 'home.html?category=' + encodeURIComponent('게임'), 'sports_esports'],
-];
+import { el, avatar } from './render.js';
+import { loadData } from './data.js';
+import { subscriptions } from './store.js';
+import { soon } from './card-menu.js';
 
 function iconButton(tag, label, iconName) {
   const node = el(tag, 'icon-button');
@@ -26,9 +15,66 @@ function iconButton(tag, label, iconName) {
 
 function header(nav, query) {
   const menu = iconButton('button', '메뉴', 'menu');
-  // Collapses the wide sidebar to the mini one (only visible from 1313px; narrower widths set the mode in CSS,
-  // so there is no aria-expanded: the button cannot know what CSS shows).
-  menu.addEventListener('click', () => nav.classList.toggle('guide-mini'));
+  nav.id = 'guide';
+  menu.setAttribute('aria-controls', 'guide');
+  const drawerQuery = matchMedia('(max-width: 1312px)');
+  const drawerMode = () => nav.classList.contains('guide-drawer') || drawerQuery.matches;
+  if (drawerMode()) menu.setAttribute('aria-expanded', 'false');
+  let scrim = null;
+  let page = null;
+  let search = null;
+  let right = null;
+
+  const close = (restoreFocus = true) => {
+    if (!nav.classList.contains('guide-open')) return;
+    nav.classList.remove('guide-open');
+    scrim?.remove();
+    scrim = null;
+    if (page) page.inert = false;
+    if (search) search.inert = false;
+    if (right) right.inert = false;
+    if (drawerMode()) menu.setAttribute('aria-expanded', 'false');
+    else menu.removeAttribute('aria-expanded');
+    if (restoreFocus) menu.focus();
+  };
+  const open = () => {
+    page = document.querySelector('.page');
+    search = document.querySelector('.header .search');
+    right = document.querySelector('.header-right');
+    if (page) page.inert = true;
+    if (search) search.inert = true;
+    if (right) right.inert = true;
+    nav.classList.add('guide-open');
+    menu.setAttribute('aria-expanded', 'true');
+    scrim = el('div', 'guide-scrim');
+    scrim.addEventListener('click', () => close());
+    document.body.append(scrim);
+    nav.querySelector('a')?.focus();
+  };
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') close();
+  });
+  nav.addEventListener('click', (event) => {
+    if (event.defaultPrevented) return;
+    const link = event.target.closest('a[href]');
+    if (link && nav.contains(link)) close(false);
+  });
+  drawerQuery.addEventListener('change', () => {
+    close();
+    if (drawerMode()) menu.setAttribute('aria-expanded', 'false');
+    else menu.removeAttribute('aria-expanded');
+  });
+
+  // Drawer mode uses an overlay through tablet widths; desktop keeps mini-sidebar toggling.
+  menu.addEventListener('click', () => {
+    if (drawerMode()) {
+      if (nav.classList.contains('guide-open')) close();
+      else open();
+    } else {
+      menu.removeAttribute('aria-expanded');
+      nav.classList.toggle('guide-mini');
+    }
+  });
 
   const logo = el('a', 'logo');
   logo.href = 'home.html';
@@ -38,7 +84,7 @@ function header(nav, query) {
   const left = el('div', 'header-left');
   left.append(menu, logo);
 
-  const search = el('form', 'search');
+  search = el('form', 'search');
   search.setAttribute('role', 'search');
   search.action = 'home.html';
   search.method = 'get';
@@ -50,30 +96,116 @@ function header(nav, query) {
   go.type = 'submit';
   search.append(input, go);
 
-  const right = el('div', 'header-right');
+  right = el('div', 'header-right');
   const profile = iconButton('a', '내 채널', 'account_circle');
-  profile.href = 'from-team/profile.html';
-  right.append(iconButton('button', '만들기', 'add'), iconButton('button', '알림', 'notifications'), profile);
+  profile.href = 'profile.html';
+  const create = iconButton('button', '만들기', 'add');
+  const notifications = iconButton('button', '알림', 'notifications');
+  create.addEventListener('click', soon);
+  notifications.addEventListener('click', soon);
+  right.append(create, notifications, profile);
 
   return [left, search, right];
 }
 
-function sidebar(active) {
-  return NAV.map((item) => {
-    if (!item) return el('hr');
-    const [key, label, href, iconName] = item;
-    const link = el('a', key === active ? 'guide-item guide-item-active' : 'guide-item');
-    link.href = href;
-    if (key === active) link.setAttribute('aria-current', 'page');
-    link.append(icon(iconName), el('span', '', label));
-    return link;
-  });
+// One sidebar link. lead is an icon name or a node; no href = a placeholder that goes nowhere (pages we do not build).
+function item(label, lead, href, active, className = '') {
+  const link = el('a', ['guide-item', active && 'guide-item-active', className].filter(Boolean).join(' '));
+  link.href = href ?? '#';
+  if (!href) link.addEventListener('click', (event) => { event.preventDefault(); soon(); });
+  if (active) link.setAttribute('aria-current', 'page');
+  link.append(typeof lead === 'string' ? icon(lead) : lead, el('span', '', label));
+  return link;
 }
 
-// active: a NAV key ('home', 'subscriptions', ...) or null.
+// Section title; with an href it is a link followed by a chevron.
+function heading(label, href) {
+  if (!href) return el('h2', 'guide-heading', label);
+  const link = el('a', 'guide-heading', label);
+  link.href = href;
+  link.append(icon('chevron_right'));
+  return link;
+}
+
+const placeholders = (labels) => labels.map((label) => {
+  const link = el('a', 'guide-link', label);
+  link.href = '#';
+  link.addEventListener('click', (event) => { event.preventDefault(); soon(); });
+  return link;
+});
+
+// Clicking the button swaps it for the extra items.
+function showMore(extras) {
+  const button = el('button', 'guide-item');
+  button.type = 'button';
+  button.append(icon('expand_more'), el('span', '', '더보기'));
+  button.addEventListener('click', () => button.replaceWith(...extras));
+  return button;
+}
+
+const category = (name) => 'home.html?category=' + encodeURIComponent(name);
+
+// Home and Shorts, then the mini-only 구독 and 나 entries, then guide-more (wide sidebar only).
+function sidebar(active, subs) {
+  const more = el('div', 'guide-more');
+  more.append(
+    el('hr'), subs,
+    heading('나', 'profile.html'),
+    item('내 채널', 'account_box', 'profile.html', active === 'profile'),
+    item('시청 기록', 'history', 'home.html?feed=history', active === 'history'),
+    item('재생목록', 'playlist_play'),
+    item('나중에 볼 동영상', 'schedule', 'home.html?feed=later', active === 'later'),
+    item('좋아요 표시한 동영상', 'thumb_up', 'home.html?feed=liked', active === 'liked'),
+    item('내 동영상', 'video_library'),
+    item('다운로드', 'download'),
+    el('hr'), heading('탐색'),
+    item('음악', 'music_note', category('음악')),
+    item('영화', 'movie'),
+    item('라이브', 'sensors'),
+    showMore([item('게임', 'sports_esports', category('게임')), item('뉴스', 'newspaper', category('뉴스'))]),
+    el('hr'), heading('MeTube 더 보기'),
+    item('MeTube Premium', 'smart_display'),
+    item('MeTube Music', 'play_circle'),
+    item('MeTube Kids', 'child_care'),
+    el('hr'), item('신고 기록', 'flag'),
+    el('hr'),
+  );
+  const links = el('div', 'guide-links');
+  links.append(...placeholders(['소개', '보도자료', '저작권', '문의하기', '크리에이터', '광고', '개발자', '약관', '개인정보처리방침', '정책 및 안전', 'MeTube 작동의 원리', '새로운 기능 테스트']));
+  more.append(links, el('p', 'guide-copy', '© 2026 MeTube, deepfake 팀. 학교 프로젝트이며 YouTube와 관계가 없습니다.'));
+  return [
+    item('홈', 'home', 'home.html', active === 'home'),
+    item('Shorts', 'smart_display', null, active === 'shorts'),
+    item('구독', 'subscriptions', 'home.html?feed=subscriptions', active === 'subscriptions', 'guide-mini-only'),
+    item('나', 'account_circle', 'profile.html', active === 'profile', 'guide-mini-only'),
+    more,
+  ];
+}
+
+// active: 'home', 'shorts', 'profile', 'history', 'later', 'liked', 'subscriptions' or null.
 export function renderLayout(active) {
   const nav = document.querySelector('.guide');
   const query = new URLSearchParams(location.search).get('q') ?? '';
+  const subs = el('div'); // filled once the channel names are loaded
   document.querySelector('.header').replaceChildren(...header(nav, query));
-  nav.replaceChildren(...sidebar(active));
+  nav.replaceChildren(...sidebar(active, subs));
+  let data = null;
+  const renderSubscriptions = () => {
+    if (!data) return;
+    const channels = subscriptions().map((id) => data.channel(id)).filter(Boolean);
+    subs.replaceChildren();
+    if (!channels.length) return;
+    subs.append(
+      heading('구독', 'home.html?feed=subscriptions'),
+      ...channels.map((channel) => item(channel.name, avatar(channel.avatarLetter, 'xs'), `profile.html?c=${channel.id}`, false)),
+      el('hr'),
+    );
+  };
+  document.addEventListener('metube:change', (event) => {
+    if (event.detail?.key === 'subscriptions') renderSubscriptions();
+  });
+  loadData().then((loaded) => {
+    data = loaded;
+    renderSubscriptions();
+  }).catch(() => {}); // the sidebar works without the channel list
 }

@@ -1,10 +1,11 @@
 import { renderLayout } from './layout.js';
 import { loadData, relatedVideos } from './data.js';
-import { el, avatar, setTone, relatedCard, commentItem } from './render.js';
+import { el, avatar, setTone, relatedCard, commentItem, subscribeButton } from './render.js';
 import { koCount, formatSubscribers, formatDate } from './format.js';
 import {
-  GUEST_NAME, isSubscribed, toggleSubscription, reaction, toggleReaction,
+  GUEST_NAME, reaction, toggleReaction,
   isSaved, toggleSaved, comments, addComment, isCommentLiked, toggleCommentLike, addHistory,
+  hiddenVideos, hiddenChannels,
 } from './store.js';
 import { icon } from './icons.js';
 
@@ -57,17 +58,13 @@ try {
       player.append(placeholder);
     }
     primary.append(player, el('h1', 'watch-title', video.title));
-    const subscribe = el('button');
-    subscribe.type = 'button';
-    const paintSubscribe = (on) => {
-      subscribe.className = `button ${on ? 'button-subscribed' : 'button-subscribe'}`;
-      subscribe.textContent = on ? '구독중' : '구독';
-      subscribe.setAttribute('aria-pressed', String(on));
-    };
-    paintSubscribe(isSubscribed(channel.id));
-    subscribe.addEventListener('click', () => paintSubscribe(toggleSubscription(channel.id)));
+    const subscribe = subscribeButton(channel.id);
     const channelInfo = el('div');
-    channelInfo.append(el('p', 'channel-name', channel.name), el('p', 'channel-subs', formatSubscribers(channel.subscribers)));
+    const channelName = el('p', 'channel-name');
+    const channelLink = el('a', '', channel.name);
+    channelLink.href = `profile.html?c=${encodeURIComponent(channel.id)}`;
+    channelName.append(channelLink);
+    channelInfo.append(channelName, el('p', 'channel-subs', formatSubscribers(channel.subscribers)));
     const actions = el('div', 'watch-actions');
     const [like, likeCount] = actionButton('thumb_up', '');
     const [dislike, dislikeCount] = actionButton('thumb_down', '');
@@ -160,9 +157,28 @@ try {
     const secondary = el('aside', 'watch-secondary');
     secondary.setAttribute('aria-label', '관련 동영상');
     const related = el('div', 'related-list');
-    relatedVideos(data, video, 10).forEach((item) => related.append(relatedCard(item, data.channel(item.channelId))));
+    function renderRelated() {
+      const hiddenVideoIds = new Set(hiddenVideos());
+      const hiddenChannelIds = new Set(hiddenChannels());
+      const candidates = relatedVideos(data, video, data.videos.length);
+      const visible = candidates
+        .filter((item) => !hiddenVideoIds.has(item.id) && !hiddenChannelIds.has(item.channelId))
+        .slice(0, 10);
+      related.replaceChildren(...(visible.length
+        ? visible.map((item) => relatedCard(item, data.channel(item.channelId)))
+        : [el('p', 'page-message', '추천 동영상이 없습니다.')]));
+    }
+    renderRelated();
+    document.addEventListener('metube:change', (event) => {
+      if (['hidden-videos', 'hidden-channels'].includes(event.detail?.key)) renderRelated();
+    });
     secondary.append(related);
     layout.append(primary, secondary);
+    // Keep related videos above comments on narrow screens.
+    const narrow = matchMedia('(max-width: 999px)');
+    const moveSecondary = () => narrow.matches ? section.before(secondary) : layout.append(secondary);
+    moveSecondary();
+    narrow.addEventListener('change', moveSecondary);
     page.append(layout);
   }
 } catch {
