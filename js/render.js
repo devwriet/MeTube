@@ -12,6 +12,7 @@ export function el(tag, className, text) {
 }
 
 export const watchUrl = (id) => `watch.html?v=${encodeURIComponent(id)}`;
+export const shortsUrl = (id) => `shorts.html?v=${encodeURIComponent(id)}`;
 export const channelUrl = (id) => `profile.html?c=${encodeURIComponent(id)}`;
 export const videoStats = (video) => `${formatViews(video.views)} · ${timeAgo(video.publishedAt)}`;
 
@@ -72,13 +73,13 @@ export function shortCard(video) {
   card.dataset.video = video.id;
   card.dataset.channel = video.channelId;
   const link = el('a', 'card-link');
-  link.href = watchUrl(video.id);
+  link.href = shortsUrl(video.id);
   link.tabIndex = -1;
   link.setAttribute('aria-hidden', 'true');
   link.append(thumb('card-thumb', video));
 
   const titleLink = el('a', '', video.title);
-  titleLink.href = watchUrl(video.id);
+  titleLink.href = shortsUrl(video.id);
   titleLink.append(el('span', 'sr-only', ` · ${formatDuration(video.durationSeconds)}`));
   const title = el('h3', 'card-title');
   title.append(titleLink);

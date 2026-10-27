@@ -175,7 +175,7 @@ function sidebar(active, subs) {
   more.append(links, el('p', 'guide-copy', '© 2026 MeTube, deepfake 팀. 학교 프로젝트이며 YouTube와 관계가 없습니다.'));
   return [
     item('홈', 'home', 'home.html', active === 'home'),
-    item('Shorts', 'smart_display', null, active === 'shorts'),
+    item('Shorts', 'smart_display', 'shorts.html', active === 'shorts'),
     item('구독', 'subscriptions', 'home.html?feed=subscriptions', active === 'subscriptions', 'guide-mini-only'),
     item('나', 'account_circle', 'profile.html', active === 'profile', 'guide-mini-only'),
     more,

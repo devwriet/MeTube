@@ -1,4 +1,4 @@
-import { el, watchUrl } from './render.js';
+import { el, watchUrl, shortsUrl } from './render.js';
 import { icon } from './icons.js';
 import { isSaved, toggleSaved, isHiddenVideo, setHiddenVideo, isHiddenChannel, setHiddenChannel } from './store.js';
 
@@ -159,7 +159,7 @@ function fillMenu(video) {
   item(node, '오프라인 저장', 'download', soon);
   item(node, '공유', 'share', () => {
     try {
-      const link = new URL(watchUrl(video.id), location.href).href;
+      const link = new URL(video.type === 'short' ? shortsUrl(video.id) : watchUrl(video.id), location.href).href;
       Promise.resolve(navigator.clipboard.writeText(link))
         .then(() => toast('링크를 복사했습니다.'))
         .catch(() => toast('링크를 복사하지 못했습니다.'));

@@ -109,15 +109,27 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 
 | Class | What it is | Size / note |
 | --- | --- | --- |
-| `shorts-feed` | Scrolling list, one short per screen | snaps to each short |
-| `short` | One short | |
-| `short-player` | Vertical video | 9:16, about 378 × 672 |
-| `short-overlay` | Text over the bottom of the video | |
-| `short-channel` | Channel name and Subscribe | |
-| `short-title` | Title | |
-| `short-rail` | Buttons at the right side | |
-| `rail-button` | Like, Comment, Share | round |
-| `rail-count` | Number under a button | |
+| `shorts-page` | Shorts main page | zero padding; min-width 0 |
+| `shorts-feed` | Scrolling list, one short per screen | height viewport − 56 px; vertical mandatory snap; hidden scrollbar |
+| `short-item` | One full-screen short | 8 px top / 32 px bottom padding; snap start and stop |
+| `short-stage` | Player, action rail, and optional comments panel | full height; 12 px player-to-rail gap; 24 px before side panel |
+| `short-player` | Vertical video or placeholder | 9:16; 12 px radius; full stage height |
+| `short-play` | Play/pause control for a real video | 48 px circle; 16 px top/left; scrim background |
+| `short-video` | Video inside the player | absolute fill; object-fit cover |
+| `short-status` | Video preparation status pill | 36 px high; 18 px radius; 14 px text |
+| `short-overlay` | Text over the bottom of the video | 156 px minimum; 16 px inset and bottom gradient |
+| `short-channel` | Channel name and Subscribe row | 8 px gap; vertically centered |
+| `short-channel-name` | Channel name | 14 / 20 px, medium; ellipsis |
+| `short-title` | Short title | 14 / 20 px; one line with ellipsis |
+| `short-actions` | Vertical action rail | 12 px gap; 78 px action pitch |
+| `short-action` | Like, dislike, comments, or share button | 48 px circle; 12 / 18 px label |
+| `short-action-label` | Text below a rail icon | 12 / 18 px |
+| `short-channel-thumb` | Channel avatar at the bottom of the rail | 40 × 40 px; 6 px radius |
+| `shorts-nav` | Previous and next controls | fixed at right; 56 px buttons, 16 px gap; hidden at 650 px and below |
+| `shorts-nav-btn` | Previous or next Shorts button | 56 × 56 px circle |
+| `shorts-comments` | Comments dialog or side panel | desktop side panel full stage height, 480 px wide (shrinks to 360 px minimum; 409 px basis at 1100–1312 px); centered modal maximum height 643 px; phone sheet 70dvh |
+| `shorts-comments-head` | Comments title, count, and close button | 57 px high; 16 px horizontal padding |
+| `shorts-comments-count` | Comment count | 16 / 22 px; secondary text |
 
 ## Profile
 

@@ -1,7 +1,7 @@
 // Channel page: profile.html?c=<channelId>. Default is the guest's own channel (ch-woopi).
 import { renderLayout } from './layout.js';
 import { loadData } from './data.js';
-import { el, avatar, setTone, thumb, watchUrl, videoStats, subscribeButton } from './render.js';
+import { el, avatar, setTone, thumb, watchUrl, shortsUrl, videoStats, subscribeButton } from './render.js';
 import { cardMenu, soon } from './card-menu.js';
 import { formatSubscribers, formatViews, formatDuration, koCount } from './format.js';
 import { icon } from './icons.js';
@@ -26,13 +26,13 @@ function profileCard(video) {
   card.dataset.video = video.id;
   card.dataset.channel = video.channelId;
   const link = el('a', 'card-link');
-  link.href = watchUrl(video.id);
+  link.href = isShort ? shortsUrl(video.id) : watchUrl(video.id);
   link.tabIndex = -1;
   link.setAttribute('aria-hidden', 'true');
   link.append(isShort ? setTone(el('div', 'card-thumb'), video.hue) : thumb('card-thumb', video));
 
   const titleLink = el('a', '', video.title);
-  titleLink.href = watchUrl(video.id);
+  titleLink.href = isShort ? shortsUrl(video.id) : watchUrl(video.id);
   titleLink.append(el('span', 'sr-only', ` · ${formatDuration(video.durationSeconds)}`));
   const title = el('div', 'card-title');
   title.append(titleLink);
