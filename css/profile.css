@@ -60,6 +60,10 @@
 .tab-active { color: var(--text); border-bottom-color: var(--text); }
 .tab:focus-visible { outline-offset: -2px; }
 .tabs > .icon-button { width: 48px; height: 48px; }
+@media (max-width: 650px) {
+  .tablist { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .tab { min-width: 44px; padding: 0 12px; }
+}
 .section-heading { margin-top: 24px; font-size: 20px; line-height: 28px; font-weight: 700; }
 .tab-panel .page-message { padding: 48px 16px; }
 
@@ -74,11 +78,25 @@
 .profile-wrap .card-title { margin-bottom: 2px; }
 
 /* Home tab: horizontal shelves */
+.shelf-wrap { position: relative; }
 .shelf { display: flex; gap: 8px; padding-top: 12px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
+.shelf-arrow {
+  position: absolute; top: 51px; z-index: 1; /* centered on a 210px 16:9 thumb: 12 + 59 - 20 */
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; padding: 0;
+  border: 0; border-radius: 50%; background: var(--field-btn); color: var(--text);
+  box-shadow: 0 1px 4px var(--line);
+}
+.shelf-wrap:has(.shelf-wide) .shelf-arrow { top: 92px; } /* 354px 16:9 thumb */
+.shelf-wrap:has(.short-tile) .shelf-arrow { top: 150px; } /* 210px 2:3 thumb */
+.shelf-prev { left: 0; }
+.shelf-prev .icon { transform: scaleX(-1); }
+.shelf-next { right: 0; }
 .shelf > .card { flex: none; width: 210px; scroll-snap-align: start; }
 .shelf-wide > .card { width: min(354px, 85%); }
 .shelf .card-thumb { border-radius: 8px; }
 .shelf .card-title, .playlist-card .card-title { font-size: 14px; line-height: 20px; }
+@media (max-width: 650px) { .shelf-arrow { display: none; } }
 
 /* Shorts tab: 2:3 tiles, at least 200px wide, 4px between columns */
 .profile-wrap .short-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 4px; }

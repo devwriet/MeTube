@@ -184,6 +184,17 @@ function sidebar(active, subs) {
 
 // active: 'home', 'shorts', 'profile', 'history', 'later', 'liked', 'subscriptions' or null.
 export function renderLayout(active) {
+  let skipLink = document.querySelector('.skip-link');
+  if (!skipLink) {
+    skipLink = el('a', 'skip-link', '본문으로 건너뛰기');
+    skipLink.setAttribute('href', '#content');
+    document.body.prepend(skipLink);
+  }
+  const page = document.querySelector('main > .page');
+  if (page) {
+    page.setAttribute('id', 'content');
+    page.tabIndex = -1;
+  }
   const nav = document.querySelector('.guide');
   const query = new URLSearchParams(location.search).get('q') ?? '';
   const subs = el('div'); // filled once the channel names are loaded

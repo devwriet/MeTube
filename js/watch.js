@@ -128,6 +128,11 @@ try {
     const heading = el('h2', 'comments-count', `${koCount(allComments.length)}개의 댓글`);
     heading.id = 'comments-count';
     heading.setAttribute('aria-live', 'polite');
+    heading.setAttribute('tabindex', '-1');
+    const commentsJump = el('a', 'comments-jump');
+    commentsJump.href = '#comments-count';
+    const commentsJumpLabel = el('span', '', `댓글 ${koCount(allComments.length)}개`);
+    commentsJump.append(icon('comment'), commentsJumpLabel);
     const section = el('section', 'comments');
     section.setAttribute('aria-labelledby', heading.id);
     const form = el('form', 'comment-form');
@@ -147,11 +152,13 @@ try {
       const comment = addComment(video.id, text);
       list.prepend(commentItem(comment, false, () => toggleCommentLike(comment.id)));
       heading.textContent = `${koCount(list.children.length)}개의 댓글`;
+      commentsJumpLabel.textContent = `댓글 ${koCount(list.children.length)}개`;
       input.value = '';
       submit.disabled = true;
       input.focus();
     });
     allComments.forEach((comment) => list.append(commentItem(comment, isCommentLiked(comment.id), () => toggleCommentLike(comment.id))));
+    description.after(commentsJump);
     section.append(heading, form, list);
     primary.append(section);
     const secondary = el('aside', 'watch-secondary');

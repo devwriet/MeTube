@@ -65,6 +65,45 @@ const row = (className, nodes) => {
 };
 const empty = (text) => el('p', 'page-message', text);
 
+function shelfControls(shelf, index) {
+  shelf.id = `profile-shelf-${index}`;
+  const wrap = el('div', 'shelf-wrap');
+  const previous = el('button', 'shelf-arrow shelf-prev');
+  previous.type = 'button';
+  previous.setAttribute('aria-label', '이전');
+  previous.setAttribute('aria-controls', shelf.id);
+  previous.append(icon('chevron_right'));
+  const next = el('button', 'shelf-arrow shelf-next');
+  next.type = 'button';
+  next.setAttribute('aria-label', '다음');
+  next.setAttribute('aria-controls', shelf.id);
+  next.append(icon('chevron_right'));
+  const update = () => {
+    const hidePrevious = shelf.scrollLeft <= 0;
+    const hideNext = shelf.scrollLeft + shelf.clientWidth >= shelf.scrollWidth - 1;
+    if (hidePrevious && document.activeElement === previous && !hideNext) {
+      next.hidden = false;
+      next.focus({ preventScroll: true });
+    }
+    if (hideNext && document.activeElement === next && !hidePrevious) {
+      previous.hidden = false;
+      previous.focus({ preventScroll: true });
+    }
+    previous.hidden = hidePrevious;
+    next.hidden = hideNext;
+  };
+  const scroll = (direction) => {
+    const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    shelf.scrollBy({ left: direction * (shelf.clientWidth - 210), behavior });
+  };
+  previous.addEventListener('click', () => scroll(-1));
+  next.addEventListener('click', () => scroll(1));
+  shelf.addEventListener('scroll', update, { passive: true });
+  new ResizeObserver(update).observe(shelf);
+  wrap.append(previous, shelf, next);
+  return wrap;
+}
+
 // Sort chips plus a grid that is rebuilt on every click.
 function sortedPanel(panel, videos, build, gridClass, emptyText) {
   if (!videos.length) { panel.append(empty(emptyText)); return; }
@@ -136,8 +175,12 @@ try {
           ['Shorts', 'shelf', [...shorts].sort(byDate).slice(0, 6).map(profileCard)],
           ['인기 영상', 'shelf', [...videos].sort(byViews).slice(0, 6).map(profileCard)],
         ];
+        let shelfIndex = 0;
         for (const [title, className, cards] of sections) {
-          if (cards.length) panel.append(el('h2', 'section-heading', title), row(className, cards));
+          if (cards.length) {
+            const shelf = row(className, cards);
+            panel.append(el('h2', 'section-heading', title), shelfControls(shelf, ++shelfIndex));
+          }
         }
         if (!panel.children.length) panel.append(empty('아직 올린 동영상이 없습니다.'));
       }],

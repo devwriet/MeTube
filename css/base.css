@@ -26,6 +26,13 @@ button { cursor: pointer; }
   position: absolute; width: 1px; height: 1px;
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
+.skip-link {
+  position: fixed; top: 0; left: -999px; z-index: 31;
+  padding: 8px 16px; border-radius: 8px;
+  background: var(--text); color: var(--bg);
+  clip-path: inset(50%); white-space: nowrap;
+}
+.skip-link:focus-visible { top: 8px; left: 8px; clip-path: none; }
 
 /* header */
 .header {
@@ -146,6 +153,7 @@ button.guide-item {
 .guide-scrim { position: fixed; inset: 56px 0 0 0; z-index: 19; background: var(--scrim); }
 
 .page { min-width: 0; flex: 1; padding: 0 24px 48px; }
+.page:focus:not(:focus-visible) { outline: none; }
 
 /* nothing to show: no results, video not found, data failed */
 .page-message { padding: 64px 16px; text-align: center; overflow-wrap: anywhere; color: var(--text-2); font-size: 16px; line-height: 24px; }
@@ -303,6 +311,13 @@ button.guide-item {
   .menu-item { height: 48px; }
   .toast { left: 8px; right: 8px; bottom: 8px; max-width: none; }
   .header { padding: 0 8px; gap: 8px; }
+  .icon-button { width: 44px; height: 44px; }
+  .button-subscribe, .button-subscribed { height: auto; min-width: 44px; min-height: 44px; }
+  .chip { position: relative; }
+  .chip::before { content: ''; position: absolute; inset: -6px 0; }
+  .card-menu { position: relative; }
+  .card-menu::before { content: ''; position: absolute; inset: -2px; }
+  .short-tile .card-menu::before { inset: -2px 0 -2px -4px; }
   .logo { font-size: 0; }
   .logo i { font-size: 15px; }
   .header-left, .header-right { gap: 4px; }

@@ -20,10 +20,11 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `header-left` | Menu button and logo | |
 | `header-right` | Create, bell, avatar | |
 | `logo` | "MeTube" text with the `Me` box | |
+| `skip-link` | Keyboard link to the page content | hidden until focused |
 | `search` | Search form (input and button) | centered, up to 640 px |
 | `search-input` | Text field | 40 px high, 16 px text, round left |
 | `search-button` | Magnifier button | 64 px wide, icon centered, round right; on phones the field stays visible and the button is 44 px (youtube.com collapses it to a 40 px icon below 657 px; we keep the field for our own search feature) |
-| `icon-button` | Round icon-only button | 40 px |
+| `icon-button` | Round icon-only button | 40 px; 44 px on phones |
 | `icon` | Inline SVG icon (copy from `media/icons/`) | 24 px, takes the text color; add `aria-hidden="true"` |
 | `avatar` | Round picture or letter | `avatar-xs` 24 (sidebar channels), `avatar-sm` 32, `avatar-md` 36, `avatar-lg` 160 |
 | `guide` | Left sidebar | 240 px wide; `guide-mini` is 72 px; hidden at 791 px or less (tablet and phone). `guide-drawer` = always hidden (Watch); `guide-open` = the menu button shows it as a 240 px overlay at <=1312 px and on Watch at every width, with `guide-scrim` behind it |
@@ -34,13 +35,13 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `guide-links` | Footer text links (소개, 저작권 ...) | 13 px, wraps |
 | `guide-link` | One footer text link | placeholder |
 | `guide-copy` | Footer copyright line | 12 px |
-| `page` | Main area right of the sidebar | |
+| `page` | Main area right of the sidebar | `id="content"`, focusable for skip link |
 | `page-title` | The page's `h1` when the design shows no title (Home, Watch "not found") | hidden on screen, read by screen readers |
 | `sr-only` | Visually hidden text that remains available to screen readers | |
 | `page-message` | Message instead of content: no search results, video not found, data failed to load | centered, secondary color, 16 px |
 | `button` | Base pill button | 40 px high, bold 500 |
-| `button-subscribe` | Subscribe | fill `--text`, text `--bg` |
-| `button-subscribed` | Subscribed (after click) | fill `--field-btn`, border `--field-line` |
+| `button-subscribe` | Subscribe | fill `--text`, text `--bg`; 44 px min height on phones |
+| `button-subscribed` | Subscribed (after click) | fill `--field-btn`, border `--field-line`; 44 px min height on phones |
 
 ## Video card and grid (Home, Profile, search results)
 
@@ -66,7 +67,7 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | Class | What it is | Size / note |
 | --- | --- | --- |
 | `chips` | Category bar under the header | 56 px high, sticky |
-| `chip` | One category button | 32 px high, 8 px radius |
+| `chip` | One category button | 32 px high, 8 px radius; 44 px hit area on phones |
 | `chip-active` | The selected category | fill `--text`, text `--bg` |
 
 Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
@@ -86,6 +87,7 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `watch-actions` | Like, Share, Save row | |
 | `action-button` | One pill in that row | |
 | `description-box` | Views, date, description | grey box (`--chip`) |
+| `comments-jump` | Jump to comments on narrow screens | 36 px pill; 44 px on phones |
 | `comments` | Whole comments block | |
 | `comments-count` | "128 Comments" | |
 | `comment-form` | Add-comment area | |
@@ -159,6 +161,10 @@ Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` i
 | `profile-meta` | One line: `@handle · subscribers · videos` | holds `profile-handle` and `profile-stats` |
 | `tabs-bar` | Full-width sticky strip behind the tabs (draws the divider line across the page) | sticks 56 px from the top; holds one `profile-wrap tabs` |
 | `tablist` | Wrapper around the tab buttons (the search icon sits next to it inside `tabs`) | 24 px between tabs |
+| `shelf-wrap` | Relative wrapper for a Home shelf and its arrows | |
+| `shelf-arrow` | Previous/next control over a Home shelf edge | 40 px circle; hidden on phones |
+| `shelf-prev` | Previous shelf control | chevron points left |
+| `shelf-next` | Next shelf control | chevron points right |
 | `playlist-grid` | Playlists tab: grid of 210 px cards | add next to `video-grid`; 4 px column gap |
 | `tab-panel` | Content of one tab | `hidden` on the others |
 | `section-heading` | Heading inside a panel ("Latest") | 20 px, bold |
@@ -166,7 +172,7 @@ Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` i
 | `chips-end` | Chip row pushed to the right (Playlists "Sort by") | add next to `chips` |
 | `profile-actions` | Row with Subscribe and Community | 8 px gap, buttons 40 px high |
 | `button-secondary` | Grey pill button (Community) | fill `--field-btn`, text `--text` |
-| `card-menu` | Button that opens the card action menu | 40 px round target, 24 px icon; hidden until hover on mouse devices, always visible on short tiles |
+| `card-menu` | Button that opens the card action menu | 40 px round target (44 px hit area on phones), 24 px icon; hidden until hover on mouse devices, always visible on short tiles |
 | `menu` | Shared card action menu | Fixed overlay; max-height calc(100dvh - 16px), scrolls when needed; bottom sheet on phones |
 | `menu-item` | One action in the card menu | 36 px high; 48 px on phones |
 | `toast` | Action feedback message | Fixed near the bottom of the screen |
