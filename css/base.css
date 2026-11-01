@@ -180,9 +180,10 @@ button.guide-item {
 .chip:hover { background: var(--hover); }
 .chip-active, .chip-active:hover { background: var(--text); color: var(--bg); }
 
-/* video grid: 4 / 3 / 2 / 1 columns */
-.video-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 16px; padding-top: 12px; }
-@media (max-width: 1500px) { .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* youtube.com Home: 3 columns, 4 from 1912px (wide sidebar) or 1744px (mini sidebar) */
+.video-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 16px; padding-top: 12px; }
+@media (min-width: 1912px) { .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1744px) { main:has(> .guide-mini) .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 1100px) { .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 650px) { .video-grid { grid-template-columns: 1fr; } }
 

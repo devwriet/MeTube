@@ -46,7 +46,7 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 
 | Class | What it is | Size / note |
 | --- | --- | --- |
-| `video-grid` | Grid of cards | 4 columns wide, 3 medium, 2 small, 1 on phones (650 px or less); 16 px column gap, 40 px row gap |
+| `video-grid` | Grid of cards | 3 columns; 4 from 1912 px (wide sidebar) or 1744 px (mini sidebar); 2 at 1100 px or less, 1 at 650 px or less; 16 px column gap, 40 px row gap |
 | `shorts-shelf` | Home Shorts section inside `video-grid` | spans every grid column |
 | `shorts-shelf-header` | Shorts header row: title left, ⋮ button right | 40 px high; 18 px below |
 | `shorts-shelf-title` | Shorts icon and title inside the header row | 20 px, bold; 24 px icon |
@@ -148,7 +148,7 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 
 Profile (`profile.html?c=<channel id>`, built by `js/profile.js` from `data/videos.json`) = `header` + `guide` + `page` containing `banner`, `profile-header`, `tabs`, and one `tab-panel` per tab (only the selected one is shown).
 
-On Profile the `video-grid` is 3 columns from 1171 px, 2 from 671 to 1170 px, 1 below, with a 32 px row gap (the 4/3/2/1 rule above is for Home). The channel-search button next to the tabs is 48 px.
+On Profile the `video-grid` is 3 columns from 1171 px, 2 from 671 to 1170 px, 1 below, with a 32 px row gap (the Home rule above does not apply). The channel-search button next to the tabs is 48 px.
 
 Tabs: Home, Videos, Shorts, Playlists, About. JS switches the panels, so `tab` is a button with `role="tab"`.
 
