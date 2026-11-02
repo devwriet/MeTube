@@ -143,6 +143,14 @@ function makeEntry(video, channel) {
     });
     player.append(playButton);
     paintPlayback();
+    // Missing or unplayable clip: same status as a Short without a clip, and no dead play button.
+    media.addEventListener('error', () => {
+      playButton.remove();
+      media.remove();
+      media = null;
+      entry.media = null;
+      player.prepend(el('span', 'short-status', '영상을 불러오지 못했습니다'));
+    });
   } else {
     player.append(el('span', 'short-status', '영상 준비 중'));
   }
@@ -229,10 +237,12 @@ function setCurrent(entry) {
   updateNavigation(entries.indexOf(entry));
 }
 
+// Returns false at the first and last Short, where there is nothing to scroll to.
 function navigate(direction) {
-  const index = entries.indexOf(current);
-  const target = entries[index + direction];
-  if (target) target.item.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start' });
+  const target = entries[entries.indexOf(current) + direction];
+  if (!target) return false;
+  target.item.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start' });
+  return true;
 }
 
 document.addEventListener('keydown', (event) => {
@@ -279,6 +289,32 @@ try {
     next.addEventListener('click', () => navigate(1));
     nav.append(previous, next);
     page.append(feed, nav);
+
+    // Mouse wheel: one gesture moves one Short. Native snap scrolling bounces a single notch back to the same Short.
+    // Small trackpad deltas add up until they pass 40px. The lock covers the scroll animation and extends while
+    // trackpad inertia keeps sending events; it only starts when a Short was actually scrolled to.
+    let wheelLockUntil = 0;
+    let wheelSum = 0;
+    let wheelTimer = 0;
+    feed.addEventListener('wheel', (event) => {
+      if (event.ctrlKey || event.target.closest('dialog, .menu')) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now < wheelLockUntil) {
+        wheelLockUntil = Math.max(wheelLockUntil, now + 150);
+        return;
+      }
+      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? feed.clientHeight : 1; // pixels, lines, pages
+      const dy = event.deltaY * scale;
+      if (Math.abs(event.deltaX * scale) > Math.abs(dy)) return;
+      wheelSum += dy;
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { wheelSum = 0; }, 200);
+      if (Math.abs(wheelSum) < 40) return;
+      const moved = navigate(wheelSum > 0 ? 1 : -1);
+      wheelSum = 0;
+      if (moved) wheelLockUntil = now + 650;
+    }, { passive: false });
 
     const initial = entries.find((entry) => entry.video.id === requestedId) ?? entries[0];
     initial.item.scrollIntoView({ behavior: 'auto', block: 'start' });
