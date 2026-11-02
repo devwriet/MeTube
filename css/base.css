@@ -86,8 +86,9 @@ main { display: flex; }
 .guide {
   width: 240px; flex: 0 0 240px; height: calc(100vh - 56px);
   position: sticky; top: 56px; padding: 12px;
-  overflow-y: auto; background: var(--bg);
+  overflow-y: auto; scrollbar-width: none; background: var(--bg);
 }
+.guide::-webkit-scrollbar { display: none; }
 .guide-item {
   height: 40px; display: flex; align-items: center; gap: 24px;
   padding: 0 12px; border-radius: 10px; color: var(--text);
