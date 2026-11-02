@@ -4,6 +4,7 @@ import { el, avatar } from './render.js';
 import { loadData } from './data.js';
 import { subscriptions } from './store.js';
 import { soon } from './card-menu.js';
+import { startNavProgress } from './nav-progress.js';
 
 function iconButton(tag, label, iconName) {
   const node = el(tag, 'icon-button');
@@ -101,6 +102,8 @@ function header(nav, query) {
   profile.href = 'profile.html';
   const create = iconButton('button', '만들기', 'add');
   const notifications = iconButton('button', '알림', 'notifications');
+  // upload + notifs: the 2 btns most likely to get clicked
+  // in the demo. naturally neither works
   create.addEventListener('click', soon);
   notifications.addEventListener('click', soon);
   right.append(create, notifications, profile);
@@ -127,6 +130,9 @@ function heading(label, href) {
   return link;
 }
 
+// footer links to pages that dont exist. look important,
+// go nowhere, like a meeting that couldve been an email.
+// every click gets the 준비 중 toast instead of a 404
 const placeholders = (labels) => labels.map((label) => {
   const link = el('a', 'guide-link', label);
   link.href = '#';
@@ -184,6 +190,7 @@ function sidebar(active, subs) {
 
 // active: 'home', 'shorts', 'profile', 'history', 'later', 'liked', 'subscriptions' or null.
 export function renderLayout(active) {
+  startNavProgress();
   let skipLink = document.querySelector('.skip-link');
   if (!skipLink) {
     skipLink = el('a', 'skip-link', '본문으로 건너뛰기');
