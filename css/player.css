@@ -1,0 +1,127 @@
+/* Custom Watch video controls. */
+.player.player-custom { display: block; }
+.player.player-custom video { position: absolute; inset: 0; }
+.player-controls {
+  position: absolute; z-index: 2; right: 0; bottom: 8px; left: 0;
+  color: var(--on-scrim); opacity: 1; visibility: visible;
+  transition: opacity 250ms cubic-bezier(0,0,0.2,1), visibility 250ms;
+}
+.player-controls[hidden], .player-big[hidden], .player-loading[hidden] { display: none; }
+.player-progress-row { height: 6px; margin: 0 12px; display: flex; align-items: center; }
+.player-progress {
+  --progress: 0%; --buffered: 0%; --hover-position: 0%;
+  position: relative; flex: 1; height: 6px; padding: 1px 0; cursor: pointer; touch-action: none;
+}
+.player-progress::before {
+  position: absolute; top: 50%; right: 0; left: 0; height: 4px; content: ''; transform: translateY(-50%);
+  background: color-mix(in srgb, var(--hover) 60%, transparent); border-radius: 3px;
+}
+.player-buffered, .player-progress-fill {
+  position: absolute; z-index: 1; top: 50%; left: 0; height: 4px; transform: translateY(-50%); border-radius: 3px; pointer-events: none;
+}
+.player-buffered { --buffered: 0%; width: var(--buffered, 0%); background: var(--on-scrim); opacity: .4; }
+.player-progress-fill {
+  width: var(--progress, 0%);
+  background: linear-gradient(90deg, var(--accent) 80%, color-mix(in srgb, var(--accent) 60%, var(--on-scrim)));
+}
+.player-progress-thumb {
+  --position: 0%;
+  position: absolute; z-index: 2; top: 50%; left: var(--position, 0%); width: 12px; height: 12px;
+  border-radius: 50%; background: var(--accent); opacity: 1; transform: translate(-50%, -50%); pointer-events: none;
+  transition: width 120ms ease, height 120ms ease;
+}
+.player-progress:hover .player-progress-thumb, .player-progress:focus-visible .player-progress-thumb, .player-scrubbing .player-progress-thumb { width: 20px; height: 20px; }
+.player-tooltip {
+  --hover-position: 0%;
+  position: absolute; bottom: calc(100% + 5px); left: var(--hover-position, 0%); transform: translateX(-50%);
+  padding: 3px 6px; border-radius: 4px; color: var(--on-scrim); background: color-mix(in srgb, var(--bg) 60%, transparent);
+  font-size: 13px; white-space: nowrap; pointer-events: none;
+}
+.player-tooltip:empty { display: none; }
+.player-button-row { height: 56px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.player-control-group { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.player-left { flex: 1 1 auto; }
+.player-right {
+  flex: 0 0 auto; gap: 0; overflow: hidden; border-radius: 8px;
+  background: color-mix(in srgb, var(--bg) 48%, transparent); backdrop-filter: blur(8px);
+}
+.player-button, .player-big {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  border: 0; color: var(--on-scrim); cursor: pointer;
+}
+.player-button { width: 48px; height: 40px; padding: 0; border-radius: 0; background: transparent; }
+.player-button:hover { background: color-mix(in srgb, var(--hover) 70%, transparent); }
+.player-left > .player-button { width: 40px; height: 40px; border-radius: 50%; background: color-mix(in srgb, var(--bg) 48%, transparent); backdrop-filter: blur(8px); }
+.player-button .icon { width: 24px; height: 24px; }
+.player-left > .player-button .icon { width: 36px; height: 36px; }
+.player-button[hidden] { display: none; }
+.player-time {
+  flex: 0 1 auto; min-width: 0; height: 40px; padding: 0 12px; display: inline-flex; align-items: center;
+  border-radius: 20px; color: var(--text); background: color-mix(in srgb, var(--bg) 48%, transparent); backdrop-filter: blur(8px);
+  font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.player-volume-group {
+  display: flex; align-items: center; gap: 0; flex: 0 0 auto; overflow: hidden; border-radius: 20px;
+  background: color-mix(in srgb, var(--bg) 48%, transparent); backdrop-filter: blur(8px);
+}
+.player-volume-group > .player-button { width: 40px; height: 40px; border-radius: 50%; }
+.player-volume {
+  --volume: 100%;
+  position: relative; width: 0; height: 40px; padding: 0; overflow: hidden; opacity: 0;
+  cursor: pointer; touch-action: none; transition: width 0.2s cubic-bezier(0.4,0,0.2,1), opacity 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+.player-volume-group:hover .player-volume, .player-volume-group:focus-within .player-volume { width: 52px; opacity: 1; }
+.player-volume::before {
+  position: absolute; top: 50%; right: 6px; left: 0; height: 3px; content: ''; transform: translateY(-50%); border-radius: 99px;
+  background: linear-gradient(to right, var(--on-scrim) 0 var(--volume), color-mix(in srgb, var(--on-scrim) 35%, transparent) var(--volume) 100%);
+}
+.player-volume::after {
+  position: absolute; top: 50%; left: var(--volume); width: 12px; height: 12px; content: ''; transform: translate(-50%, -50%);
+  border-radius: 50%; background: var(--on-scrim);
+}
+.player-big {
+  position: absolute; z-index: 2; top: 50%; left: 50%; width: 68px; height: 48px;
+  border-radius: 14px; color: var(--on-scrim); background: color-mix(in srgb, var(--bg) 52%, transparent);
+  backdrop-filter: blur(8px); transform: translate(-50%, -50%);
+}
+.player-big:hover { background: color-mix(in srgb, var(--bg) 65%, transparent); }
+.player-big .icon { width: 36px; height: 36px; }
+.player-started .player-big { display: none; }
+.player:not(.player-paused) .player-big { visibility: hidden; pointer-events: none; }
+.player-loading {
+  position: absolute; z-index: 1; top: 50%; left: 50%; width: 32px; height: 32px; overflow: hidden;
+  border: 3px solid var(--text-2); border-top-color: var(--text); border-radius: 50%; color: transparent;
+  transform: translate(-50%, -50%); animation: player-spin 800ms linear infinite;
+}
+@keyframes player-spin { to { rotate: 360deg; } }
+.player .player-error {
+  position: absolute; inset: 0; z-index: 5; display: grid; place-items: center;
+  padding: 24px; border-radius: 0; color: var(--text); background: var(--bg); font-weight: 400; text-align: center;
+}
+.player-idle .player-controls { opacity: 0; visibility: hidden; pointer-events: none; }
+.player-idle:has(:focus-visible) .player-controls { opacity: 1; visibility: visible; pointer-events: auto; }
+.player-idle { cursor: none; }
+.player:fullscreen { aspect-ratio: auto; width: 100%; height: 100%; border-radius: 0; background: var(--bg); }
+.player:fullscreen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.player:fullscreen .player-controls { padding-bottom: env(safe-area-inset-bottom); }
+@media (max-width: 650px), (pointer: coarse) {
+  .player-progress-row { height: 44px; }
+  .player-progress { height: 44px; padding: 20px 0; }
+  .player-button-row { height: auto; min-height: 56px; padding: 0 12px; gap: 4px; }
+  .player-left { gap: 4px; flex-wrap: wrap; }
+  .player-right { max-width: 50%; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .player-right::-webkit-scrollbar { display: none; }
+  .player-button { width: 44px; height: 44px; }
+  .player-right .player-button { width: 44px; height: 44px; }
+  .player-left > .player-button, .player-volume-group > .player-button { width: 44px; height: 44px; }
+  .player-time { height: 40px; max-width: 100%; padding: 0 8px; font-size: 12px; }
+  .player-volume { display: none; }
+  .player-big { top: calc((100% - 96px) / 2); }
+  .player-control-group { gap: 4px; }
+  .player-right { gap: 0; }
+}
+.player-right .player-button:focus-visible, .player-volume-group > .player-button:focus-visible { outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .player-controls, .player-volume, .player-progress-thumb { transition: none; }
+  .player-loading { animation: none; border-top-color: var(--text-2); }
+}

@@ -12,10 +12,10 @@
 
 /* player: 16:9; placeholder until the clip exists */
 .player {
-  aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
+  position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
   display: grid; place-items: center;
 }
-.player video { width: 100%; height: 100%; display: block; background: var(--bg); }
+.player video { width: 100%; height: 100%; display: block; object-fit: contain; background: var(--bg); }
 .player p {
   display: flex; align-items: center; gap: 8px; padding: 8px 16px 8px 12px;
   border-radius: 999px; background: var(--scrim); color: var(--on-scrim); font-weight: 500;
@@ -107,3 +107,14 @@
   .related-card > .card-menu { position: relative; margin: 0 -8px 0 0; }
 }
 @media (max-width: 650px) { .related-list { grid-template-columns: 1fr; } }
+
+/* Theater mode: wide centered player, with related videos below the primary column. */
+@media (min-width: 1000px) {
+  .watch-layout.watch-theater { flex-direction: column; }
+  .watch-layout.watch-theater .watch-primary { width: 100%; }
+  .watch-layout.watch-theater .watch-primary > .player {
+    width: min(100%, calc((100vh - 80px) * 16 / 9)); max-height: calc(100vh - 56px - 24px);
+    aspect-ratio: 16 / 9; margin-inline: auto; background: var(--bg);
+  }
+  .watch-layout.watch-theater .watch-secondary { flex: 0 0 auto; width: 100%; margin: 0; }
+}

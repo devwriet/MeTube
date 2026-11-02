@@ -21,6 +21,7 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `header-right` | Create, bell, avatar | |
 | `logo` | "MeTube" text with the `Me` box | |
 | `skip-link` | Keyboard link to the page content | hidden until focused |
+| `nav-progress` | Top loading bar for page loads | 2 px, accent-to-mint gradient, above the header; finishes when the page data is loaded |
 | `search` | Search form (input and button) | centered, up to 640 px |
 | `search-input` | Text field | 40 px high, 16 px text, round left |
 | `search-button` | Magnifier button | 64 px wide, icon centered, round right; on phones the field stays visible and the button is 44 px (youtube.com collapses it to a 40 px icon below 657 px; we keep the field for our own search feature) |
@@ -80,6 +81,63 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `watch-primary` | Left column | player, info, comments |
 | `watch-secondary` | Right column | max(402 px, 27.5vw); related videos; below 1000 px it goes under the player |
 | `player` | Video area | 16:9 |
+| `player-big` | Center play button | 68x48 dark translucent; only before the first play (youtube.com) |
+| `player-controls` | Bottom playback controls | translucent pills, no bar; hides 3 s after the last move while playing, or when the mouse leaves while playing |
+| `player-progress-row` | Scrub track and time preview | 24 px hit area; 44 px on phones |
+| `player-progress` | Playback position slider | keyboard and pointer seek |
+| `player-buffered` | Buffered track range | inside progress slider |
+| `player-progress-fill` | Played track range | MeTube accent |
+| `player-progress-thumb` | Scrub thumb | shown on hover or focus |
+| `player-tooltip` | Hover seek time | above progress track |
+| `player-button-row` | Playback button row | 48 px high |
+| `player-control-group` | Left (play, volume, time) or right (settings, fullscreen) cluster | 8 px gaps |
+| `player-button` | Player action button | 40 px round pill (play icon 36 px); 48x40 inside the right pill; 44 px on phones |
+| `player-time` | Current and total time | 13 px desktop |
+| `player-volume-group` | Mute and volume slider | slider expands on hover |
+| `player-volume` | Volume slider | hidden on touch devices |
+| `player-volume-fill` | Current volume fill | inside volume slider |
+| `player-loading` | Waiting indicator | animated ring |
+| `player-error` | Media load error | centered alert |
+| `player-left` | Left control cluster for play, volume, and time | Added alongside `player-control-group` as required by the shared context API |
+| `player-right` | Right control cluster for installed player modules | Added alongside `player-control-group`; hosts the shared right pill |
+| `player-settings-wrap` | Container for the settings gear in the right control group | Inserted before the fullscreen button |
+| `player-popup` | Shared player popup marker for one-popup-at-a-time coordination | Added to the settings menu |
+| `player-settings-panel` | Current settings menu panel | Main and speed panels replace each other |
+| `player-settings-speed` | Playback speed submenu panel | Added alongside `player-settings-panel` |
+| `player-settings-row` | Main panel menu item row | 48px minimum height |
+| `player-settings-label` | Left-side setting name | Main panel |
+| `player-settings-value` | Right-side setting value | Main panel |
+| `player-settings-chevron` | Speed row forward chevron | Distinguishes the submenu entry |
+| `player-settings-back` | Speed submenu back row | Accessible label is “이전 메뉴로 돌아가기” |
+| `player-settings-current` | Large current playback rate | `aria-live="off"` |
+| `player-settings-steps` | Group for slower/faster controls | Speed submenu |
+| `player-settings-step` | Playback rate decrement/increment button | 44px target; disabled at rate bounds |
+| `player-settings-presets` | Preset rate button group | Speed submenu |
+| `player-settings-preset` | Playback rate preset chip | Uses `aria-pressed` for the active rate |
+| `player-settings-normal` | “보통” label for the 1.0 preset | Nested inside its preset chip |
+| `player-bezel` | Centered playback or volume feedback icon | One per player; 78px circle, 36px icon; 64px/32px on phones; hidden from assistive technology. |
+| `player-badge` | Brief visual player feedback message | One per player, top-center; visual duplicate is aria-hidden. |
+| `player-badge-fading` | Fades the visual feedback message | Removed after the 250ms fade; reduced motion disables the transition. |
+| `player-feedback-sr` | Announces feedback text to assistive technology | Visually hidden, shared `role="status"` with polite live updates. |
+| `player-tip` | Shared button tooltip | Repositioned and horizontally clamped for its triggering control; does not intercept pointer events. |
+| `player-tip-key` | Keyboard shortcut keycap inside a tooltip | Uppercase key label; omitted when no key is provided. |
+| `player-autoplay` | Autoplay switch button. | `aria-checked` reflects its state. |
+| `player-autoplay-track` | Autoplay switch track. | 36px by 14px track. |
+| `player-autoplay-knob` | Autoplay switch knob and state icon. | Moves when enabled. |
+| `is-on` | Enabled autoplay state. | Applied to `.player-autoplay`. |
+| `player-autoplay-next` | Next-video countdown group. | `role="group"`; hidden until media ends. |
+| `player-autoplay-heading` | Next-video overlay heading. | Displays “다음 동영상”. |
+| `player-autoplay-title` | Related video title in the overlay. | Read from its `.related-card`. |
+| `player-autoplay-progress` | Five-second countdown bar. | Width uses `--progress`. |
+| `player-autoplay-actions` | Overlay action button row. | Holds cancel and play-now actions. |
+| `player-autoplay-action` | Overlay action button. | 44px minimum height on phones. |
+| `player-autoplay-now` | Play-now action emphasis. | Accent background. |
+| `player-theater` | Theater mode button. | Hidden at 999px and below. |
+| `player-context` | Player context popup menu. | `player-popup`; pointer position uses `--x` and `--y`. |
+| `player-context-item` | Context menu action row. | Supports menuitem and menuitemcheckbox. |
+| `player-context-check` | Repeat enabled check icon. | Hidden when repeat is off. |
+| `watch-theater` | Theater layout state. | Applied to `.watch-layout` above 999px. |
+| `player-menu` | Settings menu (also `player-popup`) | 303 px, 48 px rows, main panel and speed submenu |
 | `watch-title` | Video title | large |
 | `channel-row` | Avatar, name, subs, Subscribe | one line |
 | `channel-name` | Channel name | |

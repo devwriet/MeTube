@@ -8,6 +8,7 @@ import {
   hiddenVideos, hiddenChannels,
 } from './store.js';
 import { icon } from './icons.js';
+import { attachControls } from './player.js';
 
 renderLayout(null);
 const page = document.querySelector('.page');
@@ -45,11 +46,12 @@ try {
     const player = setTone(el('div', 'player'), video.hue);
     if (typeof video.src === 'string' && video.src.trim()) {
       const media = el('video');
-      media.controls = true;
-      media.preload = 'metadata';
+      // Whole clip (about 3 MB): a server without range requests (python http.server) can only seek inside loaded data.
+      media.preload = 'auto';
       media.src = video.src;
       media.setAttribute('aria-label', video.title);
       player.append(media);
+      attachControls(player, media, video);
     } else {
       player.setAttribute('role', 'img');
       player.setAttribute('aria-label', `${video.title} (영상 준비 중)`);

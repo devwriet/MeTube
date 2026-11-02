@@ -45,3 +45,13 @@ Files (no substitutions):
 - newspaper.svg
 - block.svg
 - do_not_disturb_on.svg
+- fullscreen_exit.svg
+- settings.svg
+- replay.svg
+- chevron_left.svg
+- remove.svg
+- width_wide.svg
+- width_normal.svg
+- repeat.svg
+- link.svg
+- volume_down.svg
