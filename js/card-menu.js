@@ -2,6 +2,9 @@ import { el, watchUrl, shortsUrl } from './render.js';
 import { icon } from './icons.js';
 import { isSaved, toggleSaved, isHiddenVideo, setHiddenVideo, isHiddenChannel, setHiddenChannel } from './store.js';
 
+// 1 ⋮ menu + 1 toast for the whole page,
+// every card reuses them. only 1 can be open
+// anyway so 200 hidden menus = dom confetti lmao
 let menu;
 let toastNode;
 let toastTimer;
@@ -11,6 +14,7 @@ let toastPaused = false;
 let toastUndoButton;
 let activeButton;
 
+// built on first use, like most of my hw ngl
 function ensureMenu() {
   if (menu) return menu;
   menu = el('div', 'menu');
@@ -29,6 +33,8 @@ function ensureToast() {
   toastNode.addEventListener('pointerenter', pauseToast);
   toastNode.addEventListener('pointerleave', resumeToast);
   toastNode.addEventListener('focusin', pauseToast);
+  // wait a tick bc focus going msg -> undo btn
+  // isnt actually leaving the toast
   toastNode.addEventListener('focusout', (event) => {
     if (!toastNode.contains(event.relatedTarget)) queueMicrotask(resumeToast);
   });
@@ -45,6 +51,9 @@ function closeMenu(returnFocus = false) {
   if (returnFocus) button?.focus();
 }
 
+// 8s timer pauses on hover/focus so slow readers
+// and keyboard ppl still get to hit undo.
+// keeps the time left, doesnt restart it
 function pauseToast() {
   if (!toastNode || toastNode.hidden || toastPaused) return;
   toastPaused = true;
@@ -75,11 +84,15 @@ export function toast(message, actionLabel, action, afterAction) {
   if (actionLabel && action) {
     const button = el('button', 'toast-action', actionLabel);
     button.type = 'button';
+    // matched by label rn. rename 실행취소 and the
+    // focus fallback below breaks. rename both or get f-ed
     if (actionLabel === '실행취소') toastUndoButton = button;
     button.addEventListener('click', () => {
       action();
       node.hidden = true;
       clearTimeout(toastTimer);
+      // undo re-renders the grid via metube:change,
+      // the card to focus only exists next frame
       if (afterAction) requestAnimationFrame(() => {
         const target = afterAction();
         if (target?.isConnected && target.getClientRects().length > 0) target.focus();
@@ -89,6 +102,7 @@ export function toast(message, actionLabel, action, afterAction) {
     node.append(button);
   }
   node.hidden = false;
+  // 8s: long enough to read, short enough to regret
   startToastTimer(8000);
   if (node.matches(':hover') || node.contains(document.activeElement)) pauseToast();
 }
@@ -98,6 +112,9 @@ function firstVisible(selector) {
     .find((element) => element.isConnected && element.getClientRects().length > 0);
 }
 
+// where focus goes when ur thing got removed
+// (hidden vid, empty list): 1st card title, else
+// page msg/title. never leave focus on <body>
 function focusFallback() {
   const title = firstVisible('.card-title a, .related-title a');
   if (title) {
@@ -110,6 +127,9 @@ function focusFallback() {
   destination.focus();
 }
 
+// after a menu action: back to the ⋮ that opened it,
+// else the toast's undo, else focusFallback().
+// microtask + frame bc the action prob just re-rendered the card
 function restoreActionFocus(button) {
   queueMicrotask(() => requestAnimationFrame(() => {
     if (button?.isConnected) {
@@ -158,6 +178,9 @@ function fillMenu(video) {
   item(node, '재생목록에 저장', 'bookmark', soon);
   item(node, '오프라인 저장', 'download', soon);
   item(node, '공유', 'share', () => {
+    // navigator.clipboard only exists on https or localhost.
+    // demo from a classroom ip over plain http and u land
+    // in the catch below. how do i know? idk yet, hope it stays that way
     try {
       const link = new URL(video.type === 'short' ? shortsUrl(video.id) : watchUrl(video.id), location.href).href;
       Promise.resolve(navigator.clipboard.writeText(link))
@@ -168,6 +191,8 @@ function fillMenu(video) {
     }
   });
   item(node, '관심 없음', 'block', () => {
+    // undo restores the old state, not jst false,
+    // in case it was already hidden
     const previous = isHiddenVideo(video.id);
     setHiddenVideo(video.id, true);
     toast('동영상을 숨겼습니다.', '실행취소', () => setHiddenVideo(video.id, previous), restoredVideoFocus(video.id));
@@ -181,6 +206,9 @@ function fillMenu(video) {
   return node;
 }
 
+// the 1 place style.* gets written (house-rule exception):
+// menu follows its btn, flips up when no room below.
+// phones use the css bottom sheet so inline values get cleared
 function positionMenu(button, node) {
   if (matchMedia('(max-width: 650px)').matches) {
     node.style.left = '';
@@ -215,6 +243,8 @@ function onMenuKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     closeMenu(true);
+    // menu lives at the end of <body>, way off from its card
+    // in tab order, so tab closes it and goes back to ⋮
   } else if (event.key === 'Tab') {
     event.preventDefault();
     const button = activeButton;
@@ -224,6 +254,7 @@ function onMenuKeydown(event) {
     next = (index + 1) % items.length;
   } else if (event.key === 'ArrowUp') {
     next = (index - 1 + items.length) % items.length;
+    // home/end: for the 3 ppl on earth who know menus do this
   } else if (event.key === 'Home') {
     next = 0;
   } else if (event.key === 'End') {
@@ -240,11 +271,14 @@ document.addEventListener('pointerdown', (event) => {
   if (menu.contains(event.target) || activeButton?.contains(event.target)) return;
   closeMenu();
 });
+// resized window = menu floating where the btn used to be
 window.addEventListener('resize', () => closeMenu());
 
 export function cardMenu(video) {
   const button = el('button', 'card-menu');
   button.type = 'button';
+  // screen readers get the full title, everyone else
+  // gets three dots and a dream
   button.setAttribute('aria-label', `작업 메뉴: ${video.title}`);
   button.setAttribute('aria-haspopup', 'menu');
   button.setAttribute('aria-expanded', 'false');
@@ -259,6 +293,7 @@ export function cardMenu(video) {
   return button;
 }
 
+// four menu items, one excuse lmao
 export function soon() {
   toast('준비 중인 기능입니다.');
 }
