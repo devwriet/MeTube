@@ -62,7 +62,7 @@
       "category": "브이로그",
       "type": "video",
       "description": "새 학기를 앞두고 가방을 정리했어요. 꼭 필요한 준비물을 하나씩 확인해 봅니다.",
-      "src": null,
+      "src": "media/clips/bbb-a.mp4",
       "hue": 204,
       "comments": [
         {
@@ -86,7 +86,7 @@
       "category": "음악",
       "type": "video",
       "description": "창밖에 비가 내리는 저녁을 떠올리며 천천히 연주했습니다. 공부하거나 쉬는 시간에 편하게 들어 주세요.",
-      "src": null,
+      "src": "media/clips/bbb-b.mp4",
       "hue": 258,
       "comments": [
         {
@@ -110,7 +110,7 @@
       "category": "게임",
       "type": "video",
       "description": "팀원 네 명이 호흡을 맞춰 긴 협동 맵에 도전했습니다. 실수할 때마다 다시 전략을 세우고, 마지막 구간까지 차분히 이어 가 봤어요.",
-      "src": null,
+      "src": "media/clips/cos-a.mp4",
       "hue": 18,
       "comments": [
         {
@@ -134,7 +134,7 @@
       "category": "뉴스",
       "type": "video",
       "description": "이번 주에 알아두면 좋은 생활 정보를 다섯 가지로 정리했습니다. 일정이나 이용 방법은 지역과 상황에 따라 달라질 수 있으니 안내 내용을 함께 확인해 주세요.",
-      "src": null,
+      "src": "media/clips/cos-b.mp4",
       "hue": 42,
       "comments": [
         {
@@ -438,7 +438,7 @@
       "category": "음악",
       "type": "short",
       "description": "아침에 가볍게 듣기 좋은 짧은 피아노 선율입니다.",
-      "src": null,
+      "src": "media/clips/bbb-v.mp4",
       "hue": 240,
       "comments": [
         {
@@ -462,7 +462,7 @@
       "category": "게임",
       "type": "short",
       "description": "아슬아슬하게 마지막 점프를 통과한 순간을 담았어요!",
-      "src": null,
+      "src": "media/clips/cos-v.mp4",
       "hue": 350,
       "comments": [
         {
