@@ -2,7 +2,7 @@ import { el } from './render.js';
 import { icon } from './icons.js';
 import { soon } from './card-menu.js';
 
-const PRESETS = [1, 1.25, 1.5, 1.75, 2];
+const PRESETS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 const MIN_RATE = 0.25;
 const MAX_RATE = 2;
 const roundRate = (rate) => Math.round(rate * 100) / 100;

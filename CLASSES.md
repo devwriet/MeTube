@@ -132,6 +132,10 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `player-autoplay-actions` | Overlay action button row. | Holds cancel and play-now actions. |
 | `player-autoplay-action` | Overlay action button. | 44px minimum height on phones. |
 | `player-autoplay-now` | Play-now action emphasis. | Accent background. |
+| `player-end` | End screen over the last frame. | `role="group"`; hidden until media ends with autoplay off or cancelled; blurred, dimmed; own size container. |
+| `player-end-card` | One related video on the end screen. | Cloned from `.related-card`; 3 cards from 720 px wide, 2 below; 112 px wide on phones. |
+| `player-end-title` | Related video title on the end screen. | 16 px, 2 lines; 12 px, 1 line on phones; its link stretches over the whole card. |
+| `player-end-meta` | Channel name, then views and age. | `--text-2`; hidden on phones. |
 | `player-theater` | Theater mode button. | Hidden at 999px and below. |
 | `player-context` | Player context popup menu. | `player-popup`; pointer position uses `--x` and `--y`. |
 | `player-context-item` | Context menu action row. | Supports menuitem and menuitemcheckbox. |
@@ -175,6 +179,8 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `short-stage` | Player, action rail, and optional comments panel | full height; 12 px player-to-rail gap; 24 px before side panel |
 | `short-player` | Vertical video or placeholder | 9:16; 12 px radius; full stage height |
 | `short-play` | Play/pause control for a real video | 48 px circle; 16 px top/left; scrim background |
+| `short-mute` | Sound toggle for a real video | 48 px circle; 16 px top/right; scrim background; one mute state for the whole feed |
+| `short-progress` | Seekable progress bar on a real video | range input, 24 px hit area (44 px on phones and touch); 3 px track (5 px on hover/focus); accent fill via `--progress` |
 | `short-video` | Video inside the player | absolute fill; object-fit cover |
 | `short-status` | Video preparation status pill | 36 px high; 18 px radius; 14 px text |
 | `short-overlay` | Text over the bottom of the video | 156 px minimum; 16 px inset and bottom gradient |

@@ -1,7 +1,7 @@
 .player-autoplay { position: relative; }
 .player-autoplay-track {
   position: relative; display: block; width: 36px; height: 14px; border-radius: 99px;
-  background: var(--text-2); transition: background 150ms ease;
+  background: var(--text-2); box-shadow: 0 0 0 1px var(--on-scrim); transition: background 150ms ease;
 }
 .player-autoplay.is-on .player-autoplay-track { background: var(--accent); }
 .player-autoplay-knob {
@@ -9,7 +9,7 @@
   border-radius: 50%; color: var(--bg); background: var(--text); transform: translateY(-50%);
   transition: left 150ms ease, color 150ms ease, background 150ms ease;
 }
-.player-autoplay.is-on .player-autoplay-knob { left: 16px; color: var(--on-accent); background: var(--on-scrim); }
+.player-autoplay.is-on .player-autoplay-knob { left: 16px; color: var(--accent); background: var(--on-scrim); }
 .player-autoplay-knob .icon { width: 12px; height: 12px; filter: none; }
 .player-autoplay-next {
   --progress: 100%;
@@ -19,6 +19,31 @@
   transform: translate(-50%, -50%);
 }
 .player-autoplay-next[hidden] { display: none; }
+/* End screen. The overlay is its own size container so the card count follows the player, not the page. */
+.player-end {
+  position: absolute; inset: 0; z-index: 1; container-type: inline-size;
+  display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 16px 16px 72px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 55%, transparent), var(--bg) 92%);
+  backdrop-filter: blur(20px);
+}
+.player-end[hidden] { display: none; }
+.player:has(> .player-end:not([hidden])) .player-big { display: none; }
+.player-end-card { position: relative; min-width: 0; flex: 1 1 0; max-width: 360px; margin: 0 8px; }
+.player-end-card:nth-child(n+3) { display: none; }
+.player-end-title {
+  margin: 8px 0 4px; font-size: 16px; line-height: 22px; font-weight: 500;
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.player-end-title a { color: var(--text); }
+/* The title link stretches over the whole card, so the tap target is the card, never a 16 px text line. */
+.player-end-title a::after { position: absolute; inset: 0; content: ''; }
+.player-end-meta { color: var(--text-2); font-size: 14px; line-height: 20px; }
+@container (min-width: 720px) { .player-end-card:nth-child(n+3) { display: block; } }
+@container (max-width: 419px) {
+  .player-end-card { max-width: 112px; margin: 0 4px; }
+  .player-end-title { margin-top: 4px; font-size: 12px; line-height: 16px; -webkit-line-clamp: 1; line-clamp: 1; }
+  .player-end-meta { display: none; }
+}
 .player-autoplay-heading { font-size: 14px; color: var(--text-2); }
 .player-autoplay-title { margin-top: 4px; font-size: 18px; font-weight: 600; }
 .player-autoplay-progress { height: 4px; margin-top: 16px; overflow: hidden; border-radius: 99px; background: var(--hover); }
@@ -46,9 +71,10 @@
 .player-context-item > span:nth-child(2) { flex: 1; }
 .player-context-check { width: 18px; height: 18px; }
 .player-context-check[hidden] { visibility: hidden; }
-.player-button:focus-visible, .player-autoplay-action:focus-visible, .player-context-item:focus-visible { outline: 2px solid var(--on-scrim); outline-offset: 2px; }
+.player-end a:focus-visible, .player-button:focus-visible, .player-autoplay-action:focus-visible, .player-context-item:focus-visible { outline: 2px solid var(--on-scrim); outline-offset: 2px; }
 @media (max-width: 999px) { .player-theater { display: none; } }
 @media (max-width: 650px) {
+  .player-end { padding: 8px 8px 72px; }
   .player-autoplay-next { width: min(360px, calc(100% - 24px)); padding: 8px; }
   .player-autoplay-heading { font-size: 12px; }
   .player-autoplay-title { display: -webkit-box; margin-top: 2px; overflow: hidden; font-size: 14px; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }

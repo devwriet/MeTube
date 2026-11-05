@@ -1,13 +1,15 @@
 import { el } from './render.js';
 import { icon } from './icons.js';
 import { toast } from './card-menu.js';
+import { playerPrefs, setPlayerPrefs } from './store.js';
 
 const isNarrow = () => matchMedia('(max-width: 999px)').matches;
 const trimmedRate = (rate) => `${Number(rate.toFixed(2))}x`;
 
 export function installExtras(ctx) {
   const { player, media, right, fullscreenButton, feedback } = ctx;
-  let autoplay = true;
+  // One saved switch: starting on load (player.js) and the next-video countdown below.
+  let autoplay = playerPrefs().autoplay;
   let countdownTimer = 0;
   let touchPointerAt = 0;
   let touchPointerType = '';
@@ -32,8 +34,9 @@ export function installExtras(ctx) {
   paintAutoplay();
   autoplayButton.addEventListener('click', () => {
     autoplay = !autoplay;
+    setPlayerPrefs({ autoplay });
     paintAutoplay();
-    if (!autoplay) hideNext();
+    if (!autoplay) { hideNext(); showEnd(); }
   });
   feedback.tooltip(autoplayButton);
 
@@ -91,7 +94,48 @@ export function installExtras(ctx) {
     if (!nextHref) return;
     location.href = nextHref;
   }
-  cancelButton.addEventListener('click', hideNext);
+  // End screen: a few related videos over a dimmed, blurred last frame, like youtube.com. It shows when the
+  // clip ends and the next-video countdown is off or was cancelled; play or a seek away brings the video back.
+  const endScreen = el('div', 'player-end');
+  endScreen.hidden = true;
+  endScreen.setAttribute('role', 'group');
+  endScreen.setAttribute('aria-label', '추천 동영상');
+  player.append(endScreen);
+  function hideEnd() {
+    endScreen.hidden = true;
+    endScreen.replaceChildren();
+  }
+  function showEnd() {
+    // Read from the related list so the end screen always matches it (same filters, same order).
+    const cards = [...document.querySelectorAll('.watch-secondary .related-card')].slice(0, 3);
+    if (!media.ended || !cards.length) return;
+    endScreen.replaceChildren(...cards.map((card) => {
+      const source = card.querySelector('.related-title a');
+      const title = el('h3', 'player-end-title');
+      const link = el('a', '', source.childNodes[0].textContent);
+      link.href = source.href;
+      title.append(link);
+      const thumbSource = card.querySelector('.related-thumb');
+      const thumbBox = el('div', 'related-thumb');
+      thumbBox.dataset.tone = thumbSource.dataset.tone;
+      thumbBox.append(el('span', 'card-duration', thumbSource.textContent));
+      const thumbLink = el('a', 'card-link');
+      thumbLink.href = source.href;
+      thumbLink.tabIndex = -1;
+      thumbLink.setAttribute('aria-hidden', 'true');
+      thumbLink.append(thumbBox);
+      const item = el('div', 'player-end-card');
+      item.append(
+        thumbLink,
+        title,
+        el('div', 'player-end-meta', card.querySelector('.related-channel').textContent),
+        el('div', 'player-end-meta', card.querySelector('.related-stats').textContent),
+      );
+      return item;
+    }));
+    endScreen.hidden = false;
+  }
+  cancelButton.addEventListener('click', () => { hideNext(); showEnd(); });
   playNowButton.addEventListener('click', navigateNext);
   function showNext() {
     const link = document.querySelector('.watch-secondary a[href*="watch.html"]');
@@ -115,9 +159,9 @@ export function installExtras(ctx) {
       }
     }, 50);
   }
-  media.addEventListener('ended', showNext);
-  media.addEventListener('seeking', hideNext);
-  media.addEventListener('play', hideNext);
+  media.addEventListener('ended', () => { showNext(); if (nextOverlay.hidden) showEnd(); });
+  media.addEventListener('seeking', () => { hideNext(); hideEnd(); });
+  media.addEventListener('play', () => { hideNext(); hideEnd(); });
 
   const contextMenu = el('div', 'player-context player-popup');
   contextMenu.hidden = true;

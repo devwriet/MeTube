@@ -8,12 +8,13 @@ const HISTORY_MAX = 50;
 // the only user. very loyal. never logs out lmao
 export const GUEST_NAME = '나';
 
-const PLAYER_DEFAULTS = { volume: 1, muted: false, rate: 1 };
+const PLAYER_DEFAULTS = { volume: 1, muted: false, rate: 1, autoplay: true };
 
 // Wrong-shaped or edited values fall back to the defaults one field at a time.
 const cleanPlayerPrefs = (v) => ({
   volume: typeof v.volume === 'number' && v.volume >= 0 && v.volume <= 1 ? v.volume : PLAYER_DEFAULTS.volume,
   muted: typeof v.muted === 'boolean' ? v.muted : PLAYER_DEFAULTS.muted,
+  autoplay: typeof v.autoplay === 'boolean' ? v.autoplay : PLAYER_DEFAULTS.autoplay,
   rate: typeof v.rate === 'number' && 0.25 <= v.rate && v.rate <= 2 && Math.abs(v.rate * 20 - Math.round(v.rate * 20)) < 1e-6 ? Math.round(v.rate * 20) / 20 : PLAYER_DEFAULTS.rate,
 });
 export const playerPrefs = () => cleanPlayerPrefs(read('player', PLAYER_DEFAULTS));

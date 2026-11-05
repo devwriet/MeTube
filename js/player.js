@@ -72,6 +72,7 @@ export function attachControls(player, media, video) {
   let dragging = false;
   let volumeDragging = false;
   let pointerType = '';
+  let usedKeyboard = false;
   let hideTimer = 0;
   let controlsHeld = false;
 
@@ -254,9 +255,15 @@ export function attachControls(player, media, video) {
     const active = document.fullscreenElement === player;
     fullscreen.replaceChildren(icon(active ? 'fullscreen_exit' : 'fullscreen'));
     fullscreen.setAttribute('aria-label', active ? '전체 화면 종료' : '전체 화면');
+    // Chrome re-applies :focus-visible to the clicked button when the window refocuses for fullscreen, which
+    // pins the controls open forever. A mouse-driven toggle drops that focus; keyboard users keep theirs.
+    const focused = document.activeElement;
+    if (!usedKeyboard && player.contains(focused) && focused !== player) focused.blur();
+    activity();
   }
   function onPointerDown(event) {
     pointerType = event.pointerType;
+    usedKeyboard = false;
   }
   function onPlayerClick(event) {
     if (event.target.closest('.player-controls, .player-big')) return;
@@ -335,7 +342,7 @@ export function attachControls(player, media, video) {
     player.classList.add('player-idle');
   });
   player.addEventListener('pointerdown', onPointerDown);
-  player.addEventListener('keydown', activity);
+  player.addEventListener('keydown', () => { usedKeyboard = true; activity(); });
   player.addEventListener('focusin', () => { clearHideTimer(); player.classList.remove('player-idle'); });
   player.addEventListener('focusout', () => setTimeout(() => { if (!player.contains(document.activeElement)) scheduleHide(); }, 0));
   document.addEventListener('keydown', onDocumentKey);
@@ -346,11 +353,11 @@ export function attachControls(player, media, video) {
   media.addEventListener('play', () => { updatePlay(); scheduleHide(); });
   // Like youtube.com, the big center button is only there before the first play.
   media.addEventListener('play', () => player.classList.add('player-started'), { once: true });
-  // Start by itself 1 s after the clip can play, unless the viewer already pressed play or pause.
+  // Start by itself 1 s after the clip can play, unless the autoplay switch is off or the viewer already pressed play or pause.
   // Browsers block sound autoplay on a page nobody clicked yet; then it stays paused on the big play button.
   media.addEventListener('canplay', () => {
     setTimeout(() => {
-      if (!player.classList.contains('player-started') && media.paused) media.play().catch(() => {});
+      if (playerPrefs().autoplay && !player.classList.contains('player-started') && media.paused) media.play().catch(() => {});
     }, 1000);
   }, { once: true });
   media.addEventListener('pause', () => { clearHideTimer(); player.classList.remove('player-idle'); updatePlay(); });
