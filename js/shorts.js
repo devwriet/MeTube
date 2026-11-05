@@ -20,6 +20,16 @@ let current = null;
 let openComments = null;
 let entries = [];
 let navButtons;
+// Browsers only autoplay muted video, so every Short starts muted. One flag for the whole feed:
+// unmuting once (a click, which also counts as the user gesture) keeps the next Shorts unmuted.
+let soundMuted = true;
+const muteRepaints = new Set();
+
+function setMuted(value) {
+  soundMuted = value;
+  for (const { media } of entries) if (media) media.muted = value;
+  muteRepaints.forEach((repaint) => repaint());
+}
 
 function action(iconName, label, text) {
   const button = el('button', 'short-action');
@@ -126,7 +136,7 @@ function makeEntry(video, channel) {
     media.setAttribute('playsinline', '');
     media.setAttribute('muted', '');
     media.setAttribute('preload', 'metadata');
-    media.muted = true;
+    media.muted = soundMuted;
     player.append(media);
     const playButton = el('button', 'short-play');
     playButton.type = 'button';
@@ -143,8 +153,45 @@ function makeEntry(video, channel) {
     });
     player.append(playButton);
     paintPlayback();
+
+    const muteButton = el('button', 'short-mute');
+    muteButton.type = 'button';
+    const paintMute = () => {
+      muteButton.setAttribute('aria-label', soundMuted ? '소리 켜기' : '음소거');
+      muteButton.replaceChildren(icon(soundMuted ? 'volume_off' : 'volume_up'));
+    };
+    muteRepaints.add(paintMute);
+    muteButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setMuted(!soundMuted);
+    });
+    paintMute();
+
+    // A real range input gives keyboard, touch and mouse seeking for free; CSS just thins it down.
+    const progress = el('input', 'short-progress');
+    progress.type = 'range';
+    progress.min = '0';
+    progress.max = '1000';
+    progress.value = '0';
+    progress.setAttribute('aria-label', '재생 위치');
+    const paintProgress = () => {
+      const ratio = media.duration > 0 ? media.currentTime / media.duration : 0;
+      progress.value = String(Math.round(ratio * 1000));
+      progress.style.setProperty('--progress', `${ratio * 100}%`);
+    };
+    media.addEventListener('timeupdate', paintProgress);
+    media.addEventListener('loadedmetadata', paintProgress);
+    progress.addEventListener('input', () => {
+      if (media.duration > 0) media.currentTime = (Number(progress.value) / 1000) * media.duration;
+      paintProgress();
+    });
+    player.append(muteButton, progress);
+
     // Missing or unplayable clip: same status as a Short without a clip, and no dead play button.
     media.addEventListener('error', () => {
+      muteRepaints.delete(paintMute);
+      muteButton.remove();
+      progress.remove();
       playButton.remove();
       media.remove();
       media = null;
@@ -203,7 +250,7 @@ function makeEntry(video, channel) {
   rail.append(thumbLink);
   stage.append(player, rail);
   player.addEventListener('click', (event) => {
-    if (!media || event.target.closest('a, button, dialog')) return;
+    if (!media || event.target.closest('a, button, dialog, input')) return;
     togglePlayback();
   });
   item.append(stage);
@@ -253,6 +300,10 @@ document.addEventListener('keydown', (event) => {
   const target = event.target;
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return;
   if (document.querySelector('.menu:not([hidden])') || document.querySelector('dialog[open]')) return;
+  if (event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.metaKey && !event.altKey && current?.media) {
+    setMuted(!soundMuted);
+    return;
+  }
   if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault();
     navigate(event.key === 'ArrowDown' ? 1 : -1);
