@@ -9,654 +9,574 @@
       "bio": "MeTube 첫 번째 채널입니다."
     },
     {
-      "id": "ch-sorim",
-      "name": "소리정원",
-      "handle": "@sorim.music",
-      "subscribers": 48300,
-      "avatarLetter": "소",
-      "bio": "편안한 연주와 작은 음악 이야기를 들려주는 채널입니다."
+      "id": "ch-nctdream",
+      "name": "NCT DREAM",
+      "handle": "@nctdream",
+      "subscribers": 7120000,
+      "avatarLetter": "N",
+      "bio": "NCT DREAM의 영상을 모아 둔 채널입니다."
     },
     {
-      "id": "ch-playzip",
-      "name": "플레이집",
-      "handle": "@playzip",
-      "subscribers": 210000,
-      "avatarLetter": "플",
-      "bio": "친구들과 즐기는 게임과 도전 기록을 올리는 채널입니다."
+      "id": "ch-ninetzzong",
+      "name": "9트쫑",
+      "handle": "@ninetzzong",
+      "subscribers": 799000,
+      "avatarLetter": "9",
+      "bio": "9트쫑의 영상을 모아 둔 채널입니다."
     },
     {
-      "id": "ch-harunews",
-      "name": "하루한눈",
-      "handle": "@haru.news",
-      "subscribers": 1230000,
-      "avatarLetter": "하",
-      "bio": "오늘의 생활 속 소식을 알기 쉽게 전하는 채널입니다."
+      "id": "ch-yubyeongjae",
+      "name": "유병재",
+      "handle": "@yubyeongjae",
+      "subscribers": 1950000,
+      "avatarLetter": "유",
+      "bio": "유병재의 영상을 모아 둔 채널입니다."
     },
     {
-      "id": "ch-studyon",
-      "name": "공부온",
-      "handle": "@study_on",
-      "subscribers": 87000,
-      "avatarLetter": "공",
-      "bio": "공부 습관과 기초 개념을 차근차근 나누는 채널입니다."
+      "id": "ch-timetotravel",
+      "name": "It's Time to Travel",
+      "handle": "@timetotravel",
+      "subscribers": 651000,
+      "avatarLetter": "I",
+      "bio": "It's Time to Travel의 영상을 모아 둔 채널입니다."
     },
     {
-      "id": "ch-tableday",
-      "name": "식탁의 하루",
-      "handle": "@tableday",
-      "subscribers": 3200,
-      "avatarLetter": "식",
-      "bio": "집에서 따라 하기 쉬운 한 끼 요리를 소개하는 채널입니다."
+      "id": "ch-bodeumtv",
+      "name": "강형욱의 보듬TV",
+      "handle": "@bodeumtv",
+      "subscribers": 2270000,
+      "avatarLetter": "강",
+      "bio": "강형욱의 보듬TV의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-tvndent",
+      "name": "tvN D ENT",
+      "handle": "@tvndent",
+      "subscribers": 5370000,
+      "avatarLetter": "t",
+      "bio": "tvN D ENT의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-jtbcvoyage",
+      "name": "JTBC Voyage",
+      "handle": "@jtbcvoyage",
+      "subscribers": 4670000,
+      "avatarLetter": "J",
+      "bio": "JTBC Voyage의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-archivex",
+      "name": "기록 보관소 X",
+      "handle": "@archivex",
+      "subscribers": 14300,
+      "avatarLetter": "기",
+      "bio": "기록 보관소 X의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-mbcmystery",
+      "name": "MBC 미스터리",
+      "handle": "@mbcmystery",
+      "subscribers": 1010000,
+      "avatarLetter": "M",
+      "bio": "MBC 미스터리의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-strangenight",
+      "name": "기묘한 밤",
+      "handle": "@strangenight",
+      "subscribers": 1150000,
+      "avatarLetter": "기",
+      "bio": "기묘한 밤의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-gamst",
+      "name": "감스트GAMST",
+      "handle": "@gamst",
+      "subscribers": 3060000,
+      "avatarLetter": "감",
+      "bio": "감스트GAMST의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-jerunangan",
+      "name": "제루난간",
+      "handle": "@jerunangan",
+      "subscribers": 4460,
+      "avatarLetter": "제",
+      "bio": "제루난간의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-ggambring",
+      "name": "겜브링 GGAM BRING",
+      "handle": "@ggambring",
+      "subscribers": 3020000,
+      "avatarLetter": "겜",
+      "bio": "겜브링 GGAM BRING의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-pokerev",
+      "name": "PokeRev",
+      "handle": "@pokerev",
+      "subscribers": 3310000,
+      "avatarLetter": "P",
+      "bio": "PokeRev의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-bookmark",
+      "name": "북마크",
+      "handle": "@bookmark",
+      "subscribers": 130000,
+      "avatarLetter": "북",
+      "bio": "북마크의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-blobbyclips",
+      "name": "BlobbyClips",
+      "handle": "@blobbyclips",
+      "subscribers": 2840000,
+      "avatarLetter": "B",
+      "bio": "BlobbyClips의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-austin",
+      "name": "austinthegamerguy",
+      "handle": "@austin",
+      "subscribers": 10900,
+      "avatarLetter": "a",
+      "bio": "austinthegamerguy의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-alimation",
+      "name": "Alimation",
+      "handle": "@alimation",
+      "subscribers": 218000,
+      "avatarLetter": "A",
+      "bio": "Alimation의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-ricksclips",
+      "name": "Ricks Clips",
+      "handle": "@ricksclips",
+      "subscribers": 142000,
+      "avatarLetter": "R",
+      "bio": "Ricks Clips의 영상을 모아 둔 채널입니다."
+    },
+    {
+      "id": "ch-millio",
+      "name": "Millio",
+      "handle": "@millio",
+      "subscribers": 6640,
+      "avatarLetter": "M",
+      "bio": "Millio의 영상을 모아 둔 채널입니다."
     }
   ],
   "videos": [
     {
       "id": "MT000000001",
-      "title": "새 학기 첫날, 학교 가방에 챙긴 것들",
-      "channelId": "ch-woopi",
-      "durationSeconds": 684,
-      "views": 9200,
-      "likes": 401,
-      "dislikes": 8,
-      "publishedAt": "2026-10-25",
-      "category": "브이로그",
+      "title": "몬자야키, 말차, 그리고 사모예드 #TOKYO | 드림 바이 드림",
+      "channelId": "ch-nctdream",
+      "durationSeconds": 20,
+      "views": 930890,
+      "likes": 28542,
+      "dislikes": 0,
+      "publishedAt": "2026-07-22",
+      "category": "음악",
       "type": "video",
-      "description": "새 학기를 앞두고 가방을 정리했어요. 꼭 필요한 준비물을 하나씩 확인해 봅니다.",
-      "src": "media/clips/bbb-a.mp4",
-      "hue": 204,
-      "comments": [
-        {
-          "id": "c-1001",
-          "author": "민서",
-          "text": "준비물 체크하는 장면이 도움 됐어요!",
-          "time": "2026-10-25T18:20:00+09:00",
-          "likes": 12
-        }
-      ]
+      "description": "NCT DREAM이 도쿄에서 몬자야키와 말차를 즐기고 사모예드를 만나는 영상의 일부입니다.",
+      "src": "media/clips/MT000000001.mp4",
+      "thumb": "media/thumbs/MT000000001.jpg",
+      "hue": 0,
+      "comments": []
     },
     {
       "id": "MT000000002",
-      "title": "비 오는 저녁에 듣기 좋은 잔잔한 피아노 30분",
-      "channelId": "ch-sorim",
-      "durationSeconds": 1830,
-      "views": 145000,
-      "likes": 5900,
-      "dislikes": 74,
-      "publishedAt": "2026-10-22",
+      "title": "한여름 밤의 드림 : 저주받은 민속촌 | 드림 바이 드림",
+      "channelId": "ch-nctdream",
+      "durationSeconds": 20,
+      "views": 1119384,
+      "likes": 72400,
+      "dislikes": 0,
+      "publishedAt": "2026-07-10",
       "category": "음악",
       "type": "video",
-      "description": "창밖에 비가 내리는 저녁을 떠올리며 천천히 연주했습니다. 공부하거나 쉬는 시간에 편하게 들어 주세요.",
-      "src": "media/clips/bbb-b.mp4",
-      "hue": 258,
-      "comments": [
-        {
-          "id": "c-1002",
-          "author": "Jin",
-          "text": "오늘 분위기랑 딱 맞네요. 잘 듣고 갑니다!",
-          "time": "2026-10-23T08:15:00+09:00",
-          "likes": 31
-        }
-      ]
+      "description": "NCT DREAM이 한여름 밤에 민속촌을 찾아가는 영상의 일부입니다.",
+      "src": "media/clips/MT000000002.mp4",
+      "thumb": "media/thumbs/MT000000002.jpg",
+      "hue": 47,
+      "comments": []
     },
     {
       "id": "MT000000003",
-      "title": "한 번도 안 쉬고 협동 맵 끝까지 갈 수 있을까?",
-      "channelId": "ch-playzip",
-      "durationSeconds": 1260,
-      "views": 823000,
-      "likes": 29400,
-      "dislikes": 390,
-      "publishedAt": "2026-10-20",
-      "category": "게임",
+      "title": "내비없이 을왕리가기",
+      "channelId": "ch-ninetzzong",
+      "durationSeconds": 20,
+      "views": 5385899,
+      "likes": 135980,
+      "dislikes": 0,
+      "publishedAt": "2026-08-12",
+      "category": "브이로그",
       "type": "video",
-      "description": "팀원 네 명이 호흡을 맞춰 긴 협동 맵에 도전했습니다. 실수할 때마다 다시 전략을 세우고, 마지막 구간까지 차분히 이어 가 봤어요.",
-      "src": "media/clips/cos-a.mp4",
-      "hue": 18,
-      "comments": [
-        {
-          "id": "c-1003",
-          "author": "도윤",
-          "text": "마지막에 다 같이 성공해서 저도 신났어요 ㅋㅋ",
-          "time": "2026-10-20T21:00:00+09:00",
-          "likes": 205
-        }
-      ]
+      "description": "내비게이션 없이 을왕리까지 가 보는 영상의 일부입니다.",
+      "src": "media/clips/MT000000003.mp4",
+      "thumb": "media/thumbs/MT000000003.jpg",
+      "hue": 94,
+      "comments": []
     },
     {
       "id": "MT000000004",
-      "title": "이번 주 생활 속 달라지는 소식 5가지 정리",
-      "channelId": "ch-harunews",
-      "durationSeconds": 755,
-      "views": 2940000,
-      "likes": 77100,
-      "dislikes": 880,
-      "publishedAt": "2026-10-18",
-      "category": "뉴스",
+      "title": "[무딱싫] 공포썰 마니아라더니 담력은 제로였음...ㅠ (w.제로베이스원 성한빈)",
+      "channelId": "ch-yubyeongjae",
+      "durationSeconds": 20,
+      "views": 1414803,
+      "likes": 12475,
+      "dislikes": 0,
+      "publishedAt": "2026-10-01",
+      "category": "코미디",
       "type": "video",
-      "description": "이번 주에 알아두면 좋은 생활 정보를 다섯 가지로 정리했습니다. 일정이나 이용 방법은 지역과 상황에 따라 달라질 수 있으니 안내 내용을 함께 확인해 주세요.",
-      "src": "media/clips/cos-b.mp4",
-      "hue": 42,
-      "comments": [
-        {
-          "id": "c-1004",
-          "author": "가을",
-          "text": "한 번에 정리해 줘서 보기 편해요.",
-          "time": "2026-10-19T09:30:00+09:00",
-          "likes": 88
-        }
-      ]
+      "description": "실제 시청자들이 겪거나 주변에서 들은 사연을 바탕으로 진행한 라이브 방송입니다.",
+      "src": "media/clips/MT000000004.mp4",
+      "thumb": "media/thumbs/MT000000004.jpg",
+      "hue": 141,
+      "comments": []
     },
     {
       "id": "MT000000005",
-      "title": "재료 네 가지로 끓이는 따뜻한 감자수프",
-      "channelId": "ch-tableday",
-      "durationSeconds": 542,
-      "views": 870,
-      "likes": 37,
-      "dislikes": 1,
-      "publishedAt": "2026-10-08",
-      "category": "요리",
+      "title": "Japan's Samoyed Dog Cafe in Kyoto That Melted Our Hearts",
+      "channelId": "ch-timetotravel",
+      "durationSeconds": 20,
+      "views": 323948,
+      "likes": 3527,
+      "dislikes": 0,
+      "publishedAt": "2025-03-28",
+      "category": "여행",
       "type": "video",
-      "description": "감자와 우유처럼 구하기 쉬운 재료로 부드러운 수프를 만들어요. 간은 마지막에 조금씩 맞춰 주세요.",
-      "src": null,
-      "hue": 77,
+      "description": "교토의 사모예드 카페를 찾아간 영상의 일부입니다.",
+      "src": "media/clips/MT000000005.mp4",
+      "thumb": "media/thumbs/MT000000005.jpg",
+      "hue": 188,
       "comments": []
     },
     {
       "id": "MT000000006",
-      "title": "직업계고 실습 시간, 작은 웹 화면 만들기",
-      "channelId": "ch-woopi",
-      "durationSeconds": 1104,
-      "views": 38100,
-      "likes": 1500,
-      "dislikes": 23,
-      "publishedAt": "2026-09-30",
-      "category": "브이로그",
+      "title": "털 빠짐도 한도초과! 사모예드 우유가 왔어요 | 견종백과 사모예드편",
+      "channelId": "ch-bodeumtv",
+      "durationSeconds": 20,
+      "views": 6022581,
+      "likes": 73241,
+      "dislikes": 0,
+      "publishedAt": "2024-03-09",
+      "category": "동물",
       "type": "video",
-      "description": "오늘은 수업에서 간단한 웹 화면을 만들어 봤어요. 처음에는 배치가 생각처럼 되지 않았지만, 작은 부분부터 고치면서 완성했습니다. 같은 수업을 듣는 친구들과 서로 화면을 살펴보며 아이디어도 나눴어요. 학교 실습은 결과만큼 과정을 익히는 게 재미있는 것 같아요.",
-      "src": null,
-      "hue": 190,
-      "comments": [
-        {
-          "id": "c-1007",
-          "author": "태민",
-          "text": "저도 실습할 때 정렬이 제일 어렵더라고요.",
-          "time": "2026-10-01T13:10:00+09:00",
-          "likes": 16
-        }
-      ]
+      "description": "오늘 견종백과로 만나볼 친구는 사모예드입니다~ 골든 리트리버의 스피츠 버전이라고 불릴 정도로 성격도 외모도 완벽한 우리 사모예드 친구! 하지만, 털빠짐이 어마어마어마어마하다고 하는데요... (쿨럭)",
+      "src": "media/clips/MT000000006.mp4",
+      "thumb": "media/thumbs/MT000000006.jpg",
+      "hue": 235,
+      "comments": []
     },
     {
       "id": "MT000000007",
-      "title": "기타 처음 배울 때 연습하기 좋은 코드 진행",
-      "channelId": "ch-sorim",
-      "durationSeconds": 649,
-      "views": 49200,
-      "likes": 1830,
-      "dislikes": 29,
-      "publishedAt": "2026-09-19",
-      "category": "음악",
+      "title": "[#유퀴즈온더블럭] 악령이 씌는 사람은 따로 있다⁉ 악령 쫓는 사제가 직접 말하는 구마 의식 현장 ㄷㄷ",
+      "channelId": "ch-tvndent",
+      "durationSeconds": 20,
+      "views": 1424699,
+      "likes": 6794,
+      "dislikes": 0,
+      "publishedAt": "2026-05-02",
+      "category": "예능",
       "type": "video",
-      "description": "손가락 이동이 편한 코드 진행을 느린 속도로 연주해 봅니다. 처음에는 한 마디씩 끊어서 연습하고, 익숙해지면 박자를 조금씩 올려 보세요.",
-      "src": null,
-      "hue": 292,
-      "comments": [
-        {
-          "id": "c-1008",
-          "author": "하늘",
-          "text": "천천히 보여 주셔서 따라 하기 좋았어요!",
-          "time": "2026-09-20T10:25:00+09:00",
-          "likes": 54
-        }
-      ]
+      "description": "악령을 쫓는 사제가 구마 의식 현장을 이야기하는 장면입니다.",
+      "src": "media/clips/MT000000007.mp4",
+      "thumb": "media/thumbs/MT000000007.jpg",
+      "hue": 282,
+      "comments": []
     },
     {
       "id": "MT000000008",
-      "title": "작은 섬에서 시작해 마을을 완성하는 건축 도전",
-      "channelId": "ch-playzip",
-      "durationSeconds": 4320,
-      "views": 1840000,
-      "likes": 69100,
-      "dislikes": 1200,
-      "publishedAt": "2026-09-04",
-      "category": "게임",
+      "title": "[#유퀴즈온더블럭] ※밤에 보면 혼자 잠 못 잠※ 실화라서 더 무서운 유퀴즈 레전드 공포 괴담 모음",
+      "channelId": "ch-tvndent",
+      "durationSeconds": 20,
+      "views": 1049561,
+      "likes": 5537,
+      "dislikes": 0,
+      "publishedAt": "2025-07-19",
+      "category": "예능",
       "type": "video",
-      "description": "빈 섬에서 재료를 모아 집과 다리를 만들고, 함께 살 수 있는 작은 마을을 꾸며 봤습니다. 중간에 계획을 바꾼 이유와 각자 맡은 역할도 영상에 담았어요. 긴 건축 과정을 편하게 이어서 감상해 주세요.",
-      "src": null,
-      "hue": 31,
-      "comments": [
-        {
-          "id": "c-1009",
-          "author": "Mina",
-          "text": "마을 완성된 모습이 정말 아늑해요!",
-          "time": "2026-09-05T11:00:00+09:00",
-          "likes": 310
-        }
-      ]
+      "description": "실화를 바탕으로 한 공포 괴담 모음 영상의 일부입니다.",
+      "src": "media/clips/MT000000008.mp4",
+      "thumb": "media/thumbs/MT000000008.jpg",
+      "hue": 329,
+      "comments": []
     },
     {
       "id": "MT000000009",
-      "title": "매일 쓰는 영어 표현 10개, 짧은 예문과 함께",
-      "channelId": "ch-studyon",
-      "durationSeconds": 805,
-      "views": 26700,
-      "likes": 1040,
-      "dislikes": 18,
-      "publishedAt": "2026-07-30",
-      "category": "교육",
+      "title": "저주받은 내비...? 야심한 밤 으슥한 곳으로 길 안내한 이유?! 블박 괴담 모음 | 한블리",
+      "channelId": "ch-jtbcvoyage",
+      "durationSeconds": 20,
+      "views": 728869,
+      "likes": 5058,
+      "dislikes": 0,
+      "publishedAt": "2026-07-06",
+      "category": "예능",
       "type": "video",
-      "description": "학교와 집에서 자주 쓰는 표현을 짧은 예문으로 익혀 봅니다. 모든 표현을 한 번에 외우기보다 마음에 드는 문장 두세 개를 골라 직접 말해 보세요. 익숙해지면 다른 상황에 맞게 단어를 바꾸는 연습도 할 수 있습니다.",
-      "src": null,
-      "hue": 166,
-      "comments": [
-        {
-          "id": "c-1011",
-          "author": "민재",
-          "text": "예문이 짧아서 복습하기 좋아요.",
-          "time": "2026-07-30T19:05:00+09:00",
-          "likes": 25
-        }
-      ]
+      "description": "블랙박스에 찍힌 괴담을 모아 본 영상의 일부입니다.",
+      "src": "media/clips/MT000000009.mp4",
+      "thumb": "media/thumbs/MT000000009.jpg",
+      "hue": 16,
+      "comments": []
     },
     {
       "id": "MT000000010",
-      "title": "남은 채소로 만드는 간단한 볶음밥 한 그릇",
-      "channelId": "ch-tableday",
-      "durationSeconds": 397,
-      "views": 5000,
-      "likes": 205,
-      "dislikes": 4,
-      "publishedAt": "2026-06-21",
-      "category": "요리",
+      "title": "1960년대 강원도, 감쪽같이 사라진 한 산골 마을 [괴담]",
+      "channelId": "ch-archivex",
+      "durationSeconds": 20,
+      "views": 1085500,
+      "likes": 9151,
+      "dislikes": 0,
+      "publishedAt": "2025-08-25",
+      "category": "영화/애니",
       "type": "video",
-      "description": "냉장고에 남은 채소를 작게 썰어 볶음밥으로 만들어요. 밥을 넣기 전에 채소를 먼저 충분히 익히면 맛이 더 잘 어울립니다.",
-      "src": null,
-      "hue": 50,
-      "comments": [
-        {
-          "id": "c-1012",
-          "author": "유나",
-          "text": "냉장고 정리할 때 해봐야겠어요 ㅎㅎ",
-          "time": "2026-06-22T12:30:00+09:00",
-          "likes": 9
-        }
-      ]
+      "description": "강원도 깊은 산속, 사람들의 발길이 끊긴 ‘악귀의 땅’ 한때 평화로운 산촌 마을이었지만, 한국전쟁 이후 수십 명이 원인을 알 수 없는 죽음을 맞이한 곳… 지금은 출입 금지 구역으로 지정된 이곳에서 실제로 일어난 원혼의 전설, 괴담을 추적합니다.",
+      "src": "media/clips/MT000000010.mp4",
+      "thumb": "media/thumbs/MT000000010.jpg",
+      "hue": 63,
+      "comments": []
     },
     {
       "id": "MT000000011",
-      "title": "시험 기간 책상 정리하고 공부 계획 세우기",
-      "channelId": "ch-woopi",
-      "durationSeconds": 930,
-      "views": 128000,
-      "likes": 4600,
-      "dislikes": 67,
-      "publishedAt": "2026-05-15",
-      "category": "브이로그",
+      "title": "[어둑시니Pick] 보약을 먹은 뒤 언니의 입에서 나온 기괴한 울음소리 | 심야괴담회",
+      "channelId": "ch-mbcmystery",
+      "durationSeconds": 20,
+      "views": 869088,
+      "likes": 4563,
+      "dislikes": 0,
+      "publishedAt": "2026-09-15",
+      "category": "예능",
       "type": "video",
-      "description": "시험 기간을 맞아 책상 위를 정리하고 이번 주 계획을 세웠어요. 과목별로 해야 할 일을 작게 나누고, 쉬는 시간도 달력에 함께 적어 두었습니다. 계획을 너무 빽빽하게 채우면 지키기 어려워서 실제로 할 수 있는 만큼만 정하는 편이에요. 공부하는 장면은 타이머를 켜고 조용히 담았습니다. 해야 할 일을 모두 끝내지 못해도 괜찮도록 하루에 여유 시간을 남겨 두었어요. 계획을 마친 뒤에는 짧게 쉬면서 다음 할 일을 준비합니다.",
-      "src": null,
-      "hue": 220,
-      "comments": [
-        {
-          "id": "c-1013",
-          "author": "나래",
-          "text": "쉬는 시간도 계획에 넣는 거 좋네요!",
-          "time": "2026-05-16T09:00:00+09:00",
-          "likes": 61
-        }
-      ]
+      "description": "괴담꾼들이 보약에 얽힌 이야기를 들려주는 장면의 일부입니다.",
+      "src": "media/clips/MT000000011.mp4",
+      "thumb": "media/thumbs/MT000000011.jpg",
+      "hue": 110,
+      "comments": []
     },
     {
       "id": "MT000000012",
-      "title": "잠들기 전에 듣는 어쿠스틱 기타 연주",
-      "channelId": "ch-sorim",
-      "durationSeconds": 3720,
-      "views": 238000,
-      "likes": 8300,
-      "dislikes": 102,
-      "publishedAt": "2026-03-08",
-      "category": "음악",
+      "title": "장산범으로 추정되는 조선시대의 실제 기록과 증언들 [괴담]",
+      "channelId": "ch-strangenight",
+      "durationSeconds": 20,
+      "views": 1140061,
+      "likes": 11195,
+      "dislikes": 0,
+      "publishedAt": "2021-12-08",
+      "category": "예능",
       "type": "video",
-      "description": "잔잔한 기타 연주를 한 시간 동안 이어서 들을 수 있도록 준비했습니다. 편안한 음량으로 감상해 주세요.",
-      "src": null,
-      "hue": 278,
-      "comments": [
-        {
-          "id": "c-1014",
-          "author": "수빈",
-          "text": "조용히 틀어 두기 좋아요.",
-          "time": "2026-03-09T00:15:00+09:00",
-          "likes": 118
-        }
-      ]
+      "description": "부산의 장산에 산다고 전해지는 장산범 이것은 과연 단순한 도시전설인 걸까요?",
+      "src": "media/clips/MT000000012.mp4",
+      "thumb": "media/thumbs/MT000000012.jpg",
+      "hue": 157,
+      "comments": []
     },
     {
       "id": "MT000000013",
-      "title": "동네 도서관 이용할 때 알아두면 좋은 점",
-      "channelId": "ch-harunews",
-      "durationSeconds": 602,
-      "views": 385000,
-      "likes": 11200,
-      "dislikes": 193,
-      "publishedAt": "2025-10-03",
-      "category": "뉴스",
+      "title": "감스트 30주년 포켓몬카드 2000만원 어치 오픈!! 레전드 썼습니다!!",
+      "channelId": "ch-gamst",
+      "durationSeconds": 20,
+      "views": 1731671,
+      "likes": 5687,
+      "dislikes": 0,
+      "publishedAt": "2026-10-23",
+      "category": "브이로그",
       "type": "video",
-      "description": "도서관을 처음 방문할 때 확인하면 좋은 이용 방법을 정리했어요. 운영 시간과 대출 규칙은 장소마다 다를 수 있으니 방문하려는 곳의 안내를 확인해 주세요.",
-      "src": null,
-      "hue": 90,
-      "comments": [
-        {
-          "id": "c-1016",
-          "author": "정우",
-          "text": "동네 도서관 가기 전에 확인해 볼게요.",
-          "time": "2025-10-04T11:10:00+09:00",
-          "likes": 47
-        }
-      ]
+      "description": "30주년 포켓몬카드 박스를 개봉하는 방송 영상의 일부입니다.",
+      "src": "media/clips/MT000000013.mp4",
+      "thumb": "media/thumbs/MT000000013.jpg",
+      "hue": 204,
+      "comments": []
     },
     {
       "id": "MT000000014",
-      "title": "집중이 안 될 때 시작하는 5분 공부 루틴",
-      "channelId": "ch-studyon",
-      "durationSeconds": 721,
-      "views": 176000,
-      "likes": 7100,
-      "dislikes": 122,
-      "publishedAt": "2025-07-12",
-      "category": "교육",
+      "title": "전설의 포켓몬카드 초판 박스 뜯어버렸습니다 ㄷㄷㄷ",
+      "channelId": "ch-jerunangan",
+      "durationSeconds": 20,
+      "views": 569394,
+      "likes": 2740,
+      "dislikes": 0,
+      "publishedAt": "2025-07-22",
+      "category": "영화/애니",
       "type": "video",
-      "description": "공부를 시작하기 막막할 때 할 일을 하나만 정하고 5분 동안 손을 움직여 봅니다. 책을 펴고 오늘 볼 부분에 표시를 한 뒤, 짧은 목표를 적으면 시작이 조금 쉬워질 수 있어요. 사람마다 잘 맞는 방법은 다르니 부담 없이 시험해 보고 자신에게 편한 방식으로 바꿔 보세요. 중요한 건 완벽한 계획보다 다시 시작할 수 있는 작은 습관입니다. 매일 같은 시간에 짧게 시작해도 좋고, 집중이 잘되는 장소를 찾아보는 것도 도움이 됩니다. 작은 실천을 기록하면서 자신에게 맞는 속도를 찾아가면 공부를 이어 가기 쉬워집니다.",
-      "src": null,
-      "hue": 145,
-      "comments": [
-        {
-          "id": "c-1017",
-          "author": "예린",
-          "text": "일단 5분만 해보자는 말이 힘이 돼요.",
-          "time": "2025-07-13T20:00:00+09:00",
-          "likes": 92
-        }
-      ]
+      "description": "포켓몬카드 초판 Base set 박스깡 영상입니다!!!!! 아니 여기서 초판 리자몽이 ??????? 대구에서 700여개의 박스를 다같이 개봉하고 이야기 나누는 이벤트가 있다고 해서 바로 참석했습니다!!! 박스도 까고 오리파도 구매하고 했는데 영상을 제대로 찍지 못해서 너무 아쉽습니다 ㅠㅠㅠ",
+      "src": "media/clips/MT000000014.mp4",
+      "thumb": "media/thumbs/MT000000014.jpg",
+      "hue": 251,
+      "comments": []
     },
     {
       "id": "MT000000015",
-      "title": "매콤하지 않게 만드는 간장 비빔국수",
-      "channelId": "ch-tableday",
-      "durationSeconds": 456,
-      "views": 12600,
-      "likes": 490,
-      "dislikes": 8,
-      "publishedAt": "2025-02-22",
-      "category": "요리",
+      "title": "오랜만에 품절난 신규 포켓몬 카드!! 근본 이브이 8종 슈퍼레어 가격이 미쳤습니다!!!",
+      "channelId": "ch-ggambring",
+      "durationSeconds": 20,
+      "views": 490242,
+      "likes": 4148,
+      "dislikes": 0,
+      "publishedAt": "2025-02-09",
+      "category": "게임",
       "type": "video",
-      "description": "간장과 참기름으로 담백하게 양념한 비빔국수예요. 오이와 달걀을 곁들이면 한 끼로 먹기 좋습니다.",
-      "src": null,
-      "hue": 38,
-      "comments": [
-        {
-          "id": "c-1018",
-          "author": "현우",
-          "text": "매운 음식 못 먹는데 이 레시피 좋네요!",
-          "time": "2025-02-23T13:45:00+09:00",
-          "likes": 19
-        }
-      ]
+      "description": "오랜만에 품절난 신규 포켓몬 카드!! 근본 이브이 8종 슈퍼레어 가격이 미쳤습니다!!!",
+      "src": "media/clips/MT000000015.mp4",
+      "thumb": "media/thumbs/MT000000015.jpg",
+      "hue": 298,
+      "comments": []
     },
     {
       "id": "MT000000016",
-      "title": "MeTube 화면을 직접 꾸며 본 한 주 기록",
-      "channelId": "ch-woopi",
-      "durationSeconds": 854,
-      "views": 74,
-      "likes": 3,
+      "title": "I Opened $850 of 151 Packs To See If It's WORTH IT",
+      "channelId": "ch-pokerev",
+      "durationSeconds": 20,
+      "views": 1840562,
+      "likes": 27353,
       "dislikes": 0,
-      "publishedAt": "2024-10-11",
-      "category": "브이로그",
+      "publishedAt": "2024-12-28",
+      "category": "예능",
       "type": "video",
-      "description": "학교 프로젝트 화면을 조금씩 꾸미며 보낸 한 주를 기록했어요. 참고 자료를 정리하고, 색을 고르고, 목록 화면에 들어갈 내용을 생각했습니다. 막히는 부분은 수업 노트를 다시 보면서 하나씩 풀어 봤어요. 아직 배울 게 많지만 완성된 화면을 보니 뿌듯합니다. 다음에는 친구들에게 써 보게 하고 의견을 들어볼 예정이에요. 화면을 만들 때는 글자가 잘 읽히는지와 필요한 정보가 쉽게 보이는지도 살펴봤습니다. 작은 수정이 쌓여 조금씩 완성되어 가는 모습을 기록으로 남겨 두니 다음 작업을 시작할 때도 도움이 됐어요.",
-      "src": null,
-      "hue": 199,
-      "comments": [
-        {
-          "id": "c-1019",
-          "author": "주아",
-          "text": "프로젝트 진행 기록 재밌어요. 다음 편도 기다릴게요!",
-          "time": "2024-10-12T10:00:00+09:00",
-          "likes": 4
-        }
-      ]
+      "description": "In this Pokemon cards opening, I find out if I can get my value back from opening $850 worth of 151 booster packs!",
+      "src": "media/clips/MT000000016.mp4",
+      "thumb": "media/thumbs/MT000000016.jpg",
+      "hue": 345,
+      "comments": []
     },
     {
       "id": "MT000000017",
-      "title": "맑은 아침을 여는 20초 피아노 선율",
-      "channelId": "ch-sorim",
-      "durationSeconds": 20,
-      "views": 68400,
-      "likes": 2300,
-      "dislikes": 31,
-      "publishedAt": "2026-10-24",
-      "category": "음악",
+      "title": "130만원짜리 포켓몬 카드",
+      "channelId": "ch-bookmark",
+      "durationSeconds": 14,
+      "views": 9821836,
+      "likes": 80218,
+      "dislikes": 0,
+      "publishedAt": "2025-09-30",
+      "category": "예능",
       "type": "short",
-      "description": "아침에 가볍게 듣기 좋은 짧은 피아노 선율입니다.",
-      "src": "media/clips/bbb-v.mp4",
-      "hue": 240,
-      "comments": [
-        {
-          "id": "c-1020",
-          "author": "온유",
-          "text": "짧지만 기분 좋아지는 소리예요!",
-          "time": "2026-10-24T14:20:00+09:00",
-          "likes": 27
-        }
-      ]
+      "description": "단돈 몇천 원짜리 카드 팩 한 장이 130만 원짜리 보물로?! 어린 시절 문방구에서 뽑던 포켓몬 카드가 이제는 어른들의 새로운 투자 자산이 되었습니다! 극악의 확률을 뚫고 나온다는 전설의 '메가리자몽 GX' 골드 카드!",
+      "src": "media/clips/MT000000017.mp4",
+      "thumb": "media/thumbs/MT000000017.jpg",
+      "hue": 32,
+      "comments": []
     },
     {
       "id": "MT000000018",
-      "title": "마지막 한 칸 남기고 성공한 점프 순간",
-      "channelId": "ch-playzip",
-      "durationSeconds": 35,
-      "views": 153000,
-      "likes": 5800,
-      "dislikes": 84,
-      "publishedAt": "2026-10-17",
-      "category": "게임",
+      "title": "My Pokemon Pack is Super THICK!!!",
+      "channelId": "ch-pokerev",
+      "durationSeconds": 20,
+      "views": 7821239,
+      "likes": 226067,
+      "dislikes": 0,
+      "publishedAt": "2024-10-17",
+      "category": "예능",
       "type": "short",
-      "description": "아슬아슬하게 마지막 점프를 통과한 순간을 담았어요!",
-      "src": "media/clips/cos-v.mp4",
-      "hue": 350,
-      "comments": [
-        {
-          "id": "c-1021",
-          "author": "건우",
-          "text": "저도 같이 점프했어요 ㅋㅋ",
-          "time": "2026-10-17T20:00:00+09:00",
-          "likes": 202
-        }
-      ]
+      "description": "My Pokemon Pack is Super THICK!!!",
+      "src": "media/clips/MT000000018.mp4",
+      "thumb": "media/thumbs/MT000000018.jpg",
+      "hue": 79,
+      "comments": []
     },
     {
       "id": "MT000000019",
-      "title": "달걀말이 단면 예쁘게 자르는 간단한 팁",
-      "channelId": "ch-tableday",
-      "durationSeconds": 28,
-      "views": 22200,
-      "likes": 810,
-      "dislikes": 10,
-      "publishedAt": "2026-09-26",
-      "category": "요리",
+      "title": "I Pulled The Rarest Pokemon Card In The World",
+      "channelId": "ch-pokerev",
+      "durationSeconds": 14,
+      "views": 9007741,
+      "likes": 113537,
+      "dislikes": 0,
+      "publishedAt": "2024-11-24",
+      "category": "예능",
       "type": "short",
-      "description": "한 김 식힌 뒤 천천히 자르면 모양이 잘 유지돼요.",
-      "src": null,
-      "hue": 62,
-      "comments": [
-        {
-          "id": "c-1022",
-          "author": "보라",
-          "text": "도시락 만들 때 써먹어야겠어요!",
-          "time": "2026-09-27T08:05:00+09:00",
-          "likes": 32
-        }
-      ]
+      "description": "I Pulled The Rarest Pokemon Card In The World",
+      "src": "media/clips/MT000000019.mp4",
+      "thumb": "media/thumbs/MT000000019.jpg",
+      "hue": 126,
+      "comments": []
     },
     {
       "id": "MT000000020",
-      "title": "하교길에 만난 노을, 오늘의 작은 기록",
-      "channelId": "ch-woopi",
-      "durationSeconds": 44,
-      "views": 108000000,
-      "likes": 2400000,
-      "dislikes": 29000,
-      "publishedAt": "2026-10-05",
+      "title": "Night People vs. Morning People!",
+      "channelId": "ch-blobbyclips",
+      "durationSeconds": 15,
+      "views": 14979385,
+      "likes": 207603,
+      "dislikes": 0,
+      "publishedAt": "2026-10-14",
       "category": "브이로그",
       "type": "short",
-      "description": "하교길 하늘이 예뻐서 잠깐 담아 봤어요.",
-      "src": null,
-      "hue": 28,
+      "description": "Are you a night owl or a morning blob?",
+      "src": "media/clips/MT000000020.mp4",
+      "thumb": "media/thumbs/MT000000020.jpg",
+      "hue": 173,
       "comments": []
     },
     {
       "id": "MT000000021",
-      "title": "책상 위 10분 정리로 공부 시작하기",
-      "channelId": "ch-woopi",
-      "durationSeconds": 26,
-      "views": 48200,
-      "likes": 1930,
-      "dislikes": 29,
-      "publishedAt": "2026-10-12",
-      "category": "브이로그",
+      "title": "The Power of Ground Pound Cancelling!",
+      "channelId": "ch-austin",
+      "durationSeconds": 20,
+      "views": 2244653,
+      "likes": 64827,
+      "dislikes": 0,
+      "publishedAt": "2026-08-20",
+      "category": "게임",
       "type": "short",
-      "description": "어질러진 책상을 짧게 정리하고 오늘 할 일을 펼쳐 봤어요.",
-      "src": null,
-      "hue": 212,
-      "comments": [
-        {
-          "id": "c-1023",
-          "author": "서윤",
-          "text": "저도 타이머 켜고 같이 정리했어요!",
-          "time": "2026-10-12T19:10:00+09:00",
-          "likes": 18
-        }
-      ]
+      "description": "The first of three Shorts on this channel.",
+      "src": "media/clips/MT000000021.mp4",
+      "thumb": "media/thumbs/MT000000021.jpg",
+      "hue": 220,
+      "comments": []
     },
     {
       "id": "MT000000022",
-      "title": "세 번의 코드로 완성하는 포근한 기타 소리",
-      "channelId": "ch-sorim",
-      "durationSeconds": 32,
-      "views": 96500,
-      "likes": 3860,
-      "dislikes": 58,
-      "publishedAt": "2026-10-09",
-      "category": "음악",
+      "title": "Pokémon FireRed… But Pidgeot Flies There AND Back Before Doduo Arrives",
+      "channelId": "ch-alimation",
+      "durationSeconds": 20,
+      "views": 330279,
+      "likes": 5570,
+      "dislikes": 0,
+      "publishedAt": "2026-10-30",
+      "category": "게임",
       "type": "short",
-      "description": "세 가지 코드만으로 포근한 분위기를 만들어 봤어요.",
-      "src": null,
-      "hue": 276,
-      "comments": [
-        {
-          "id": "c-1024",
-          "author": "다은",
-          "text": "코드가 단순해서 바로 따라 쳐보고 싶어요.",
-          "time": "2026-10-10T08:40:00+09:00",
-          "likes": 42
-        }
-      ]
+      "description": "Lv. 100 Pidgeot vs Lv. 1 Doduo, same route, real-time Fly Pidgeot made it to Cinnabar and back before Doduo even landed",
+      "src": "media/clips/MT000000022.mp4",
+      "thumb": "media/thumbs/MT000000022.jpg",
+      "hue": 267,
+      "comments": []
     },
     {
       "id": "MT000000023",
-      "title": "팀원과 딱 맞춘 마지막 퍼즐 한 조각",
-      "channelId": "ch-playzip",
-      "durationSeconds": 18,
-      "views": 321000,
-      "likes": 12800,
-      "dislikes": 192,
-      "publishedAt": "2026-10-03",
-      "category": "게임",
+      "title": "The Burglar Who Only Moved Furniture",
+      "channelId": "ch-ricksclips",
+      "durationSeconds": 20,
+      "views": 8157146,
+      "likes": 205036,
+      "dislikes": 0,
+      "publishedAt": "2026-10-21",
+      "category": "예능",
       "type": "short",
-      "description": "마지막 조각을 맞추자 팀원들 반응이 터졌어요!",
-      "src": null,
-      "hue": 12,
-      "comments": [
-        {
-          "id": "c-1025",
-          "author": "현준",
-          "text": "합 맞을 때 쾌감 대박이네요 ㅋㅋ",
-          "time": "2026-10-03T22:05:00+09:00",
-          "likes": 116
-        }
-      ]
+      "description": "The Burglar Who Only Moved Furniture",
+      "src": "media/clips/MT000000023.mp4",
+      "thumb": "media/thumbs/MT000000023.jpg",
+      "hue": 314,
+      "comments": []
     },
     {
       "id": "MT000000024",
-      "title": "외출 전 5초, 우산 챙길지 확인하는 법",
-      "channelId": "ch-harunews",
-      "durationSeconds": 24,
-      "views": 74000,
-      "likes": 2960,
-      "dislikes": 44,
-      "publishedAt": "2026-09-28",
-      "category": "뉴스",
+      "title": "The Doom Player Who Ran in Circles for 23 Days",
+      "channelId": "ch-millio",
+      "durationSeconds": 20,
+      "views": 2363484,
+      "likes": 77041,
+      "dislikes": 0,
+      "publishedAt": "2026-11-02",
+      "category": "브이로그",
       "type": "short",
-      "description": "외출하기 전 강수 예보와 시간대를 함께 확인해 보세요.",
-      "src": null,
-      "hue": 44,
-      "comments": [
-        {
-          "id": "c-1026",
-          "author": "지호",
-          "text": "아침에 확인하는 습관 들여야겠어요!",
-          "time": "2026-09-28T17:35:00+09:00",
-          "likes": 36
-        }
-      ]
-    },
-    {
-      "id": "MT000000025",
-      "title": "헷갈리는 영어 단어, 그림으로 구분하기",
-      "channelId": "ch-studyon",
-      "durationSeconds": 41,
-      "views": 56200,
-      "likes": 2250,
-      "dislikes": 34,
-      "publishedAt": "2026-09-18",
-      "category": "교육",
-      "type": "short",
-      "description": "비슷하게 생긴 영어 단어를 간단한 그림으로 비교해요.",
-      "src": null,
-      "hue": 158,
-      "comments": [
-        {
-          "id": "c-1027",
-          "author": "유진",
-          "text": "그림으로 보니까 차이가 잘 보여요.",
-          "time": "2026-09-19T12:15:00+09:00",
-          "likes": 24
-        }
-      ]
-    },
-    {
-      "id": "MT000000026",
-      "title": "바삭한 감자전 뒤집기, 가장자리부터 살살",
-      "channelId": "ch-tableday",
-      "durationSeconds": 29,
-      "views": 18400,
-      "likes": 740,
-      "dislikes": 11,
-      "publishedAt": "2026-09-07",
-      "category": "요리",
-      "type": "short",
-      "description": "가장자리가 노릇해졌을 때 뒤집으면 감자전이 잘 모양을 잡아요.",
-      "src": null,
-      "hue": 66,
-      "comments": [
-        {
-          "id": "c-1028",
-          "author": "수아",
-          "text": "뒤집을 때 자꾸 부서졌는데 해볼게요!",
-          "time": "2026-09-08T18:25:00+09:00",
-          "likes": 15
-        }
-      ]
+      "description": "The Doom Player Who Ran in Circles for 23 Days",
+      "src": "media/clips/MT000000024.mp4",
+      "thumb": "media/thumbs/MT000000024.jpg",
+      "hue": 1,
+      "comments": []
     }
   ]
 }
