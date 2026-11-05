@@ -38,6 +38,14 @@
   font-size: 13px; white-space: nowrap; pointer-events: none;
 }
 .player-tooltip:empty { display: none; }
+.player-preview {
+  --hover-position: 0%;
+  position: absolute; bottom: calc(100% + 34px); left: clamp(88px, var(--hover-position, 0%), calc(100% - 88px)); transform: translateX(-50%);
+  overflow: hidden; border: 2px solid var(--on-scrim); border-radius: 8px; background: var(--bg); pointer-events: none;
+}
+.player-preview[hidden] { display: none; }
+/* `.player video` (watch.css) and `.player.player-custom video` (above) pin every video in the player to full size, so this must outrank both. */
+.player.player-custom .player-preview-video { position: static; inset: auto; display: block; width: 168px; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
 .player-button-row { height: 56px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .player-control-group { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .player-left { flex: 1 1 auto; }
@@ -107,6 +115,8 @@
 @media (max-width: 650px), (pointer: coarse) {
   .player-progress-row { height: 44px; }
   .player-progress { height: 44px; padding: 20px 0; }
+  .player-preview { bottom: calc(100% + 26px); left: clamp(56px, var(--hover-position, 0%), calc(100% - 56px)); }
+  .player.player-custom .player-preview-video { width: 96px; }
   .player-button-row { height: auto; min-height: 56px; padding: 0 12px; gap: 4px; }
   .player-left { gap: 4px; flex-wrap: wrap; }
   .player-right { max-width: 50%; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }

@@ -35,7 +35,11 @@ export function attachControls(player, media, video) {
   const fill = el('span', 'player-progress-fill');
   const thumb = el('span', 'player-progress-thumb');
   const tooltip = el('span', 'player-tooltip');
-  progress.append(buffered, fill, thumb, tooltip);
+  // Frame preview above the time tooltip, like youtube.com. Its video is a second silent copy of the clip,
+  // created the first time somebody hovers or drags the bar.
+  const preview = el('div', 'player-preview');
+  preview.hidden = true;
+  progress.append(buffered, fill, thumb, preview, tooltip);
   const row = el('div', 'player-button-row');
   const left = el('div', 'player-control-group player-left');
   const right = el('div', 'player-control-group player-right');
@@ -68,7 +72,8 @@ export function attachControls(player, media, video) {
   const prefs = playerPrefs();
   media.volume = prefs.volume;
   media.muted = prefs.muted;
-  media.playbackRate = prefs.rate;
+  // defaultPlaybackRate too: setting src later (clip.js) re-runs the load algorithm, which resets playbackRate to it.
+  media.defaultPlaybackRate = media.playbackRate = prefs.rate;
   let dragging = false;
   let volumeDragging = false;
   let pointerType = '';
@@ -172,9 +177,32 @@ export function attachControls(player, media, video) {
     progress.dataset.preview = String(value);
     progress.style.setProperty('--progress', `${value / d * 100}%`);
     thumb.style.setProperty('--position', `${value / d * 100}%`);
-    tooltip.textContent = secondsText(value);
-    tooltip.style.setProperty('--hover-position', `${value / d * 100}%`);
+    showHover(value);
     updateTime();
+  }
+  let previewVideo = null;
+  function showHover(value) {
+    const d = duration();
+    if (!d) return;
+    const position = `${value / d * 100}%`;
+    tooltip.textContent = secondsText(value);
+    tooltip.style.setProperty('--hover-position', position);
+    preview.style.setProperty('--hover-position', position);
+    if (!media.currentSrc) return; // the clip is still loading
+    if (!previewVideo) {
+      previewVideo = el('video', 'player-preview-video');
+      previewVideo.muted = true;
+      previewVideo.preload = 'auto';
+      previewVideo.setAttribute('playsinline', '');
+      previewVideo.src = media.currentSrc;
+      preview.append(previewVideo);
+    }
+    previewVideo.currentTime = value;
+    preview.hidden = false;
+  }
+  function hideHover() {
+    tooltip.textContent = '';
+    preview.hidden = true;
   }
   function setVolume(value) {
     media.volume = Math.max(0, Math.min(1, value));
@@ -304,11 +332,7 @@ export function attachControls(player, media, video) {
   });
   progress.addEventListener('pointermove', (event) => {
     if (dragging) updatePreview(event);
-    else if (duration()) {
-      const value = eventValue(event, progress, duration());
-      tooltip.textContent = secondsText(value);
-      tooltip.style.setProperty('--hover-position', `${value / duration() * 100}%`);
-    }
+    else if (duration()) showHover(eventValue(event, progress, duration()));
   });
   // Drag ends on pointerup (seek), or on cancel / lost capture (no seek, so the preview cannot get stuck).
   function endScrub(commit) {
@@ -317,13 +341,14 @@ export function attachControls(player, media, video) {
     dragging = false;
     delete progress.dataset.preview;
     player.classList.remove('player-scrubbing');
+    if (!progress.matches(':hover')) hideHover();
     updateTime();
     scheduleHide();
   }
   progress.addEventListener('pointerup', () => endScrub(true));
   progress.addEventListener('pointercancel', () => endScrub(false));
   progress.addEventListener('lostpointercapture', () => endScrub(false));
-  progress.addEventListener('pointerleave', () => { if (!dragging) tooltip.textContent = ''; });
+  progress.addEventListener('pointerleave', () => { if (!dragging) hideHover(); });
   progress.addEventListener('keydown', (event) => {
     if (!canHandleKey(event)) return;
     const d = duration();
@@ -363,6 +388,8 @@ export function attachControls(player, media, video) {
   media.addEventListener('pause', () => { clearHideTimer(); player.classList.remove('player-idle'); updatePlay(); });
   media.addEventListener('ended', () => { clearHideTimer(); player.classList.remove('player-idle'); updatePlay(); });
   media.addEventListener('waiting', () => { loading.hidden = false; clearHideTimer(); player.classList.remove('player-idle'); });
+  // Play pressed while the clip is still downloading (no src yet): 'waiting' never fires, so show the spinner here.
+  media.addEventListener('play', () => { if (!media.currentSrc) loading.hidden = false; });
   media.addEventListener('canplay', () => { loading.hidden = true; });
   media.addEventListener('playing', () => { loading.hidden = true; scheduleHide(); });
   media.addEventListener('volumechange', () => { updateVolume(); setPlayerPrefs({ volume: media.volume, muted: media.muted }); });

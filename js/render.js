@@ -22,8 +22,19 @@ export function setTone(node, hue) {
   return node;
 }
 
+// Real thumbnail on top of the placeholder colour; the colour still shows while it loads or if the file is missing.
+export function addThumbImage(box, video) {
+  if (typeof video.thumb !== 'string' || !video.thumb) return box;
+  const image = el('img', 'thumb-img');
+  image.alt = '';
+  image.loading = 'lazy';
+  image.src = video.thumb;
+  box.append(image);
+  return box;
+}
+
 export function thumb(className, video) {
-  const box = setTone(el('div', className), video.hue);
+  const box = addThumbImage(setTone(el('div', className), video.hue), video);
   box.append(el('span', 'card-duration', formatDuration(video.durationSeconds)));
   return box;
 }

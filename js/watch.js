@@ -9,6 +9,7 @@ import {
 } from './store.js';
 import { icon } from './icons.js';
 import { attachControls } from './player.js';
+import { clipUrl } from './clip.js';
 
 renderLayout(null);
 const page = document.querySelector('.page');
@@ -46,9 +47,10 @@ try {
     const player = setTone(el('div', 'player'), video.hue);
     if (typeof video.src === 'string' && video.src.trim()) {
       const media = el('video');
-      // Whole clip (about 3 MB): a server without range requests (python http.server) can only seek inside loaded data.
+      // Whole clip as a Blob (see clip.js): seekable even on a server without range requests.
       media.preload = 'auto';
-      media.src = video.src;
+      clipUrl(video.src).then((url) => { media.src = url; });
+      if (video.thumb) media.poster = video.thumb;
       media.setAttribute('aria-label', video.title);
       player.append(media);
       attachControls(player, media, video);
@@ -153,6 +155,7 @@ try {
       if (!text) return;
       const comment = addComment(video.id, text);
       list.prepend(commentItem(comment, false, () => toggleCommentLike(comment.id)));
+      empty.hidden = true;
       heading.textContent = `${koCount(list.children.length)}개의 댓글`;
       commentsJumpLabel.textContent = `댓글 ${koCount(list.children.length)}개`;
       input.value = '';
@@ -161,7 +164,9 @@ try {
     });
     allComments.forEach((comment) => list.append(commentItem(comment, isCommentLiked(comment.id), () => toggleCommentLike(comment.id))));
     description.after(commentsJump);
-    section.append(heading, form, list);
+    const empty = el('p', 'page-message', '첫 댓글을 남겨 보세요.');
+    empty.hidden = allComments.length > 0;
+    section.append(heading, form, list, empty);
     primary.append(section);
     const secondary = el('aside', 'watch-secondary');
     secondary.setAttribute('aria-label', '관련 동영상');

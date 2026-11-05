@@ -1,7 +1,7 @@
 // Channel page: profile.html?c=<channelId>. Default is the guest's own channel (ch-woopi).
 import { renderLayout } from './layout.js';
 import { loadData } from './data.js';
-import { el, avatar, setTone, thumb, watchUrl, shortsUrl, videoStats, subscribeButton } from './render.js';
+import { el, avatar, setTone, thumb, addThumbImage, watchUrl, shortsUrl, videoStats, subscribeButton } from './render.js';
 import { cardMenu, soon } from './card-menu.js';
 import { formatSubscribers, formatViews, formatDuration, koCount } from './format.js';
 import { icon } from './icons.js';
@@ -29,7 +29,7 @@ function profileCard(video) {
   link.href = isShort ? shortsUrl(video.id) : watchUrl(video.id);
   link.tabIndex = -1;
   link.setAttribute('aria-hidden', 'true');
-  link.append(isShort ? setTone(el('div', 'card-thumb'), video.hue) : thumb('card-thumb', video));
+  link.append(isShort ? addThumbImage(setTone(el('div', 'card-thumb'), video.hue), video) : thumb('card-thumb', video));
 
   const titleLink = el('a', '', video.title);
   titleLink.href = isShort ? shortsUrl(video.id) : watchUrl(video.id);
@@ -48,7 +48,7 @@ function profileCard(video) {
 function playlistCard(category, videos) {
   const card = el('a', 'card playlist-card');
   card.href = `home.html?category=${encodeURIComponent(category)}`;
-  const cover = setTone(el('div', 'card-thumb'), videos[0].hue);
+  const cover = addThumbImage(setTone(el('div', 'card-thumb'), videos[0].hue), videos[0]);
   cover.append(el('span', 'card-duration', `동영상 ${videos.length}개`));
   const text = el('div');
   text.append(el('div', 'card-title', `${category} 모음`), el('div', 'card-channel', '재생목록'), el('div', 'card-stats', '전체 재생목록 보기'));

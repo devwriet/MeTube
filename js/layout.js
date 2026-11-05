@@ -168,7 +168,7 @@ function sidebar(active, subs) {
     item('음악', 'music_note', category('음악')),
     item('영화', 'movie'),
     item('라이브', 'sensors'),
-    showMore([item('게임', 'sports_esports', category('게임')), item('뉴스', 'newspaper', category('뉴스'))]),
+    showMore([item('게임', 'sports_esports', category('게임')), item('예능', 'smart_display', category('예능'))]),
     el('hr'), heading('MeTube 더 보기'),
     item('MeTube Premium', 'smart_display'),
     item('MeTube Music', 'play_circle'),

@@ -1,13 +1,14 @@
 import { renderLayout } from './layout.js';
 import { loadData } from './data.js';
 import { el, avatar, setTone, commentItem, subscribeButton, channelUrl, shortsUrl } from './render.js';
-import { koCount } from './format.js';
+import { koCount, formatDuration } from './format.js';
 import { cardMenu, toast } from './card-menu.js';
 import {
   reaction, toggleReaction, comments, addComment, isCommentLiked,
   toggleCommentLike, addHistory, hiddenVideos, hiddenChannels, GUEST_NAME,
 } from './store.js';
 import { icon } from './icons.js';
+import { clipUrl } from './clip.js';
 
 renderLayout('shorts');
 
@@ -82,6 +83,8 @@ function makeComments(entry) {
   const list = el('ul', 'comment-list');
   const all = visibleComments(video);
   all.forEach((comment) => list.append(commentItem(comment, isCommentLiked(comment.id), () => toggleCommentLike(comment.id))));
+  const empty = el('p', 'page-message', '첫 댓글을 남겨 보세요.');
+  empty.hidden = all.length > 0;
 
   const form = el('form', 'comment-form');
   const input = el('input', 'comment-input');
@@ -98,12 +101,13 @@ function makeComments(entry) {
     if (!text) return;
     const comment = addComment(video.id, text);
     list.prepend(commentItem(comment, false, () => toggleCommentLike(comment.id)));
+    empty.hidden = true;
     paintCommentCounts(entry, list.children.length);
     input.value = '';
     submit.disabled = true;
     input.focus();
   });
-  dialog.append(head, list, form);
+  dialog.append(head, list, empty, form);
   entry.dialogCount = count;
   paintCommentCounts(entry, all.length);
   close.addEventListener('click', () => closeComments());
@@ -131,7 +135,8 @@ function makeEntry(video, channel) {
   let media = null;
   if (typeof video.src === 'string' && video.src.trim()) {
     media = el('video', 'short-video');
-    media.setAttribute('src', video.src);
+    // No src yet: loadClip() below fills it in for the current Short and its neighbours only.
+    if (video.thumb) media.setAttribute('poster', video.thumb);
     media.setAttribute('loop', '');
     media.setAttribute('playsinline', '');
     media.setAttribute('muted', '');
@@ -185,13 +190,72 @@ function makeEntry(video, channel) {
       if (media.duration > 0) media.currentTime = (Number(progress.value) / 1000) * media.duration;
       paintProgress();
     });
-    player.append(muteButton, progress);
+    // Preview bubble above the bar, like youtube.com: a frame from a second silent copy of the clip, plus the time.
+    // That copy is only made the first time somebody hovers or drags, so idle Shorts decode nothing extra.
+    const preview = el('div', 'short-scrub');
+    preview.hidden = true;
+    const previewTime = el('span', 'short-scrub-time', '0:00');
+    preview.append(previewTime);
+    let previewVideo = null;
+    let scrubbing = false;
+    let wasPlaying = false;
+    let hideTimer = 0;
+    const showPreview = (ratio) => {
+      if (!(media.duration > 0)) return;
+      if (!previewVideo) {
+        previewVideo = el('video', 'short-scrub-video');
+        previewVideo.muted = true;
+        previewVideo.preload = 'auto';
+        previewVideo.setAttribute('playsinline', '');
+        previewVideo.src = media.currentSrc || video.src;
+        preview.prepend(previewVideo);
+      }
+      const time = ratio * media.duration;
+      previewVideo.currentTime = time;
+      previewTime.textContent = formatDuration(Math.floor(time));
+      preview.style.setProperty('--scrub-x', `${ratio * 100}%`);
+      preview.hidden = false;
+    };
+    const hidePreview = () => { clearTimeout(hideTimer); preview.hidden = true; };
+    const ratioAt = (event) => {
+      const box = progress.getBoundingClientRect();
+      return Math.min(1, Math.max(0, (event.clientX - box.left) / box.width));
+    };
+    const endScrub = () => {
+      if (!scrubbing) return;
+      scrubbing = false;
+      player.classList.remove('short-player-scrubbing');
+      if (wasPlaying && current === entry) media.play().catch(() => {});
+      if (!progress.matches(':hover')) hidePreview();
+    };
+    progress.addEventListener('pointermove', (event) => { if (!scrubbing) showPreview(ratioAt(event)); });
+    progress.addEventListener('pointerleave', () => { if (!scrubbing) hidePreview(); });
+    // Like youtube.com, playback holds still while the bar is being dragged and resumes on release.
+    progress.addEventListener('pointerdown', (event) => {
+      scrubbing = true;
+      wasPlaying = !media.paused;
+      media.pause();
+      player.classList.add('short-player-scrubbing');
+      showPreview(ratioAt(event));
+    });
+    document.addEventListener('pointerup', endScrub);
+    document.addEventListener('pointercancel', endScrub);
+    // Keyboard seeking has no pointer, so the bubble shows for a moment after each arrow key.
+    progress.addEventListener('input', () => {
+      showPreview(Number(progress.value) / 1000);
+      if (!scrubbing && !progress.matches(':hover')) {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(hidePreview, 1000);
+      }
+    });
+    player.append(muteButton, progress, preview);
 
     // Missing or unplayable clip: same status as a Short without a clip, and no dead play button.
     media.addEventListener('error', () => {
       muteRepaints.delete(paintMute);
       muteButton.remove();
       progress.remove();
+      preview.remove();
       playButton.remove();
       media.remove();
       media = null;
@@ -254,9 +318,23 @@ function makeEntry(video, channel) {
     togglePlayback();
   });
   item.append(stage);
-  const entry = { item, stage, video, media, commentButton: comment, commentCount, dialogCount: null };
+  let loadPromise = null;
+  // Whole clip into a Blob (see clip.js) so the progress bar can seek on any server. It autoplays once it is in,
+  // unless the viewer paused this Short while it was still downloading.
+  function loadClip() {
+    if (!media) return Promise.resolve();
+    loadPromise ??= clipUrl(video.src).then((url) => {
+      if (!media) return;
+      media.src = url;
+      media.preload = 'auto';
+      if (current === entry && !entry.userPaused) media.play().catch(() => {});
+    });
+    return loadPromise;
+  }
+  const entry = { item, stage, video, media, commentButton: comment, commentCount, dialogCount: null, load: loadClip, userPaused: false };
   function togglePlayback() {
     if (!media) return;
+    entry.userPaused = !media.paused;
     if (media.paused) media.play().catch(() => {});
     else media.pause();
   }
@@ -281,6 +359,10 @@ function setCurrent(entry) {
     if (media === entry.media) media.play().catch(() => {});
     else media.pause();
   });
+  // Load the current Short first, then its neighbours, so they do not share its bandwidth; the rest stay empty.
+  entry.userPaused = false;
+  const index = entries.indexOf(entry);
+  entry.load().then(() => { entries[index + 1]?.load(); entries[index - 1]?.load(); });
   updateNavigation(entries.indexOf(entry));
 }
 
@@ -298,7 +380,7 @@ document.addEventListener('keydown', (event) => {
     return;
   }
   const target = event.target;
-  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return;
+  if (target instanceof HTMLTextAreaElement || (target instanceof HTMLInputElement && target.type !== 'range')) return;
   if (document.querySelector('.menu:not([hidden])') || document.querySelector('dialog[open]')) return;
   if (event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.metaKey && !event.altKey && current?.media) {
     setMuted(!soundMuted);

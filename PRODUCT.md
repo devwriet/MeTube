@@ -30,10 +30,10 @@ The look is the exact inverse (255 minus each channel) of YouTube's light theme,
 
 - **Stack:** plain HTML, CSS and vanilla ES modules. No frameworks, no bundler or build step (mentor ruling, 2026-10-26). `fetch` of static JSON is allowed.
 - **Grading priority:** JS features and their depth come first (mentor: "use JS to its fullest", no limit on feature count). Visual fidelity to YouTube is the baseline, not the main score.
-- **Data:** `data/videos.json` (6 channels, 26 videos: 16 videos and 10 shorts), guest state in `localStorage` under `metube:` keys.
+- **Data:** `data/videos.json` (21 channels, 24 videos: 16 videos and 8 shorts; real titles, counts and dates from the source videos, real 20-second 1080p clips and thumbnails credited in `media/SOURCES.md`; the guest's own channel `ch-woopi` has no videos and comments start empty), guest state in `localStorage` under `metube:` keys.
 - **Working features:** feeds and categories, search, watch page with likes, comments and subscriptions, watch later, history, liked list, card ⋮ menu with hide and undo, Shorts snap feed with comments panel, Profile tabs, sidebar drawer, toasts.
 - **Every feature ships with tablet and phone layouts.**
-- **Undecided:** real video clips (6 planned: 4 landscape, 2 vertical; `src` is null until recorded); theme toggle and top loading bar are deferred; whether an external login or backend counts is not yet asked.
+- **Undecided:** theme toggle and top loading bar are deferred; whether an external login or backend counts is not yet asked.
 
 ## Brand Commitments
 
@@ -43,8 +43,8 @@ The look is the exact inverse (255 minus each channel) of YouTube's light theme,
 
 ## Evidence on Hand
 
-- All video titles, channels, counts and comments are authored fake data; do not present them as real.
-- No real clips yet; players show "영상 준비 중". Do not fabricate playback.
+- Video titles, channels, counts and dates come from the team's real YouTube picks (public metadata); the clips are 20-second excerpts used only for this class project (see `media/SOURCES.md`). The guest's own channel and every comment are authored mock data.
+- Clips are loaded as Blobs (`js/clip.js`) so seeking works on a static server without Range support.
 - YouTube measurements live in session reports (not in the repo); `CLASSES.md` records the resulting numbers.
 
 ## Product Principles

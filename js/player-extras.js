@@ -1,7 +1,7 @@
 import { el } from './render.js';
 import { icon } from './icons.js';
 import { toast } from './card-menu.js';
-import { playerPrefs, setPlayerPrefs } from './store.js';
+import { playerPrefs, setPlayerPrefs, history } from './store.js';
 
 const isNarrow = () => matchMedia('(max-width: 999px)').matches;
 const trimmedRate = (rate) => `${Number(rate.toFixed(2))}x`;
@@ -118,6 +118,13 @@ export function installExtras(ctx) {
       const thumbSource = card.querySelector('.related-thumb');
       const thumbBox = el('div', 'related-thumb');
       thumbBox.dataset.tone = thumbSource.dataset.tone;
+      const sourceImage = thumbSource.querySelector('.thumb-img');
+      if (sourceImage) {
+        const image = el('img', 'thumb-img');
+        image.alt = '';
+        image.src = sourceImage.src;
+        thumbBox.append(image);
+      }
       thumbBox.append(el('span', 'card-duration', thumbSource.textContent));
       const thumbLink = el('a', 'card-link');
       thumbLink.href = source.href;
@@ -138,11 +145,15 @@ export function installExtras(ctx) {
   cancelButton.addEventListener('click', () => { hideNext(); showEnd(); });
   playNowButton.addEventListener('click', navigateNext);
   function showNext() {
-    const link = document.querySelector('.watch-secondary a[href*="watch.html"]');
+    // Skip videos already watched: two videos that list each other first would otherwise bounce forever.
+    const watched = new Set(history());
+    const link = [...document.querySelectorAll('.watch-secondary a[href*="watch.html"]')]
+      .find((a) => !watched.has(new URL(a.href).searchParams.get('v')));
     if (!autoplay || !link) return;
     hideNext();
     nextHref = link.href;
-    nextTitle.textContent = link.closest('.related-card')?.querySelector('.related-title')?.textContent.trim() || link.textContent.trim();
+    const titleLink = link.closest('.related-card')?.querySelector('.related-title a');
+    nextTitle.textContent = titleLink ? titleLink.childNodes[0].textContent : link.textContent.trim();
     focusWasInPlayer = player.contains(document.activeElement);
     nextOverlay.style.setProperty('--progress', '100%');
     nextOverlay.hidden = false;
@@ -160,6 +171,8 @@ export function installExtras(ctx) {
     }, 50);
   }
   media.addEventListener('ended', () => { showNext(); if (nextOverlay.hidden) showEnd(); });
+  // Leaving mid-countdown parks this page in the back/forward cache; the frozen timer would fire on Back.
+  window.addEventListener('pagehide', hideNext);
   media.addEventListener('seeking', () => { hideNext(); hideEnd(); });
   media.addEventListener('play', () => { hideNext(); hideEnd(); });
 

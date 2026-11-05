@@ -56,6 +56,7 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `card` | One video box with separate video and channel links | |
 | `card-link` | Thumbnail link to the video | |
 | `card-thumb` | Thumbnail box | 16:9, 12 px radius |
+| `thumb-img` | Real thumbnail image inside a thumbnail box | Fills the box (object-fit cover) over the placeholder colour; lazy-loaded; `alt` empty because the title is shown next to it. |
 | `card-duration` | Time badge on the thumbnail | bottom right |
 | `card-body` | Row under the thumbnail | avatar plus text |
 | `card-avatar` | Channel picture (`avatar-md`) | not shown on Profile |
@@ -89,6 +90,8 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `player-progress-fill` | Played track range | MeTube accent |
 | `player-progress-thumb` | Scrub thumb | shown on hover or focus |
 | `player-tooltip` | Hover seek time | above progress track |
+| `player-preview` | Frame preview above the progress time tooltip | Shows while hovering or dragging the bar; follows `--hover-position`, clamped inside the player; 168 px wide (96 px on phones); `pointer-events: none`. |
+| `player-preview-video` | Silent second copy of the clip inside the preview | Created on first hover or drag; 16:9, `object-fit: cover`. |
 | `player-button-row` | Playback button row | 48 px high |
 | `player-control-group` | Left (play, volume, time) or right (settings, fullscreen) cluster | 8 px gaps |
 | `player-button` | Player action button | 40 px round pill (play icon 36 px); 48x40 inside the right pill; 44 px on phones |
@@ -180,7 +183,11 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `short-player` | Vertical video or placeholder | 9:16; 12 px radius; full stage height |
 | `short-play` | Play/pause control for a real video | 48 px circle; 16 px top/left; scrim background |
 | `short-mute` | Sound toggle for a real video | 48 px circle; 16 px top/right; scrim background; one mute state for the whole feed |
-| `short-progress` | Seekable progress bar on a real video | range input, 24 px hit area (44 px on phones and touch); 3 px track (5 px on hover/focus); accent fill via `--progress` |
+| `short-progress` | Seekable progress bar on a real video | range input, 24 px hit area (44 px on phones and touch); 3 px track (5 px and a 14 px thumb on hover, focus or drag); accent fill via `--progress` |
+| `short-scrub` | Preview bubble above the progress bar | Shows while hovering, dragging or after a keyboard seek; `--scrub-x` follows the pointer; `pointer-events: none`. |
+| `short-scrub-video` | Frame preview inside the bubble | Second silent copy of the clip, created on first use; 108 px wide, 9:16. |
+| `short-scrub-time` | Time under the preview frame | Scrim pill; 16 px, `m:ss`. |
+| `short-player-scrubbing` | State class on `short-player` | Set while the bar is being dragged: thumb and 5 px track stay visible; playback holds still. |
 | `short-video` | Video inside the player | absolute fill; object-fit cover |
 | `short-status` | Video preparation status pill | 36 px high; 18 px radius; 14 px text |
 | `short-overlay` | Text over the bottom of the video | 156 px minimum; 16 px inset and bottom gradient |

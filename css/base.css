@@ -314,6 +314,8 @@ button.guide-item {
   font: inherit; font-weight: 500; cursor: pointer;
 }
 
+/* real thumbnail image fills its box over the placeholder colour */
+.thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
 /* placeholder thumbnails until real clips exist: data-tone 0-5 is set from the video's hue (js/render.js) */
 [data-tone="0"] { background: linear-gradient(135deg, var(--accent), var(--mint)); }
 [data-tone="1"] { background: linear-gradient(45deg, var(--mint), var(--accent)); }

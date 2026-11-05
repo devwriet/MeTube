@@ -16,6 +16,8 @@ const title = document.querySelector('.page-title');
 const chips = document.querySelector('.chips');
 const grid = document.querySelector('.video-grid');
 const message = document.querySelector('.page-message');
+// The HTML ships a "needs a local server" hint for file://, where this script never runs. Scripts ran, so drop it.
+message.hidden = true;
 let category = params.get('category') ?? '';
 let data;
 
