@@ -1,7 +1,7 @@
 // Channel page: profile.html?c=<channelId>. Default is the guest's own channel (ch-woopi).
 import { renderLayout } from './layout.js';
 import { loadData } from './data.js';
-import { el, avatar, setTone, thumb, addThumbImage, watchUrl, shortsUrl, videoStats, subscribeButton } from './render.js';
+import { el, channelAvatar, setTone, thumb, addThumbImage, watchUrl, shortsUrl, videoStats, subscribeButton } from './render.js';
 import { cardMenu, soon } from './card-menu.js';
 import { formatSubscribers, formatViews, formatDuration, koCount } from './format.js';
 import { icon } from './icons.js';
@@ -165,7 +165,7 @@ try {
     community.addEventListener('click', soon);
     info.append(el('h1', 'profile-name', channel.name), meta, el('p', 'profile-bio', channel.bio), row('profile-actions', [subscribeButton(channel.id), community]));
     const profileHeader = el('section', 'profile-header');
-    profileHeader.append(avatar(channel.avatarLetter, 'lg', 'profile-avatar'), info);
+    profileHeader.append(channelAvatar(channel, 'lg', 'profile-avatar'), info);
     wrap.append(banner, profileHeader);
 
     const panels = [

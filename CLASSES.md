@@ -28,6 +28,7 @@ Sizes come from measuring youtube.com (2026-10-20). Colors: only `var(--...)` fr
 | `icon-button` | Round icon-only button | 40 px; 44 px on phones |
 | `icon` | Inline SVG icon (copy from `media/icons/`) | 24 px, takes the text color; add `aria-hidden="true"` |
 | `avatar` | Round picture or letter | `avatar-xs` 24 (sidebar channels), `avatar-sm` 32, `avatar-md` 36, `avatar-lg` 160 |
+| `avatar-img` | Real picture on top of the letter | removed if the file fails, so the letter shows |
 | `guide` | Left sidebar | 240 px wide; `guide-mini` is 72 px; hidden at 791 px or less (tablet and phone). `guide-drawer` = always hidden (Watch); `guide-open` = the menu button shows it as a 240 px overlay at <=1312 px and on Watch at every width, with `guide-scrim` behind it |
 | `guide-item` | One sidebar link | 40 px high (76 px inside `guide-mini`, icon above an 11 px label; youtube.com uses 10 px, below our 11 px readability floor); `guide-item-active` for the current page |
 | `guide-more` | Everything below Home and Shorts in the wide sidebar | hidden in mini mode |
@@ -165,6 +166,8 @@ Home = `header` + `guide` + `page` containing `chips` and `video-grid`.
 | `comment-time` | "2 days ago" | secondary color |
 | `comment-text` | The comment | |
 | `comment-like` | Like button and count | |
+| `comment-replies-toggle` | "답글 3개" button under a comment | 32 px; 44 px on phones |
+| `comment-replies` | List of replies under a comment | 24 px avatars; built on first open |
 | `related-list` | List in the right column | |
 | `related-card` | One row | thumbnail left, text right |
 | `related-thumb` | Thumbnail | 16:9; desktop width min(62%, 235 px); title up to 3 lines |

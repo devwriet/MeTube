@@ -80,6 +80,15 @@
 .comment-text { margin-top: 4px; line-height: 20px; overflow-wrap: anywhere; white-space: pre-line; }
 .comment-like { margin-top: 8px; height: 32px; padding: 0 12px 0 8px; font-size: 12px; }
 .comment-like .icon { width: 18px; height: 18px; }
+.comment-replies-toggle {
+  display: block; min-height: 32px; margin-top: 4px; padding: 0 12px; border: 0; border-radius: 16px;
+  background: none; color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer;
+}
+.comment-replies-toggle:hover { background: var(--hover); }
+.comment-replies { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.comment-replies[hidden] { display: none; }
+.comment-replies .avatar { width: 24px; height: 24px; font-size: 12px; }
+@media (max-width: 650px) { .comment-replies-toggle { min-height: 44px; } }
 
 /* related list */
 .related-list { display: flex; flex-direction: column; gap: 8px; }

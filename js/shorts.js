@@ -1,6 +1,6 @@
 import { renderLayout } from './layout.js';
 import { loadData } from './data.js';
-import { el, avatar, setTone, commentItem, subscribeButton, channelUrl, shortsUrl } from './render.js';
+import { el, avatar, channelAvatar, setTone, commentItem, subscribeButton, channelUrl, shortsUrl } from './render.js';
 import { koCount, formatDuration } from './format.js';
 import { cardMenu, toast } from './card-menu.js';
 import {
@@ -270,7 +270,7 @@ function makeEntry(video, channel) {
   const channelRow = el('div', 'short-channel');
   const channelLink = el('a');
   channelLink.href = channelUrl(channel.id);
-  channelLink.append(avatar(channel.avatarLetter, 'sm'), el('span', 'short-channel-name', channel.name));
+  channelLink.append(channelAvatar(channel, 'sm'), el('span', 'short-channel-name', channel.name));
   channelRow.append(channelLink, subscribeButton(channel.id));
   overlay.append(channelRow, el('h2', 'short-title', video.title));
   player.append(overlay);
@@ -310,7 +310,7 @@ function makeEntry(video, channel) {
   const thumbLink = el('a', 'short-channel-thumb');
   thumbLink.href = channelUrl(channel.id);
   thumbLink.setAttribute('aria-label', channel.name);
-  thumbLink.append(avatar(channel.avatarLetter, 'md'));
+  thumbLink.append(channelAvatar(channel, 'md'));
   rail.append(thumbLink);
   stage.append(player, rail);
   player.addEventListener('click', (event) => {

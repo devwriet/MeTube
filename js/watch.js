@@ -1,6 +1,6 @@
 import { renderLayout } from './layout.js';
 import { loadData, relatedVideos } from './data.js';
-import { el, avatar, setTone, relatedCard, commentItem, subscribeButton } from './render.js';
+import { el, avatar, channelAvatar, setTone, relatedCard, commentItem, subscribeButton } from './render.js';
 import { koCount, formatSubscribers, formatDate } from './format.js';
 import {
   GUEST_NAME, reaction, toggleReaction,
@@ -104,11 +104,11 @@ try {
       }
     });
     const channelRow = el('div', 'channel-row');
-    channelRow.append(avatar(channel.avatarLetter, 'md'), channelInfo, subscribe, actions);
+    channelRow.append(channelAvatar(channel, 'md'), channelInfo, subscribe, actions);
     primary.append(channelRow);
     const description = el('div', 'description-box');
     description.append(
-      el('p', '', `조회수 ${video.views.toLocaleString('ko-KR')}회 · ${formatDate(video.publishedAt)} · #${video.category}`),
+      el('p', '', `조회수 ${video.views.toLocaleString('ko-KR')}회 · ${formatDate(video.publishedAt)}${video.tags.length ? ` · ${video.tags.map((t) => `#${t}`).join(' ')}` : ` · #${video.category}`}`),
       el('p', '', video.description),
     );
     if (video.description.length >= 120 || video.description.includes('\n')) {

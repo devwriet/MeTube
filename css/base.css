@@ -87,11 +87,12 @@ button { cursor: pointer; }
 }
 .search-button:hover { background: var(--hover); }
 
-/* avatar (letter on the brand fill) */
+/* avatar: letter on the brand fill, with the picture on top when there is one */
 .avatar {
-  display: grid; place-items: center; flex: none; border-radius: 50%;
+  position: relative; display: grid; place-items: center; flex: none; border-radius: 50%;
   background: var(--accent); color: var(--on-accent); font-weight: 500;
 }
+.avatar-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .avatar-xs { width: 24px; height: 24px; font-size: 12px; }
 .avatar-sm { width: 32px; height: 32px; font-size: 14px; }
 .avatar-md { width: 36px; height: 36px; font-size: 16px; }

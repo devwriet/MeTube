@@ -1,6 +1,6 @@
 // Shared header and sidebar, rendered into the page's empty <header class="header"> and <nav class="guide">.
 import { icon } from './icons.js';
-import { el, avatar } from './render.js';
+import { el, channelAvatar } from './render.js';
 import { loadData } from './data.js';
 import { subscriptions } from './store.js';
 import { soon } from './card-menu.js';
@@ -215,7 +215,7 @@ export function renderLayout(active) {
     if (!channels.length) return;
     subs.append(
       heading('구독', 'home.html?feed=subscriptions'),
-      ...channels.map((channel) => item(channel.name, avatar(channel.avatarLetter, 'xs'), `profile.html?c=${channel.id}`, false)),
+      ...channels.map((channel) => item(channel.name, channelAvatar(channel, 'xs'), `profile.html?c=${channel.id}`, false)),
       el('hr'),
     );
   };

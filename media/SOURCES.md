@@ -2,6 +2,8 @@
 
 Demo footage for the MeTube school mockup (Applied Screen). Every clip is an excerpt (up to 20 seconds, up to 1080p) of a public YouTube video picked by the team and kept in `media/clips/`. Each thumbnail in `media/thumbs/` is the video's own YouTube thumbnail, or for Shorts a frame of the clip. Titles, view and like counts, upload dates, durations and channel names in `data/videos.json` come from the videos' public YouTube pages. All content belongs to its original owners and is used only inside this non-commercial class project, not redistributed or monetised.
 
+Comments, replies and profile pictures in `data/videos.json` and `media/avatars/` are copied from the same public YouTube pages (top comments, up to 100 per video). Comments with links or swear words were left out. They belong to their authors and appear only in this class project. Do not publish this copy.
+
 | MeTube id | Kind | Source video | Channel |
 | --- | --- | --- | --- |
 | MT000000001 | video | [·̩͙꒰ঌ 몬자야키, 말차, 그리고 사모예드🐾 ໒꒱·̩͙ 🐶🐰 #TOKYO / 드림 바이 드림 / DREAM x DREAM](https://www.youtube.com/watch?v=dOoFQl4TJfo) | NCT DREAM |

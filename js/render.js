@@ -2,7 +2,7 @@
 import { icon } from './icons.js';
 import { formatViews, timeAgo, formatDuration, koCount } from './format.js';
 import { cardMenu } from './card-menu.js';
-import { isSubscribed, toggleSubscription } from './store.js';
+import { isSubscribed, toggleSubscription, isCommentLiked, toggleCommentLike } from './store.js';
 
 export function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -39,12 +39,23 @@ export function thumb(className, video) {
   return box;
 }
 
-// Letter avatar; decorative because the name is always shown next to it.
-export function avatar(letter, size, extraClass) {
+// Decorative because the name is always shown next to it. The picture sits on top of the
+// letter, so a missing or dead image file falls back to the letter on its own.
+export function avatar(letter, size, extraClass, src) {
   const node = el('span', `avatar avatar-${size}${extraClass ? ' ' + extraClass : ''}`, letter);
   node.setAttribute('aria-hidden', 'true');
+  if (src) {
+    const image = el('img', 'avatar-img');
+    image.alt = '';
+    image.loading = 'lazy';
+    image.addEventListener('error', () => image.remove());
+    image.src = src;
+    node.append(image);
+  }
   return node;
 }
+
+export const channelAvatar = (channel, size, extraClass) => avatar(channel.avatarLetter, size, extraClass, channel.avatar);
 
 export function videoCard(video, channel) {
   const card = el('div', 'card');
@@ -60,7 +71,7 @@ export function videoCard(video, channel) {
   channelLink.href = channelUrl(channel.id);
   channelLink.tabIndex = -1;
   channelLink.setAttribute('aria-hidden', 'true');
-  channelLink.append(avatar(channel.avatarLetter, 'md', 'card-avatar'));
+  channelLink.append(channelAvatar(channel, 'md', 'card-avatar'));
 
   const titleLink = el('a', '', video.title);
   titleLink.href = watchUrl(video.id);
@@ -144,7 +155,24 @@ export function subscribeButton(channelId) {
   return button;
 }
 
-// comment: { author, text, time, likes? }. onLike() toggles in the store and returns the new state.
+// Replies are built on the first click: a page can hold 100 threads and most stay closed.
+function replyBlock(replies) {
+  const toggle = el('button', 'comment-replies-toggle', `답글 ${koCount(replies.length)}개`);
+  toggle.type = 'button';
+  toggle.setAttribute('aria-expanded', 'false');
+  const list = el('ul', 'comment-replies');
+  list.hidden = true;
+  toggle.addEventListener('click', () => {
+    if (!list.children.length) {
+      list.append(...replies.map((reply) => commentItem(reply, isCommentLiked(reply.id), () => toggleCommentLike(reply.id))));
+    }
+    list.hidden = !list.hidden;
+    toggle.setAttribute('aria-expanded', String(!list.hidden));
+  });
+  return [toggle, list];
+}
+
+// comment: { author, text, time, likes?, avatar?, replies? }. onLike() toggles in the store and returns the new state.
 export function commentItem(comment, liked, onLike) {
   const item = el('li', 'comment');
   const body = el('div', 'comment-body');
@@ -165,6 +193,8 @@ export function commentItem(comment, liked, onLike) {
   paint(liked);
 
   body.append(head, el('p', 'comment-text', comment.text), like);
-  item.append(avatar([...comment.author][0] ?? '?', 'md', 'comment-avatar'), body);
+  if (comment.replies?.length) body.append(...replyBlock(comment.replies));
+  const letter = [...comment.author.replace(/^@/, '')][0] ?? '?';
+  item.append(avatar(letter, 'md', 'comment-avatar', comment.avatar), body);
   return item;
 }
