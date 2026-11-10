@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeTube Profile 와이어프레임</title>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: var(--bg); color: var(--text); font: 14px var(--font); }
+
+    /* header */
+    .header { position: fixed; top: 0; left: 0; right: 0; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--bg); border-bottom: 1px solid var(--line); z-index: 10; }
+    .header-left, .header-right { display: flex; align-items: center; gap: 8px; }
+    .logo { display: flex; align-items: center; font-size: 18px; font-weight: 700; color: var(--text); }
+    .logo span { border: 1px solid var(--text-2); border-radius: 4px; padding: 0 4px; margin-right: 2px; }
+    .search { display: flex; flex: 0 1 640px; margin: 0 16px; }
+    .search-input { flex: 1; min-width: 0; height: 40px; padding: 0 16px; border: 1px solid var(--line); border-right: 0; border-radius: 20px 0 0 20px; background: var(--bg); color: var(--text); font: inherit; }
+    .search-button { width: 64px; height: 40px; border: 1px solid var(--line); border-radius: 0 20px 20px 0; background: var(--chip); color: var(--text); font: inherit; }
+    .icon-button { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: var(--chip); color: var(--text); font: inherit; }
+    .avatar { display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--chip); color: var(--text-2); }
+    .avatar-sm { width: 32px; height: 32px; }
+    .avatar-lg { width: 160px; height: 160px; }
+
+    /* guide-mini */
+    .guide-mini { position: fixed; top: 56px; left: 0; bottom: 0; width: 72px; padding: 4px; background: var(--bg); }
+    .guide-item { display: flex; align-items: center; justify-content: center; height: 40px; margin-bottom: 4px; border-radius: 8px; color: var(--text-2); font-size: 10px; }
+    .guide-item-active { background: var(--chip); color: var(--text); }
+
+    /* page */
+    .page { margin: 56px 0 0 72px; padding: 16px 24px 24px; }
+    .banner { display: flex; align-items: center; justify-content: center; height: 138px; border: 1px solid var(--line); border-radius: 16px; background: var(--chip); color: var(--text-2); }
+    .profile-header { display: flex; align-items: flex-start; gap: 24px; padding: 24px 0; }
+    .profile-header > div { min-width: 0; }
+    .profile-name { font-size: 36px; font-weight: 700; line-height: 44px; }
+    .profile-handle, .profile-stats, .profile-bio { margin-top: 8px; color: var(--text-2); }
+    .button { height: 36px; margin-top: 16px; padding: 0 16px; border: 1px solid var(--line); border-radius: 18px; font: inherit; font-weight: 500; cursor: pointer; }
+    .button-subscribe { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    /* tabs */
+    .tabs { display: flex; height: 48px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .tab { display: flex; align-items: center; padding: 0 24px; border-bottom: 2px solid transparent; color: var(--text-2); font-weight: 500; }
+    .tab-active { border-bottom-color: var(--text); color: var(--text); }
+
+    /* video-grid, card */
+    .video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .card { display: block; color: var(--text); }
+    .card-thumb { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 12px; background: var(--chip); color: var(--text-2); }
+    .card-duration { position: absolute; right: 8px; bottom: 8px; padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--text); font-size: 12px; }
+    .card-body { padding-top: 12px; }
+    .card-title { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 16px; font-weight: 500; line-height: 22px; }
+    .card-stats { margin-top: 4px; color: var(--text-2); }
+
+    @media (max-width: 1200px) { .video-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 800px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <button class="icon-button" type="button">≡</button>
+      <a class="logo"><span>Me</span>Tube</a>
+    </div>
+    <form class="search">
+      <input class="search-input" type="text" placeholder="검색">
+      <button class="search-button" type="button">검색</button>
+    </form>
+    <div class="header-right">
+      <button class="icon-button" type="button">+</button>
+      <button class="icon-button" type="button">벨</button>
+      <div class="avatar avatar-sm">나</div>
+    </div>
+  </header>
+
+  <nav class="guide-mini">
+    <a class="guide-item">Home</a>
+    <a class="guide-item">Shorts</a>
+    <a class="guide-item">구독</a>
+    <a class="guide-item guide-item-active">You</a>
+  </nav>
+
+  <main class="page">
+    <div class="banner">banner (높이 138px)</div>
+
+    <section class="profile-header">
+      <div class="avatar avatar-lg profile-avatar">profile-avatar</div>
+      <div>
+        <h1 class="profile-name">채널 이름</h1>
+        <p class="profile-handle">@deepfake</p>
+        <p class="profile-stats">구독자 0명 · 동영상 8개</p>
+        <p class="profile-bio">채널 소개 글이 들어가는 자리예요.</p>
+        <button class="button button-subscribe" type="button">Subscribe</button>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <a class="tab">Home</a>
+      <a class="tab tab-active">Videos</a>
+      <a class="tab">Shorts</a>
+      <a class="tab">About</a>
+    </nav>
+
+    <section class="video-grid">
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+      <a class="card">
+        <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+        <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 업로드 날짜</p></div>
+      </a>
+    </section>
+  </main>
+</body>
+</html>

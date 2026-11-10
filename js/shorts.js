@@ -1,0 +1,469 @@
+import { renderLayout } from './layout.js';
+import { loadData } from './data.js';
+import { el, avatar, channelAvatar, setTone, commentItem, subscribeButton, channelUrl, shortsUrl } from './render.js';
+import { koCount, formatDuration } from './format.js';
+import { cardMenu, toast } from './card-menu.js';
+import {
+  reaction, toggleReaction, comments, addComment, isCommentLiked,
+  toggleCommentLike, addHistory, hiddenVideos, hiddenChannels, GUEST_NAME,
+} from './store.js';
+import { icon } from './icons.js';
+import { clipUrl } from './clip.js';
+
+renderLayout('shorts');
+
+const page = document.querySelector('.shorts-page');
+const message = document.querySelector('.page-message');
+const requestedId = new URLSearchParams(location.search).get('v');
+// 멀미 나는 사람 배려. 설정 켜면 smooth 말고 바로 점프
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const commentsWide = matchMedia('(min-width: 1100px)');
+let current = null;
+let openComments = null;
+let entries = [];
+let navButtons;
+// 브라우저가 ㅈㅉ 소심함 (음소거 영상만 자동재생 허용, 그래서 음소거로 시작)
+// 소리 켜면 (클릭 = 제스처) 다음 쇼츠도 계속 켜짐. flag는 전체 공유
+let soundMuted = true;
+const muteRepaints = new Set();
+
+function setMuted(value) {
+  soundMuted = value;
+  for (const { media } of entries) if (media) media.muted = value;
+  muteRepaints.forEach((repaint) => repaint());
+}
+
+function action(iconName, label, text) {
+  const button = el('button', 'short-action');
+  button.type = 'button';
+  if (label) button.setAttribute('aria-label', label);
+  const count = el('span', 'short-action-label', text);
+  button.append(icon(iconName), count);
+  return [button, count];
+}
+
+function visibleComments(video) {
+  const guest = comments(video.id);
+  const seeds = [...video.comments].sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+  return [...guest, ...seeds];
+}
+
+function paintCommentCounts(entry, count) {
+  entry.commentCount.textContent = koCount(count);
+  entry.commentButton.setAttribute('aria-label', `댓글 ${koCount(count)}개`);
+  if (entry.dialogCount) entry.dialogCount.textContent = `${koCount(count)}개의 댓글`;
+}
+
+function closeComments(returnFocus = true) {
+  if (!openComments) return;
+  const { dialog, trigger } = openComments;
+  openComments = null;
+  if (dialog.open) dialog.close();
+  dialog.remove();
+  if (returnFocus && trigger.isConnected) trigger.focus({ preventScroll: true });
+}
+
+commentsWide.addEventListener('change', () => {
+  if (openComments) closeComments();
+});
+
+function makeComments(entry) {
+  const { video, stage, commentButton } = entry;
+  const dialog = el('dialog', 'shorts-comments');
+  dialog.setAttribute('aria-labelledby', 'shorts-comments-title');
+  const head = el('div', 'shorts-comments-head');
+  const heading = el('h2', '', '댓글');
+  heading.id = 'shorts-comments-title';
+  const count = el('span', 'shorts-comments-count');
+  const close = el('button', 'icon-button');
+  close.type = 'button';
+  close.setAttribute('aria-label', '댓글 닫기');
+  close.append(icon('close'));
+  head.append(heading, count, close);
+
+  const list = el('ul', 'comment-list');
+  const all = visibleComments(video);
+  all.forEach((comment) => list.append(commentItem(comment, isCommentLiked(comment.id), () => toggleCommentLike(comment.id))));
+  const empty = el('p', 'page-message', '첫 댓글을 남겨 보세요.');
+  empty.hidden = all.length > 0;
+
+  const form = el('form', 'comment-form');
+  const input = el('input', 'comment-input');
+  Object.assign(input, { type: 'text', name: 'comment', maxLength: 500, placeholder: '댓글 추가...', autocomplete: 'off', required: true });
+  input.setAttribute('aria-label', '댓글 추가');
+  const submit = el('button', 'button button-secondary', '댓글');
+  submit.type = 'submit';
+  submit.disabled = true;
+  form.append(avatar([...GUEST_NAME][0], 'md'), input, submit);
+  input.addEventListener('input', () => { submit.disabled = !input.value.trim(); });
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    const comment = addComment(video.id, text);
+    list.prepend(commentItem(comment, false, () => toggleCommentLike(comment.id)));
+    empty.hidden = true;
+    paintCommentCounts(entry, list.children.length);
+    input.value = '';
+    submit.disabled = true;
+    input.focus();
+  });
+  dialog.append(head, list, empty, form);
+  entry.dialogCount = count;
+  paintCommentCounts(entry, all.length);
+  close.addEventListener('click', () => closeComments());
+  dialog.addEventListener('close', () => {
+    if (openComments?.dialog !== dialog) return;
+    openComments = null;
+    dialog.remove();
+    if (commentButton.isConnected) commentButton.focus({ preventScroll: true });
+  });
+
+  if (openComments) closeComments(false);
+  stage.append(dialog);
+  openComments = { dialog, trigger: commentButton };
+  if (commentsWide.matches) dialog.show();
+  else dialog.showModal();
+  close.focus();
+}
+
+// 쇼츠 하나 = section 하나. 이 함수 욜라 김 (rip 나)
+function makeEntry(video, channel) {
+  const item = el('section', 'short-item');
+  item.dataset.video = video.id;
+  item.setAttribute('aria-label', video.title);
+  const stage = el('div', 'short-stage');
+  const player = setTone(el('div', 'short-player'), video.hue);
+  let media = null;
+  if (typeof video.src === 'string' && video.src.trim()) {
+    media = el('video', 'short-video');
+    // src 아직 없음 (loadClip이 현재랑 옆 쇼츠만 채움)
+    if (video.thumb) media.setAttribute('poster', video.thumb);
+    media.setAttribute('loop', '');
+    media.setAttribute('playsinline', '');
+    media.setAttribute('muted', '');
+    media.setAttribute('preload', 'metadata');
+    media.muted = soundMuted;
+    player.append(media);
+    const playButton = el('button', 'short-play');
+    playButton.type = 'button';
+    const paintPlayback = () => {
+      const playing = !media.paused;
+      playButton.setAttribute('aria-label', playing ? '일시정지' : '재생');
+      playButton.replaceChildren(icon(playing ? 'pause' : 'play_arrow'));
+    };
+    media.addEventListener('play', paintPlayback);
+    media.addEventListener('pause', paintPlayback);
+    playButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      togglePlayback();
+    });
+    player.append(playButton);
+    paintPlayback();
+
+    const muteButton = el('button', 'short-mute');
+    muteButton.type = 'button';
+    const paintMute = () => {
+      muteButton.setAttribute('aria-label', soundMuted ? '소리 켜기' : '음소거');
+      muteButton.replaceChildren(icon(soundMuted ? 'volume_off' : 'volume_up'));
+    };
+    muteRepaints.add(paintMute);
+    muteButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setMuted(!soundMuted);
+    });
+    paintMute();
+
+    // 공짜 seek은 range input이 줌 (키보드/터치/마우스 됨, 모양만 CSS로 깎음)
+    const progress = el('input', 'short-progress');
+    progress.type = 'range';
+    progress.min = '0';
+    progress.max = '1000';
+    progress.value = '0';
+    progress.setAttribute('aria-label', '재생 위치');
+    const paintProgress = () => {
+      const ratio = media.duration > 0 ? media.currentTime / media.duration : 0;
+      progress.value = String(Math.round(ratio * 1000));
+      progress.style.setProperty('--progress', `${ratio * 100}%`);
+    };
+    media.addEventListener('timeupdate', paintProgress);
+    media.addEventListener('loadedmetadata', paintProgress);
+    progress.addEventListener('input', () => {
+      if (media.duration > 0) media.currentTime = (Number(progress.value) / 1000) * media.duration;
+      paintProgress();
+    });
+    // 유튜브처럼 바 위 미리보기 (음소거 복사본에서 프레임 + 시간)
+    // 복사본은 hover/드래그 때 처음 만듦 (안 그러면 노는 쇼츠도 디코딩함)
+    const preview = el('div', 'short-scrub');
+    preview.hidden = true;
+    const previewTime = el('span', 'short-scrub-time', '0:00');
+    preview.append(previewTime);
+    let previewVideo = null;
+    let scrubbing = false;
+    let wasPlaying = false;
+    let hideTimer = 0;
+    const showPreview = (ratio) => {
+      if (!(media.duration > 0)) return;
+      if (!previewVideo) {
+        previewVideo = el('video', 'short-scrub-video');
+        previewVideo.muted = true;
+        previewVideo.preload = 'auto';
+        previewVideo.setAttribute('playsinline', '');
+        previewVideo.src = media.currentSrc || video.src;
+        preview.prepend(previewVideo);
+      }
+      const time = ratio * media.duration;
+      previewVideo.currentTime = time;
+      previewTime.textContent = formatDuration(Math.floor(time));
+      preview.style.setProperty('--scrub-x', `${ratio * 100}%`);
+      preview.hidden = false;
+    };
+    const hidePreview = () => { clearTimeout(hideTimer); preview.hidden = true; };
+    const ratioAt = (event) => {
+      const box = progress.getBoundingClientRect();
+      return Math.min(1, Math.max(0, (event.clientX - box.left) / box.width));
+    };
+    const endScrub = () => {
+      if (!scrubbing) return;
+      scrubbing = false;
+      player.classList.remove('short-player-scrubbing');
+      if (wasPlaying && current === entry) media.play().catch(() => { });
+      if (!progress.matches(':hover')) hidePreview();
+    };
+    progress.addEventListener('pointermove', (event) => { if (!scrubbing) showPreview(ratioAt(event)); });
+    progress.addEventListener('pointerleave', () => { if (!scrubbing) hidePreview(); });
+    progress.addEventListener('pointerdown', (event) => {
+      scrubbing = true;
+      wasPlaying = !media.paused;
+      media.pause();
+      player.classList.add('short-player-scrubbing');
+      showPreview(ratioAt(event));
+    });
+    // 쇼츠마다 하나씩 붙음, 구리게 썼누 ;;(document라 바 밖에서 놔도 끝남, 각자 flag만 봄)
+    document.addEventListener('pointerup', endScrub);
+    document.addEventListener('pointercancel', endScrub);
+    // 키보드 seek엔 포인터 없음. 화살표 누르면 말풍선 1초 띄움
+    progress.addEventListener('input', () => {
+      showPreview(Number(progress.value) / 1000);
+      if (!scrubbing && !progress.matches(':hover')) {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(hidePreview, 1000);
+      }
+    });
+    player.append(muteButton, progress, preview);
+
+    media.addEventListener('error', () => {
+      muteRepaints.delete(paintMute);
+      muteButton.remove();
+      progress.remove();
+      preview.remove();
+      playButton.remove();
+      media.remove();
+      media = null;
+      entry.media = null;
+      player.prepend(el('span', 'short-status', '영상을 불러오지 못했습니다'));
+    });
+  } else {
+    player.append(el('span', 'short-status', '영상 준비 중'));
+  }
+
+  const overlay = el('div', 'short-overlay');
+  const channelRow = el('div', 'short-channel');
+  const channelLink = el('a');
+  channelLink.href = channelUrl(channel.id);
+  channelLink.append(channelAvatar(channel, 'sm'), el('span', 'short-channel-name', channel.name));
+  channelRow.append(channelLink, subscribeButton(channel.id));
+  overlay.append(channelRow, el('h2', 'short-title', video.title));
+  player.append(overlay);
+
+  const rail = el('div', 'short-actions');
+  rail.setAttribute('aria-label', 'Shorts 작업');
+  const [like, likeCount] = action('thumb_up', '', '');
+  const [dislike, dislikeCount] = action('thumb_down', '', '싫어요');
+  const [comment, commentCount] = action('comment', '', '');
+  const [share] = action('share', '', '공유');
+  const paintReaction = (value) => {
+    const likes = video.likes + (value === 'like' ? 1 : 0);
+    const dislikes = video.dislikes + (value === 'dislike' ? 1 : 0);
+    likeCount.textContent = koCount(likes);
+    dislikeCount.textContent = '싫어요';
+    like.setAttribute('aria-label', `좋아요 ${koCount(likes)}개`);
+    dislike.setAttribute('aria-label', `싫어요 ${koCount(dislikes)}개`);
+    like.setAttribute('aria-pressed', String(value === 'like'));
+    dislike.setAttribute('aria-pressed', String(value === 'dislike'));
+  };
+  paintReaction(reaction(video.id));
+  like.addEventListener('click', () => paintReaction(toggleReaction(video.id, 'like')));
+  dislike.addEventListener('click', () => paintReaction(toggleReaction(video.id, 'dislike')));
+  comment.setAttribute('aria-label', `댓글 ${koCount(visibleComments(video).length)}개`);
+  commentCount.textContent = koCount(visibleComments(video).length);
+  comment.addEventListener('click', () => makeComments(entry));
+  share.addEventListener('click', async () => {
+    try {
+      const url = new URL(shortsUrl(video.id), location.href).href;
+      await navigator.clipboard.writeText(url);
+      toast('링크를 복사했습니다.');
+    } catch {
+      toast('링크를 복사하지 못했습니다.');
+    }
+  });
+  rail.append(like, dislike, comment, share, cardMenu(video));
+  const thumbLink = el('a', 'short-channel-thumb');
+  thumbLink.href = channelUrl(channel.id);
+  thumbLink.setAttribute('aria-label', channel.name);
+  thumbLink.append(channelAvatar(channel, 'md'));
+  rail.append(thumbLink);
+  stage.append(player, rail);
+  player.addEventListener('click', (event) => {
+    if (!media || event.target.closest('a, button, dialog, input')) return;
+    togglePlayback();
+  });
+  item.append(stage);
+  let loadPromise = null;
+  // 클립 통째로 Blob에 받음 (Range 없는 서버도 seek되게, clip.js 참고)
+  // 다 받으면 자동재생 (현재 쇼츠고 일시정지 안 했을 때만)
+  function loadClip() {
+    if (!media) return Promise.resolve();
+    loadPromise ??= clipUrl(video.src).then((url) => {
+      if (!media) return;
+      media.src = url;
+      media.preload = 'auto';
+      if (current === entry && !entry.userPaused) media.play().catch(() => { });
+    });
+    return loadPromise;
+  }
+  // 오 TDZ 안 걸림 (클로저가 entry 쓰는데 이 줄 뒤에서만 불림)
+  const entry = { item, stage, video, media, commentButton: comment, commentCount, dialogCount: null, load: loadClip, userPaused: false };
+  function togglePlayback() {
+    if (!media) return;
+    entry.userPaused = !media.paused;
+    if (media.paused) media.play().catch(() => { });
+    else media.pause();
+  }
+  return entry;
+}
+
+function updateNavigation(index) {
+  navButtons[0].hidden = index <= 0;
+  navButtons[1].hidden = index < 0 || index >= entries.length - 1;
+}
+
+function setCurrent(entry) {
+  if (!entry || current === entry) return;
+  if (openComments && openComments.trigger !== entry.commentButton) closeComments(false);
+  current = entry;
+  history.replaceState(null, '', shortsUrl(entry.video.id));
+  document.title = `${entry.video.title} - MeTube`;
+  addHistory(entry.video.id);
+  entries.forEach(({ media }) => {
+    if (!media) return;
+    if (media === entry.media) media.play().catch(() => { });
+    else media.pause();
+  });
+  // 현재 먼저, 옆 쇼츠는 그다음 (동시에 받으면 대역폭 나눠 먹음)
+  entry.userPaused = false;
+  const index = entries.indexOf(entry);
+  entry.load().then(() => { entries[index + 1]?.load(); entries[index - 1]?.load(); });
+  updateNavigation(entries.indexOf(entry));
+}
+
+function navigate(direction) {
+  const target = entries[entries.indexOf(current) + direction];
+  // 첫/끝 쇼츠면 갈 데 없음 (너는 못 지나간다)
+  if (!target) return false;
+  target.item.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start' });
+  return true;
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && openComments?.dialog.open && !openComments.dialog.matches(':modal')) {
+    closeComments();
+    return;
+  }
+  const target = event.target;
+  // range는 입력창 아님. 위/아래 키로 쇼츠 이동되게 예외 둠
+  if (target instanceof HTMLTextAreaElement || (target instanceof HTMLInputElement && target.type !== 'range')) return;
+  if (document.querySelector('.menu:not([hidden])') || document.querySelector('dialog[open]')) return;
+  if (event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.metaKey && !event.altKey && current?.media) {
+    setMuted(!soundMuted);
+    return;
+  }
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault();
+    navigate(event.key === 'ArrowDown' ? 1 : -1);
+  }
+});
+
+try {
+  const data = await loadData();
+  const hiddenVideoIds = new Set(hiddenVideos());
+  const hiddenChannelIds = new Set(hiddenChannels());
+  const videos = data.videos
+    .filter((video) => video.type === 'short' && !hiddenVideoIds.has(video.id) && !hiddenChannelIds.has(video.channelId))
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  if (!videos.length) {
+    message.textContent = '표시할 Shorts가 없습니다.';
+    message.hidden = false;
+  } else {
+    const feed = el('div', 'shorts-feed');
+    feed.tabIndex = -1;
+    entries = videos.map((video) => makeEntry(video, data.channel(video.channelId)));
+    feed.append(...entries.map((entry) => entry.item));
+
+    const nav = el('div', 'shorts-nav');
+    const previous = el('button', 'shorts-nav-btn');
+    previous.type = 'button';
+    previous.setAttribute('aria-label', '이전 Shorts');
+    previous.append(icon('arrow_upward'));
+    const next = el('button', 'shorts-nav-btn');
+    next.type = 'button';
+    next.setAttribute('aria-label', '다음 Shorts');
+    next.append(icon('arrow_downward'));
+    navButtons = [previous, next];
+    previous.addEventListener('click', () => navigate(-1));
+    next.addEventListener('click', () => navigate(1));
+    nav.append(previous, next);
+    page.append(feed, nav);
+
+    // 휠 한 제스처 = 쇼츠 한 개 (네이티브 snap은 한 칸 튕기고 같은 쇼츠로 돌아옴)
+    // 트랙패드 작은 delta는 40px 넘을 때까지 합산
+    // 잠금은 스크롤 중 + 트랙패드 관성 동안 연장, 도착했을 때만 걸림
+    let wheelLockUntil = 0;
+    let wheelSum = 0;
+    let wheelTimer = 0;
+    feed.addEventListener('wheel', (event) => {
+      if (event.ctrlKey || event.target.closest('dialog, .menu')) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now < wheelLockUntil) {
+        wheelLockUntil = Math.max(wheelLockUntil, now + 150);
+        return;
+      }
+      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? feed.clientHeight : 1; // px, 줄, 페이지 단위
+      const dy = event.deltaY * scale;
+      if (Math.abs(event.deltaX * scale) > Math.abs(dy)) return;
+      wheelSum += dy;
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { wheelSum = 0; }, 200);
+      if (Math.abs(wheelSum) < 40) return;
+      const moved = navigate(wheelSum > 0 ? 1 : -1);
+      wheelSum = 0;
+      if (moved) wheelLockUntil = now + 650;
+    }, { passive: false });
+
+    const initial = entries.find((entry) => entry.video.id === requestedId) ?? entries[0];
+    initial.item.scrollIntoView({ behavior: 'auto', block: 'start' });
+    updateNavigation(entries.indexOf(initial));
+    const observer = new IntersectionObserver((records) => {
+      const best = records
+        .filter((record) => record.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (best) setCurrent(entries.find((entry) => entry.item === best.target));
+    }, { root: feed, threshold: 0.6 });
+    entries.forEach((entry) => observer.observe(entry.item));
+    setCurrent(initial);
+  }
+} catch {
+  message.textContent = '동영상을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+  message.hidden = false;
+}

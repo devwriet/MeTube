@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeTube Profile Home 탭 와이어프레임 (모바일)</title>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html { background: var(--bg); }
+    /* 모바일 화면 폭(최대 390px)으로 고정해서 가운데에 보여줘요 */
+    body { display: flex; flex-direction: column; min-height: 100vh; max-width: 390px; margin: 0 auto; border-left: 1px solid var(--line); border-right: 1px solid var(--line); background: var(--bg); color: var(--text); font: 14px var(--font); }
+
+    /* header: 모바일은 로고와 아이콘만 */
+    .header { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 8px 0 12px; background: var(--bg); border-bottom: 1px solid var(--line); z-index: 10; }
+    .header-left, .header-right { display: flex; align-items: center; gap: 4px; }
+    .logo { display: flex; align-items: center; font-size: 18px; font-weight: 700; color: var(--text); }
+    .logo span { border: 1px solid var(--text-2); border-radius: 4px; padding: 0 4px; margin-right: 2px; }
+    .icon-button { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: var(--chip); color: var(--text); font: inherit; }
+    .avatar { display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--chip); color: var(--text-2); }
+    .avatar-sm { width: 32px; height: 32px; }
+    .avatar-lg { width: 160px; height: 160px; }
+
+    /* page */
+    .page { flex: 1; padding: 12px 16px 16px; }
+    .banner { display: flex; align-items: center; justify-content: center; height: 138px; border: 1px solid var(--line); border-radius: 16px; background: var(--chip); color: var(--text-2); }
+
+    /* profile-header: 세로로 쌓고 가운데 정렬 */
+    .profile-header { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 16px 0; text-align: center; }
+    .profile-avatar.avatar-lg { width: 96px; height: 96px; }
+    .profile-name { font-size: 24px; font-weight: 700; line-height: 32px; }
+    .profile-handle, .profile-stats, .profile-bio { margin-top: 4px; color: var(--text-2); }
+    .button { height: 36px; margin-top: 12px; padding: 0 16px; border: 1px solid var(--line); border-radius: 18px; font: inherit; font-weight: 500; cursor: pointer; }
+    .button-subscribe { width: 100%; background: var(--text); color: var(--bg); border-color: var(--text); }
+    .profile-header > div { width: 100%; }
+
+    /* tabs: 옆으로 스크롤 */
+    .tabs { display: flex; height: 48px; margin: 0 -16px 16px; padding: 0 8px; overflow-x: auto; white-space: nowrap; border-bottom: 1px solid var(--line); }
+    .tab { display: flex; align-items: center; padding: 0 16px; border-bottom: 2px solid transparent; color: var(--text-2); font-weight: 500; }
+    .tab-active { border-bottom-color: var(--text); color: var(--text); }
+
+    /* Home 탭 내용: 대표 영상 + 영상 묶음 */
+    .page section { margin-bottom: 24px; }
+    .page .profile-header { margin-bottom: 0; }
+    .page h2 { margin-bottom: 12px; font-size: 18px; font-weight: 700; line-height: 24px; }
+    .page article { margin-bottom: 24px; }
+    .page article .player { display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 12px; background: var(--chip); color: var(--text-2); }
+    .watch-title { margin-top: 12px; font-size: 16px; font-weight: 500; line-height: 22px; }
+    .page article .card-stats { margin-top: 4px; }
+    .page article .profile-bio { margin-top: 8px; }
+
+    /* video-grid: 작은 화면은 2열 */
+    .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+    .card { display: block; color: var(--text); }
+    .card-thumb { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 12px; background: var(--chip); color: var(--text-2); font-size: 12px; }
+    .card-duration { position: absolute; right: 6px; bottom: 6px; padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--text); font-size: 12px; }
+    .card-body { padding-top: 8px; }
+    .card-title { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; font-weight: 500; line-height: 20px; }
+    .card-stats { margin-top: 2px; color: var(--text-2); font-size: 12px; }
+
+    /* guide-mini: 모바일은 아래쪽 탭 바로 써요 */
+    .guide-mini { position: sticky; bottom: 0; display: flex; justify-content: space-around; height: 56px; padding: 8px; border-top: 1px solid var(--line); background: var(--bg); }
+    .guide-item { display: flex; flex: 1; align-items: center; justify-content: center; height: 40px; border-radius: 8px; color: var(--text-2); font-size: 12px; }
+    .guide-item-active { background: var(--chip); color: var(--text); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <a class="logo"><span>Me</span>Tube</a>
+    </div>
+    <div class="header-right">
+      <button class="icon-button" type="button">검색</button>
+      <button class="icon-button" type="button">벨</button>
+      <div class="avatar avatar-sm">나</div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="banner">banner (높이 138px)</div>
+
+    <section class="profile-header">
+      <div class="avatar avatar-lg profile-avatar">avatar</div>
+      <div>
+        <h1 class="profile-name">채널 이름</h1>
+        <p class="profile-handle">@deepfake</p>
+        <p class="profile-stats">구독자 0명 · 동영상 8개</p>
+        <p class="profile-bio">채널 소개 글이 들어가는 자리예요.</p>
+        <button class="button button-subscribe" type="button">Subscribe</button>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <a class="tab tab-active">Home</a>
+      <a class="tab">Videos</a>
+      <a class="tab">Shorts</a>
+      <a class="tab">About</a>
+    </nav>
+
+    <article>
+      <div class="player">대표 영상 (16:9)</div>
+      <p class="watch-title">대표 영상 제목</p>
+      <p class="card-stats">조회수 · 업로드 날짜</p>
+      <p class="profile-bio">대표 영상 설명이 들어가는 자리예요.</p>
+    </article>
+
+    <section>
+      <h2>최신 영상</h2>
+      <div class="video-grid">
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>인기 영상</h2>
+      <div class="video-grid">
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+        <a class="card">
+          <div class="card-thumb">썸네일<span class="card-duration">12:34</span></div>
+          <div class="card-body"><p class="card-title">영상 제목</p><p class="card-stats">조회수 · 날짜</p></div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="guide-mini">
+    <a class="guide-item">Home</a>
+    <a class="guide-item">Shorts</a>
+    <a class="guide-item">구독</a>
+    <a class="guide-item guide-item-active">You</a>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,171 @@
+/* 쇼츠 피드랑 댓글 패널. watch.css 다음에 로드. */
+.shorts-page { min-width: 0; padding: 0; }
+.shorts-feed {
+  height: calc(100dvh - 56px); overflow-y: auto;
+  scroll-snap-type: y mandatory; overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.shorts-feed::-webkit-scrollbar { display: none; }
+.short-item {
+  height: 100%; display: flex; justify-content: center;
+  padding: 8px 0 32px; box-sizing: border-box;
+  scroll-snap-align: start; scroll-snap-stop: always;
+}
+.short-stage { display: flex; align-items: flex-end; gap: 12px; height: 100%; }
+.short-player {
+  position: relative; height: 100%; aspect-ratio: 9 / 16;
+  max-width: calc(100vw - 32px); border-radius: 12px; overflow: hidden;
+  display: grid; place-items: center;
+}
+.short-play, .short-mute {
+  position: absolute; top: 16px; z-index: 1;
+  width: 48px; height: 48px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: var(--scrim);
+  color: var(--on-scrim); cursor: pointer;
+}
+.short-play { left: 16px; }
+.short-mute { right: 16px; }
+/* 얇은 바는 맨 아래. 입력칸 24px이라 커서로 맞히기 쉬움 */
+.short-progress {
+  --progress: 0%;
+  position: absolute; right: 0; bottom: 0; left: 0; z-index: 2;
+  width: 100%; height: 24px; margin: 0; padding: 0;
+  appearance: none; background: none; cursor: pointer;
+}
+/* pseudo-element 쓰바. 웹킷이랑 모질라가 따로 놀아서 트랙을 둘 다 씀 */
+.short-progress::-webkit-slider-runnable-track {
+  height: 3px; margin-top: 21px;
+  background: linear-gradient(to right, var(--accent) var(--progress), var(--scrim) var(--progress));
+}
+.short-progress::-moz-range-track { height: 3px; background: var(--scrim); }
+.short-progress::-moz-range-progress { height: 3px; background: var(--accent); }
+/* 호버, 포커스, 드래그 때 썸이랑 두꺼운 트랙 (youtube.com처럼) */
+.short-progress::-webkit-slider-thumb { width: 0; height: 0; appearance: none; border: 0; }
+.short-progress::-moz-range-thumb { width: 0; height: 0; border: 0; }
+.short-progress:hover::-webkit-slider-runnable-track,
+.short-progress:focus-visible::-webkit-slider-runnable-track,
+.short-player-scrubbing .short-progress::-webkit-slider-runnable-track { height: 5px; margin-top: 19px; }
+.short-progress:hover::-webkit-slider-thumb,
+.short-progress:focus-visible::-webkit-slider-thumb,
+.short-player-scrubbing .short-progress::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -4.5px; border-radius: 50%; background: var(--accent); }
+.short-progress:hover::-moz-range-thumb,
+.short-progress:focus-visible::-moz-range-thumb,
+.short-player-scrubbing .short-progress::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
+.short-scrub {
+  --scrub-x: 0%;
+  position: absolute; bottom: 36px; left: clamp(64px, var(--scrub-x), calc(100% - 64px)); z-index: 3; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none;
+}
+.short-scrub[hidden] { display: none; }
+.short-scrub-video {
+  width: 108px; aspect-ratio: 9 / 16; object-fit: cover;
+  border: 2px solid var(--on-scrim); border-radius: 8px; background: var(--bg);
+}
+.short-scrub-time {
+  padding: 2px 8px; border-radius: 12px; background: var(--scrim); color: var(--on-scrim);
+  font-size: 16px; font-weight: 500; line-height: 20px; font-variant-numeric: tabular-nums;
+}
+/* 손가락은 44px 필요. 터치 영역 키우고 얇은 트랙은 맨 아래 */
+@media (max-width: 650px), (pointer: coarse) {
+  .short-progress { height: 44px; }
+  .short-progress::-webkit-slider-runnable-track { margin-top: 41px; }
+  .short-progress:hover::-webkit-slider-runnable-track,
+  .short-progress:focus-visible::-webkit-slider-runnable-track,
+  .short-player-scrubbing .short-progress::-webkit-slider-runnable-track { margin-top: 39px; }
+  .short-scrub { bottom: 56px; }
+}
+.short-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.short-status {
+  height: 36px; padding: 0 16px; border-radius: 18px;
+  background: var(--scrim); color: var(--on-scrim);
+  font-size: 14px; font-weight: 500; line-height: 36px;
+}
+.short-overlay {
+  position: absolute; right: 0; bottom: 0; left: 0;
+  min-height: 156px; display: flex; flex-direction: column; justify-content: flex-end;
+  gap: 8px; padding: 0 16px 16px;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(to top, var(--scrim), transparent); color: var(--on-scrim);
+}
+.short-channel { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.short-channel > a { display: flex; align-items: center; gap: 8px; min-width: 0; color: inherit; }
+.short-channel-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 500; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+.short-channel .button { height: 40px; border-radius: 20px; }
+.short-title {
+  overflow: hidden; font-size: 14px; font-weight: 400; line-height: 20px;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.short-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; padding-bottom: 0; }
+.short-action {
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  border: 0; background: none; color: var(--text);
+  font-size: 12px; line-height: 18px; cursor: pointer;
+}
+.short-action .icon {
+  width: 48px; height: 48px; padding: 12px;
+  border-radius: 50%; background: var(--chip);
+}
+.short-action:hover .icon { background: var(--hover); }
+.short-action[aria-pressed="true"] .icon { background: var(--text); color: var(--bg); }
+.short-actions .card-menu { width: 48px; height: 48px; margin: 0; opacity: 1; background: var(--chip); }
+.short-actions .card-menu:hover { background: var(--hover); }
+.short-channel-thumb .avatar { width: 40px; height: 40px; border-radius: 6px; }
+.shorts-nav {
+  position: fixed; top: 50%; right: 24px; z-index: 5;
+  display: flex; flex-direction: column; gap: 16px; transform: translateY(-50%);
+}
+.shorts-nav-btn {
+  width: 56px; height: 56px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: var(--chip); color: var(--text);
+}
+.shorts-nav-btn:hover { background: var(--hover); }
+
+/* 넓은 화면에선 댓글이 플레이어 옆에 앉음 */
+@media (min-width: 1100px) {
+  .short-stage:has(> .shorts-comments[open]) { margin-right: 80px; }
+  .shorts-comments[open] {
+    position: static; flex: 0 1 480px; min-width: 360px;
+    width: auto; height: 100%; margin: 0 0 0 12px;
+    padding: 0; display: flex; flex-direction: column;
+    border: 1px solid var(--line); border-radius: 12px;
+    background: var(--bg); color: var(--text);
+  }
+}
+.shorts-comments[open] { color: var(--text); }
+.shorts-comments-head {
+  height: 57px; flex: none; display: flex; align-items: center; gap: 8px;
+  padding: 0 8px 0 16px; border-bottom: 1px solid var(--line);
+}
+.shorts-comments-head h2 { font-size: 16px; font-weight: 700; line-height: 22px; }
+.shorts-comments-count { color: var(--text-2); font-size: 16px; line-height: 22px; }
+.shorts-comments-head .icon-button { margin-left: auto; }
+.shorts-comments .comment-list { min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px; }
+.shorts-comments .comment-form { flex: none; margin: 0; padding: 12px 16px; border-top: 1px solid var(--line); }
+
+@media (min-width: 1100px) and (max-width: 1312px) {
+  .shorts-comments[open] { flex-basis: 409px; }
+}
+@media (max-width: 1099px) {
+  .shorts-comments[open] {
+    position: fixed; inset: 50% auto auto 50%;
+    width: min(480px, calc(100vw - 32px)); height: min(643px, calc(100dvh - 32px));
+    margin: 0; padding: 0; display: flex; flex-direction: column;
+    transform: translate(-50%, -50%); border: 1px solid var(--line);
+    border-radius: 12px; background: var(--bg); color: var(--text);
+  }
+  .shorts-comments::backdrop { background: var(--scrim); }
+}
+@media (max-width: 650px) {
+  .short-player { width: calc(100vw - 52px); aspect-ratio: auto; height: 100%; }
+  .short-stage { position: relative; gap: 0; }
+  .short-actions { position: absolute; right: 38px; bottom: 48px; z-index: 1; }
+  .short-action { color: var(--on-scrim); }
+  .short-action .icon { background: var(--scrim); }
+  .short-action:hover .icon { background: var(--scrim); }
+  .short-overlay { padding-right: 72px; }
+  .shorts-nav { display: none; }
+  .shorts-comments[open] {
+    inset: auto 0 0; width: 100%; max-width: none; height: 70dvh;
+    transform: none; border-radius: 12px 12px 0 0;
+  }
+}

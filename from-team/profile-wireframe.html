@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeTube - Profile</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+}
+a { color: inherit; text-decoration: none; }
+.icon { display: block; flex: none; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+/* header (same as components.html) */
+.header {
+  height: 56px; position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 0 24px;
+  background: var(--bg);
+}
+.header-left, .header-right { display: flex; align-items: center; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 4px; font-size: 20px; font-weight: 700; letter-spacing: -1px; }
+.logo i {
+  background: var(--accent); color: var(--on-accent);
+  border-radius: 6px; padding: 4px 10px; font-style: normal;
+}
+.icon-button {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: transparent;
+  color: var(--text);
+}
+.icon-button:hover { background: var(--hover); }
+.search { width: min(640px, 100%); height: 40px; display: flex; flex: 0 1 640px; min-width: 120px; margin: 0 auto; }
+.search-input {
+  flex: 1; min-width: 0; padding: 0 18px;
+  color: var(--text); background: var(--bg);
+  border: 1px solid var(--field-line); border-radius: 22px 0 0 22px;
+}
+.search-button {
+  width: 64px; border: 1px solid var(--field-line);
+  border-left: 0; border-radius: 0 22px 22px 0;
+  color: var(--text); background: var(--field-btn);
+}
+.search-button:hover { background: var(--hover); }
+
+/* mini sidebar */
+main { display: flex; }
+.guide {
+  width: 72px; flex: 0 0 72px; height: calc(100vh - 56px);
+  position: sticky; top: 56px; padding: 4px;
+  overflow-y: auto; background: var(--bg);
+}
+.guide-item {
+  height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; border-radius: 10px; color: var(--text); font-size: 11px;
+}
+.guide-item:hover { background: var(--hover); }
+.guide-item-active { background: var(--hover); font-weight: 700; }
+
+/* profile */
+.page { min-width: 0; flex: 1; padding: 0 24px 48px; }
+.profile-wrap { max-width: 1284px; margin: 0 auto; }
+.banner { height: 138px; margin-top: 16px; border-radius: 16px; background: linear-gradient(120deg, var(--accent), var(--mint)); }
+.profile-header { display: flex; gap: 24px; align-items: center; padding: 16px 0 12px; }
+.profile-avatar {
+  width: 160px; height: 160px; flex: none; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent);
+  display: grid; place-items: center; font-size: 64px; font-weight: 500;
+}
+.profile-name { font-size: 36px; line-height: 44px; font-weight: 700; }
+.profile-handle { color: var(--text); font-weight: 500; margin-top: 4px; }
+.profile-stats { color: var(--text-2); line-height: 20px; margin-top: 4px; }
+.profile-bio { color: var(--text-2); line-height: 20px; margin-top: 8px; max-width: 560px; }
+.button { height: 36px; padding: 0 16px; border: 0; border-radius: 999px; font-weight: 700; margin-top: 16px; }
+.button-subscribe { background: var(--text); color: var(--bg); }
+.button-subscribe:hover { opacity: .85; }
+
+.tabs { display: flex; height: 48px; border-bottom: 1px solid var(--line); margin-top: 8px; }
+.tab {
+  padding: 0 16px; display: grid; place-items: center;
+  color: var(--text-2); font-weight: 500; border-bottom: 2px solid transparent;
+}
+.tab:hover { color: var(--text); }
+.tab-active { color: var(--text); border-bottom-color: var(--text); }
+
+/* video grid and card (same as components.html; no card-avatar on Profile) */
+.video-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 16px; padding-top: 24px; }
+.card { display: block; min-width: 0; cursor: pointer; }
+.card-thumb {
+  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  border-radius: 12px; background: var(--hover);
+}
+.card:hover .card-thumb { border-radius: 8px; }
+.card-duration {
+  position: absolute; right: 8px; bottom: 8px; padding: 3px 6px;
+  border-radius: 4px; background: var(--scrim); color: var(--on-scrim);
+  font-size: 12px; font-weight: 500;
+}
+.card-body { padding-top: 12px; }
+.card-title {
+  font-size: 16px; line-height: 22px; font-weight: 500; margin-bottom: 4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-channel, .card-stats { color: var(--text-2); font-size: 14px; line-height: 20px; }
+
+@media (max-width: 1500px) {
+  .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1100px) {
+  .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile-header { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 650px) {
+  .header { padding: 0 10px; gap: 8px; }
+  .logo { font-size: 0; }
+  .logo i { font-size: 15px; }
+  .header-left, .header-right { gap: 4px; }
+  .guide { display: none; }
+  .page { padding: 0 12px 32px; }
+  .search-button { width: 44px; }
+  .profile-avatar { width: 96px; height: 96px; font-size: 40px; }
+  .profile-name { font-size: 28px; line-height: 34px; }
+  .tabs { overflow-x: auto; }
+  .video-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-left">
+    <button class="icon-button" type="button" aria-label="메뉴"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></button>
+    <a class="logo" href="#"><i>Me</i>Tube</a>
+  </div>
+  <form class="search" role="search" action="#">
+    <input class="search-input" type="search" placeholder="검색" aria-label="검색">
+    <button class="search-button" type="submit" aria-label="검색 버튼"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg></button>
+  </form>
+  <div class="header-right">
+    <button class="icon-button" type="button" aria-label="만들기"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></button>
+    <button class="icon-button" type="button" aria-label="알림"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg></button>
+    <button class="icon-button" type="button" aria-label="프로필"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <nav class="guide guide-mini" aria-label="사이드바">
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg></span><span>홈</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="m380-300 280-180-280-180v360ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Z"/></svg></span><span>Shorts</span></a>
+    <a class="guide-item" href="#"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M160-80q-33 0-56.5-23.5T80-160v-400q0-33 23.5-56.5T160-640h640q33 0 56.5 23.5T880-560v400q0 33-23.5 56.5T800-80H160Zm0-80h640v-400H160v400Zm240-40 240-160-240-160v320ZM160-680v-80h640v80H160Zm120-120v-80h400v80H280ZM160-160v-400 400Z"/></svg></span><span>구독</span></a>
+    <a class="guide-item guide-item-active" href="#" aria-current="page"><span><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg></span><span>나</span></a>
+  </nav>
+
+  <div class="page">
+    <div class="profile-wrap">
+      <div class="banner"></div>
+
+      <section class="profile-header">
+        <div class="profile-avatar">우</div>
+        <div>
+          <h1 class="profile-name">우피 (Woopi)</h1>
+          <div class="profile-handle">@woopi</div>
+          <div class="profile-stats">구독자 1.5만명 · 동영상 12개</div>
+          <p class="profile-bio">MeTube 첫 번째 채널입니다.</p>
+          <button class="button button-subscribe" type="button">Subscribe</button>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="채널 탭">
+        <a class="tab tab-active" href="#" aria-current="page">동영상</a>
+        <a class="tab" href="#">Shorts</a>
+        <a class="tab" href="#">재생목록</a>
+        <a class="tab" href="#">정보</a>
+      </nav>
+
+      <section class="video-grid">
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">10:00</span></div>
+          <div class="card-body"><div class="card-title">MeTube 첫 번째 영상 테스트입니다</div><div class="card-stats">조회수 1.2만회 · 3일 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">08:42</span></div>
+          <div class="card-body"><div class="card-title">집중할 때 듣기 좋은 잔잔한 음악 모음</div><div class="card-stats">조회수 8.4만회 · 1주 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">21:06</span></div>
+          <div class="card-body"><div class="card-title">게임 실력을 높이는 기본 설정과 팁</div><div class="card-stats">조회수 3.1만회 · 2일 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">15:18</span></div>
+          <div class="card-body"><div class="card-title">하루를 정리하는 조용한 에세이</div><div class="card-stats">조회수 9,200회 · 5일 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">09:51</span></div>
+          <div class="card-body"><div class="card-title">처음 시작하는 영상 편집 가이드</div><div class="card-stats">조회수 2.7만회 · 4일 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">18:03</span></div>
+          <div class="card-body"><div class="card-title">오늘의 주요 소식 한눈에 보기</div><div class="card-stats">조회수 6.5만회 · 1일 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">06:27</span></div>
+          <div class="card-body"><div class="card-title">책상 정리 브이로그</div><div class="card-stats">조회수 5천회 · 2주 전</div></div>
+        </a>
+        <a class="card" href="#">
+          <div class="card-thumb"><span class="card-duration">11:14</span></div>
+          <div class="card-body"><div class="card-title">비 오는 날 산책 영상</div><div class="card-stats">조회수 1.1만회 · 3주 전</div></div>
+        </a>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
+</html>

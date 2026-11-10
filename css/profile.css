@@ -1,0 +1,110 @@
+/* 채널 (프로필) 페이지. base.css 다음에 로드. 크기는 youtube.com 따라감 (CLASSES.md) */
+
+/* youtube.com처럼. 1313px부터 넓은 사이드바 때문에 856px로 다시 줄어듦 */
+.page { padding: 0 8px 48px; }
+.profile-wrap { width: 100%; margin: 0 auto; }
+@media (min-width: 671px) { .profile-wrap { width: 642px; } }
+@media (min-width: 957px) { .profile-wrap { width: 856px; } }
+@media (min-width: 1171px) { .profile-wrap { width: 1070px; } }
+@media (min-width: 1313px) { .profile-wrap { width: 856px; } }
+@media (min-width: 1339px) { .profile-wrap { width: 1070px; } }
+@media (min-width: 1553px) { .profile-wrap { width: 1284px; } }
+
+.banner { aspect-ratio: 6.204 / 1; margin-top: 20px; border-radius: 8px; }
+@media (min-width: 451px) { .banner { margin-top: 24px; border-radius: 16px; } }
+@media (min-width: 702px) { .banner { margin-top: 0; } }
+
+.profile-header { display: flex; gap: 16px; align-items: center; padding: 16px 0 4px; }
+.profile-name { font-size: 36px; line-height: 50px; font-weight: 700; overflow-wrap: anywhere; }
+.profile-meta { line-height: 20px; }
+.profile-handle { display: inline; color: var(--text); font-weight: 500; }
+.profile-stats { display: inline; color: var(--text-2); }
+.profile-stats::before { content: " \00b7  "; }
+.profile-bio { max-width: 600px; margin-top: 12px; color: var(--text-2); line-height: 20px; }
+.profile-actions { display: flex; gap: 8px; margin: 12px 0 8px; }
+
+@media (max-width: 839px) {
+  .profile-header { display: grid; grid-template-columns: 120px 1fr; gap: 0 16px; }
+  .profile-info { display: contents; }
+  .profile-avatar { width: 120px; height: 120px; grid-row: 1 / 4; font-size: 48px; }
+  .profile-meta, .profile-bio { grid-column: 2; font-size: 12px; line-height: 18px; }
+  .profile-bio { margin-top: 8px; }
+  .profile-actions { grid-column: 1 / -1; }
+  .profile-actions .button { flex: 1; justify-content: center; }
+}
+@media (max-width: 599px) {
+  .profile-header { grid-template-columns: 72px 1fr; }
+  .profile-avatar { width: 72px; height: 72px; grid-row: 1 / 3; font-size: 32px; }
+  .profile-name { font-size: 24px; line-height: 32px; }
+  .profile-handle, .profile-stats { display: block; }
+  .profile-stats::before { content: none; }
+  .profile-bio { grid-column: 1 / -1; }
+}
+
+/* 구분선 전체 너비. margin -8px으로 .page 패딩을 뚫음 */
+.tabs-bar {
+  position: sticky; top: 56px; z-index: 9;
+  margin: 0 -8px; padding: 0 8px;
+  background: var(--bg); box-shadow: inset 0 -1px 0 var(--line);
+}
+.tabs { display: flex; align-items: center; justify-content: space-between; height: 48px; overflow-x: auto; }
+.tablist { display: flex; flex: none; gap: 24px; }
+.tab {
+  flex: none; height: 48px; padding: 0;
+  background: none; border: 0; border-bottom: 2px solid transparent;
+  color: var(--text-2); font-size: 16px; line-height: 22px; font-weight: 500;
+}
+.tab:hover { color: var(--text); }
+.tab-active { color: var(--text); border-bottom-color: var(--text); }
+.tab:focus-visible { outline-offset: -2px; }
+.tabs > .icon-button { width: 48px; height: 48px; }
+@media (max-width: 650px) {
+  .tablist { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .tab { min-width: 44px; padding: 0 12px; }
+}
+.section-heading { margin-top: 24px; font-size: 20px; line-height: 28px; font-weight: 700; }
+.tab-panel .page-message { padding: 48px 16px; }
+
+/* 정렬 칩은 고정 안 함 (.chips는 sticky) */
+.tab-panel .chips { position: static; gap: 8px; padding: 16px 8px 8px; }
+
+/* 채널 페이지라 아바타, 채널명 없음 */
+.profile-wrap .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 16px; padding-top: 16px; }
+@media (max-width: 1170px) { .profile-wrap .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 670px) { .profile-wrap .video-grid { grid-template-columns: 1fr; } }
+.profile-wrap .card-body { justify-content: space-between; gap: 4px; }
+.profile-wrap .card-title { margin-bottom: 2px; }
+
+.shelf-wrap { position: relative; }
+.shelf { display: flex; gap: 8px; padding-top: 12px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
+.shelf-arrow {
+  position: absolute; top: 51px; z-index: 1; /* 210px 16:9 썸네일 가운데: 12 + 59 - 20 */
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; padding: 0;
+  border: 0; border-radius: 50%; background: var(--field-btn); color: var(--text);
+  box-shadow: 0 1px 4px var(--line);
+}
+.shelf-wrap:has(.shelf-wide) .shelf-arrow { top: 92px; } /* 354px 16:9 썸네일 */
+.shelf-wrap:has(.short-tile) .shelf-arrow { top: 150px; } /* 210px 2:3 썸네일 */
+.shelf-prev { left: 0; }
+.shelf-prev .icon { transform: scaleX(-1); }
+.shelf-next { right: 0; }
+.shelf > .card { flex: none; width: 210px; scroll-snap-align: start; }
+.shelf-wide > .card { width: min(354px, 85%); }
+.shelf .card-thumb { border-radius: 8px; }
+.shelf .card-title, .playlist-card .card-title { font-size: 14px; line-height: 20px; }
+@media (max-width: 650px) { .shelf-arrow { display: none; } }
+
+.profile-wrap .short-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 4px; }
+.profile-wrap .short-tile .card-thumb { aspect-ratio: 2 / 3; border-radius: 8px; }
+.playlist-card .card-body { padding-top: 8px; }
+@media (max-width: 670px) { .profile-wrap .short-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* 재생목록 줄 겹쳐 보이게 box-shadow로 흉내 */
+.profile-wrap .playlist-grid { grid-template-columns: repeat(auto-fill, 210px); gap: 16px 4px; }
+@media (max-width: 670px) { .profile-wrap .playlist-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+.playlist-card .card-thumb { margin-top: 8px; border-radius: 8px; box-shadow: 0 -4px 0 -2px var(--text-2), 0 -8px 0 -4px var(--line); }
+
+/* 정보 탭. 아무도 안 들어옴 (그래도 만듦) */
+.about { max-width: 720px; padding-top: 8px; }
+.about .card-stats { margin-top: 8px; }
