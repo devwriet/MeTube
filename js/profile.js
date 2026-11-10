@@ -1,4 +1,4 @@
-// Channel page: profile.html?c=<channelId>. Default is the guest's own channel (ch-woopi).
+// c 없으면 게스트 본인 채널 (ch-woopi)
 import { renderLayout } from './layout.js';
 import { loadData } from './data.js';
 import { el, channelAvatar, setTone, thumb, addThumbImage, watchUrl, shortsUrl, videoStats, subscribeButton } from './render.js';
@@ -44,7 +44,6 @@ function profileCard(video) {
   return card;
 }
 
-// One playlist per category of the channel's videos (Home lists only videos); it opens Home filtered to that category.
 function playlistCard(category, videos) {
   const card = el('a', 'card playlist-card');
   card.href = `home.html?category=${encodeURIComponent(category)}`;
@@ -81,6 +80,7 @@ function shelfControls(shelf, index) {
   const update = () => {
     const hidePrevious = shelf.scrollLeft <= 0;
     const hideNext = shelf.scrollLeft + shelf.clientWidth >= shelf.scrollWidth - 1;
+    // 포커스 날아감 ;>(숨겨질 화살표에 있으면 반대쪽으로 먼저 옮김)
     if (hidePrevious && document.activeElement === previous && !hideNext) {
       next.hidden = false;
       next.focus({ preventScroll: true });
@@ -104,7 +104,6 @@ function shelfControls(shelf, index) {
   return wrap;
 }
 
-// Sort chips plus a grid that is rebuilt on every click.
 function sortedPanel(panel, videos, build, gridClass, emptyText) {
   if (!videos.length) { panel.append(empty(emptyText)); return; }
   const chips = el('div', 'chips');
@@ -155,6 +154,7 @@ try {
     const shorts = own.filter((video) => video.type === 'short');
 
     const wrap = el('div', 'profile-wrap');
+    // setTone 띠가 60도 단위라 채널마다 60도씩 밀음
     const banner = setTone(el('div', 'banner'), data.channels.indexOf(channel) * 60);
 
     const info = el('div', 'profile-info');
@@ -171,6 +171,7 @@ try {
     const panels = [
       ['home', '홈', (panel) => {
         const sections = [
+          // 추천이라 써놓고 그냥 최신순임 ;;
           ['추천', 'shelf shelf-wide', [...videos].sort(byDate).slice(0, 6).map(profileCard)],
           ['Shorts', 'shelf', [...shorts].sort(byDate).slice(0, 6).map(profileCard)],
           ['인기 영상', 'shelf', [...videos].sort(byViews).slice(0, 6).map(profileCard)],
@@ -212,6 +213,7 @@ try {
     const search = el('button', 'icon-button');
     search.type = 'button';
     search.setAttribute('aria-label', '채널 검색');
+    // TODO: 채널 내 검색 만들기ㅣㅣ (지금은 버튼만 있음)
     search.addEventListener('click', soon);
     search.append(icon('search'));
     const tabs = el('div', 'profile-wrap tabs');
@@ -232,12 +234,13 @@ try {
       panel.setAttribute('role', 'tabpanel');
       panel.setAttribute('aria-labelledby', tab.id);
       fill(panel);
+      // 포커스 줄 게 없는 패널은 자기가 탭 정거장 됨 (키보드용)
       if (!panel.querySelector('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')) panel.tabIndex = 0;
       content.append(panel);
     });
 
     page.append(wrap, bar, content);
-    await import('./profile-tabs.js'); // wires the tabs now that they exist
+    await import('./profile-tabs.js'); // 순서 바꾸면 주금 ;>(profile-tabs.js가 로드 즉시 탭 찾음)
   }
 } catch {
   page.querySelectorAll('.profile-wrap, .tabs-bar').forEach((node) => node.remove());

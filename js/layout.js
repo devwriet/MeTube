@@ -1,4 +1,4 @@
-// Shared header and sidebar, rendered into the page's empty <header class="header"> and <nav class="guide">.
+// 공용 헤더 + 사이드바. 페이지의 빈 <header class="header">, <nav class="guide">에 채워 넣음
 import { icon } from './icons.js';
 import { el, channelAvatar } from './render.js';
 import { loadData } from './data.js';
@@ -42,6 +42,7 @@ function header(nav, query) {
     page = document.querySelector('.page');
     search = document.querySelector('.header .search');
     right = document.querySelector('.header-right');
+    // 드로어 열린 동안 키보드, 스크린리더가 밖으로 못 나가게 inert
     if (page) page.inert = true;
     if (search) search.inert = true;
     if (right) right.inert = true;
@@ -58,6 +59,7 @@ function header(nav, query) {
   nav.addEventListener('click', (event) => {
     if (event.defaultPrevented) return;
     const link = event.target.closest('a[href]');
+    // close(false): 링크 눌러서 떠나는 중이라 포커스 복귀 생략
     if (link && nav.contains(link)) close(false);
   });
   drawerQuery.addEventListener('change', () => {
@@ -66,7 +68,7 @@ function header(nav, query) {
     else menu.removeAttribute('aria-expanded');
   });
 
-  // Drawer mode uses an overlay through tablet widths; desktop keeps mini-sidebar toggling.
+  // 태블릿 폭까진 오버레이 드로어, 데스크톱은 미니 사이드바 토글
   menu.addEventListener('click', () => {
     if (drawerMode()) {
       if (nav.classList.contains('guide-open')) close();
@@ -102,8 +104,8 @@ function header(nav, query) {
   profile.href = 'profile.html';
   const create = iconButton('button', '만들기', 'add');
   const notifications = iconButton('button', '알림', 'notifications');
-  // upload + notifs: the 2 btns most likely to get clicked
-  // in the demo. naturally neither works
+  // 만들기, 알림은 제일 많이 눌릴 듯...? 안 되는데...
+  // (soon() 연결 = 준비 중 토스트, 안 되는 게 맞음. 이유: 작자가 귀차니즘 때문에 안 만듦)
   create.addEventListener('click', soon);
   notifications.addEventListener('click', soon);
   right.append(create, notifications, profile);
@@ -111,7 +113,8 @@ function header(nav, query) {
   return [left, search, right];
 }
 
-// One sidebar link. lead is an icon name or a node; no href = a placeholder that goes nowhere (pages we do not build).
+// lead는 아이콘 이름 또는 노드
+// href 없으면 placeholder (안 만든 페이지, 어디도 안 감)
 function item(label, lead, href, active, className = '') {
   const link = el('a', ['guide-item', active && 'guide-item-active', className].filter(Boolean).join(' '));
   link.href = href ?? '#';
@@ -121,7 +124,6 @@ function item(label, lead, href, active, className = '') {
   return link;
 }
 
-// Section title; with an href it is a link followed by a chevron.
 function heading(label, href) {
   if (!href) return el('h2', 'guide-heading', label);
   const link = el('a', 'guide-heading', label);
@@ -130,9 +132,8 @@ function heading(label, href) {
   return link;
 }
 
-// footer links to pages that dont exist. look important,
-// go nowhere, like a meeting that couldve been an email.
-// every click gets the 준비 중 toast instead of a 404
+// 푸터 링크들, 중요해 보이기만 함(실질적 없음)
+// 클릭하면 404 대신 준비 중 토스트
 const placeholders = (labels) => labels.map((label) => {
   const link = el('a', 'guide-link', label);
   link.href = '#';
@@ -140,7 +141,6 @@ const placeholders = (labels) => labels.map((label) => {
   return link;
 });
 
-// Clicking the button swaps it for the extra items.
 function showMore(extras) {
   const button = el('button', 'guide-item');
   button.type = 'button';
@@ -151,7 +151,8 @@ function showMore(extras) {
 
 const category = (name) => 'home.html?category=' + encodeURIComponent(name);
 
-// Home and Shorts, then the mini-only 구독 and 나 entries, then guide-more (wide sidebar only).
+// 구독, 나는 홈, Shorts 다음 (미니 사이드바에서만 보임)
+// guide-more는 넓은 사이드바에서만 보임
 function sidebar(active, subs) {
   const more = el('div', 'guide-more');
   more.append(
@@ -188,7 +189,7 @@ function sidebar(active, subs) {
   ];
 }
 
-// active: 'home', 'shorts', 'profile', 'history', 'later', 'liked', 'subscriptions' or null.
+// active: 'home', 'shorts', 'profile', 'history', 'later', 'liked', 'subscriptions' 또는 null
 export function renderLayout(active) {
   startNavProgress();
   let skipLink = document.querySelector('.skip-link');
@@ -204,7 +205,8 @@ export function renderLayout(active) {
   }
   const nav = document.querySelector('.guide');
   const query = new URLSearchParams(location.search).get('q') ?? '';
-  const subs = el('div'); // filled once the channel names are loaded
+  // 채널 이름 로드되면 채움 (그 전엔 빈 통)
+  const subs = el('div');
   document.querySelector('.header').replaceChildren(...header(nav, query));
   nav.replaceChildren(...sidebar(active, subs));
   let data = null;
@@ -212,6 +214,7 @@ export function renderLayout(active) {
     if (!data) return;
     const channels = subscriptions().map((id) => data.channel(id)).filter(Boolean);
     subs.replaceChildren();
+    // 구독 채널 0명. 나 혼자임 ㅠ
     if (!channels.length) return;
     subs.append(
       heading('구독', 'home.html?feed=subscriptions'),
@@ -225,5 +228,5 @@ export function renderLayout(active) {
   loadData().then((loaded) => {
     data = loaded;
     renderSubscriptions();
-  }).catch(() => {}); // the sidebar works without the channel list
+  }).catch(() => { }); // 채널 목록 없어도 사이드바는 멀쩡함
 }

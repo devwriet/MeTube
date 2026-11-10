@@ -1,5 +1,6 @@
 import { renderLayout } from './layout.js';
 import { loadData, categories, matchesQuery } from './data.js';
+import { shuffle } from './format.js';
 import { videoCard, shortCard, el } from './render.js';
 import { icon } from './icons.js';
 import { soon } from './card-menu.js';
@@ -7,6 +8,7 @@ import {
   subscriptions, history as watchHistory, watchLater, liked, hiddenVideos, hiddenChannels,
 } from './store.js';
 
+// 주소창 뜯어보기 ;>
 const params = new URLSearchParams(location.search);
 const q = params.get('q') ?? '';
 const feed = ['subscriptions', 'history', 'later', 'liked'].includes(params.get('feed')) ? params.get('feed') : '';
@@ -16,14 +18,17 @@ const title = document.querySelector('.page-title');
 const chips = document.querySelector('.chips');
 const grid = document.querySelector('.video-grid');
 const message = document.querySelector('.page-message');
-// The HTML ships a "needs a local server" hint for file://, where this script never runs. Scripts ran, so drop it.
+// 로컬 서버 안내 숨김 (file://에선 스크립트가 안 돌아서 안내가 남음)
 message.hidden = true;
 let category = params.get('category') ?? '';
 let data;
+// 칩마다 섞으면 멀미 날 듯. 로드 때 한 번만 섞음 (render 다시 돌아도 순서 유지)
+let shuffled;
 
 function render() {
-  const all = data.videos.filter((video) => video.type === 'video');
+  const all = (q ? data.videos : shuffled).filter((video) => video.type === 'video');
   const byDate = (videos) => videos.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  // 삼항 5층 꼬라지... 일단 됨 (feed별 목록 고르는 거)
   let list = feed === 'subscriptions'
     ? byDate(all.filter((video) => subscriptions().includes(video.channelId)))
     : feed === 'history'
@@ -32,7 +37,7 @@ function render() {
         ? watchLater().map((id) => data.video(id)).filter((video) => video?.type === 'video')
         : feed === 'liked'
           ? liked().map((id) => data.video(id)).filter((video) => video?.type === 'video')
-          : byDate([...all]);
+          : q ? byDate([...all]) : all;
   if (feed === '') {
     const hiddenVideoIds = new Set(hiddenVideos());
     const hiddenChannelIds = new Set(hiddenChannels());
@@ -44,11 +49,10 @@ function render() {
   if (feed === '' && q === '' && category === '') {
     const hiddenVideoIds = new Set(hiddenVideos());
     const hiddenChannelIds = new Set(hiddenChannels());
-    const shorts = data.videos
+    const shorts = shuffled
       .filter((video) => video.type === 'short'
         && !hiddenVideoIds.has(video.id)
-        && !hiddenChannelIds.has(video.channelId))
-      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+        && !hiddenChannelIds.has(video.channelId));
     if (shorts.length) {
       const shelf = el('section', 'shorts-shelf');
       shelf.setAttribute('aria-labelledby', 'shorts-shelf-title');
@@ -60,11 +64,13 @@ function render() {
       menuButton.type = 'button';
       menuButton.setAttribute('aria-label', 'Shorts 메뉴');
       menuButton.append(icon('more_vert'));
+      // 준비 중 토스트. 사실 준비 안 하는 중(ㅎ... 귀찮아요)
       menuButton.addEventListener('click', soon);
       header.append(heading, menuButton);
       const row = el('div', 'shorts-row');
       row.append(...shorts.map(shortCard));
       shelf.append(header, row);
+      // 카드 6개 뒤에 쇼츠 끼움. 6은 그냥 매직넘버임 (모자라면 맨 끝)
       grid.insertBefore(shelf, grid.children[6] ?? null);
     }
   }
@@ -87,6 +93,7 @@ document.addEventListener('metube:change', (event) => {
 
 try {
   data = await loadData();
+  shuffled = shuffle(data.videos);
   const labels = ['전체', ...categories(data.videos.filter((video) => video.type === 'video'))];
   if (category === '전체' || !labels.includes(category)) category = '';
   const heading = q ? `'${q}' 검색 결과` : ({ subscriptions: '구독', history: '시청 기록', later: '나중에 볼 동영상', liked: '좋아요 표시한 동영상' }[feed] ?? '홈');

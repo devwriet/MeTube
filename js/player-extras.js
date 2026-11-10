@@ -8,7 +8,7 @@ const trimmedRate = (rate) => `${Number(rate.toFixed(2))}x`;
 
 export function installExtras(ctx) {
   const { player, media, right, fullscreenButton, feedback } = ctx;
-  // One saved switch: starting on load (player.js) and the next-video countdown below.
+  // 로드 자동재생(player.js)이랑 아래 다음 동영상 카운트다운이 같이 씀
   let autoplay = playerPrefs().autoplay;
   let countdownTimer = 0;
   let touchPointerAt = 0;
@@ -43,7 +43,7 @@ export function installExtras(ctx) {
   const theaterButton = el('button', 'player-button player-theater');
   theaterButton.type = 'button';
   theaterButton.setAttribute('aria-pressed', 'false');
-  // Looked up on use: the player is built before watch.js puts it into .watch-layout.
+  // watch.js가 .watch-layout에 넣는 건 플레이어 만든 뒤라 함수로 찾음
   const layout = () => player.closest('.watch-layout');
   function paintTheater(on) {
     layout()?.classList.toggle('watch-theater', on);
@@ -92,10 +92,10 @@ export function installExtras(ctx) {
   }
   function navigateNext() {
     if (!nextHref) return;
+    // 다음 영상으로 납치 ㄱㄱ
     location.href = nextHref;
   }
-  // End screen: a few related videos over a dimmed, blurred last frame, like youtube.com. It shows when the
-  // clip ends and the next-video countdown is off or was cancelled; play or a seek away brings the video back.
+  // youtube 참고. 마지막 프레임을 backdrop-filter로 흐리게 깔고 띄움
   const endScreen = el('div', 'player-end');
   endScreen.hidden = true;
   endScreen.setAttribute('role', 'group');
@@ -106,7 +106,7 @@ export function installExtras(ctx) {
     endScreen.replaceChildren();
   }
   function showEnd() {
-    // Read from the related list so the end screen always matches it (same filters, same order).
+    // 사이드바 카드에서 읽음. 필터, 순서가 목록이랑 똑같아야 해서
     const cards = [...document.querySelectorAll('.watch-secondary .related-card')].slice(0, 3);
     if (!media.ended || !cards.length) return;
     endScreen.replaceChildren(...cards.map((card) => {
@@ -145,7 +145,7 @@ export function installExtras(ctx) {
   cancelButton.addEventListener('click', () => { hideNext(); showEnd(); });
   playNowButton.addEventListener('click', navigateNext);
   function showNext() {
-    // Skip videos already watched: two videos that list each other first would otherwise bounce forever.
+    // 본 영상 건너뛰기ㄱㄱ (둘이 서로 첫 추천이면 무한 핑퐁 터짐 = 망)
     const watched = new Set(history());
     const link = [...document.querySelectorAll('.watch-secondary a[href*="watch.html"]')]
       .find((a) => !watched.has(new URL(a.href).searchParams.get('v')));
@@ -171,7 +171,8 @@ export function installExtras(ctx) {
     }, 50);
   }
   media.addEventListener('ended', () => { showNext(); if (nextOverlay.hidden) showEnd(); });
-  // Leaving mid-countdown parks this page in the back/forward cache; the frozen timer would fire on Back.
+  // 카운트다운 중 나가면 bfcache에 얼어붙음
+  // 얼린 타이머가 뒤로가기 때 터짐. 그래서 pagehide에서 끔
   window.addEventListener('pagehide', hideNext);
   media.addEventListener('seeking', () => { hideNext(); hideEnd(); });
   media.addEventListener('play', () => { hideNext(); hideEnd(); });
@@ -181,6 +182,7 @@ export function installExtras(ctx) {
   contextMenu.setAttribute('role', 'menu');
   contextMenu.style.setProperty('--x', '0px');
   contextMenu.style.setProperty('--y', '0px');
+  // 메뉴 항목 만들기 복붙 시리즈 욜라 귀차늠
   const loopItem = el('button', 'player-context-item');
   loopItem.type = 'button';
   loopItem.setAttribute('role', 'menuitemcheckbox');
@@ -258,6 +260,7 @@ export function installExtras(ctx) {
   });
   player.addEventListener('contextmenu', (event) => {
     if (event.target.closest('.player-popup')) return;
+    // 터치 길게 누르면 contextmenu도 쏨. 브라우저 쪽으로 넘김
     if (touchPointerType === 'touch' && Date.now() - touchPointerAt < 3000) return;
     if (event.pointerType === 'touch' || event.sourceCapabilities?.firesTouchEvents) return;
     event.preventDefault();
@@ -309,6 +312,7 @@ export function installExtras(ctx) {
     if (event.key === ',' || event.key === '.') {
       if (!media.paused) return;
       event.preventDefault();
+      // 30fps라고 우김 (실제 프레임레이트 안 읽음 | 개발 시간 부족)
       const delta = event.key === ',' ? -1 / 30 : 1 / 30;
       media.currentTime = Math.max(0, Math.min(Number.isFinite(media.duration) ? media.duration : Infinity, media.currentTime + delta));
       feedback.text(event.key === ',' ? '-1프레임' : '+1프레임');
@@ -322,7 +326,7 @@ export function installExtras(ctx) {
     if (Number.isInteger(target) && Number.isFinite(target)) {
       const goal = () => Math.max(0, Number.isFinite(media.duration) ? Math.min(target, Math.max(0, media.duration - 0.01)) : target);
       const seekable = () => media.seekable.length > 0 && media.seekable.end(media.seekable.length - 1) >= goal();
-      // Seek once the target is seekable; without range requests that is only after the data has loaded.
+      // range 요청 안 되는 서버는 데이터 다 받아야 seek 됨
       const applyStartTime = () => {
         if (!seekable()) return;
         media.currentTime = goal();

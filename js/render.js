@@ -1,4 +1,4 @@
-// DOM builders. Data only ever goes in through textContent and attributes, never as markup.
+// innerHTML 쓰면 XSS 열림. 데이터는 textContent랑 attribute로만 (markup 넣지 마셈)
 import { icon } from './icons.js';
 import { formatViews, timeAgo, formatDuration, koCount } from './format.js';
 import { cardMenu } from './card-menu.js';
@@ -16,13 +16,12 @@ export const shortsUrl = (id) => `shorts.html?v=${encodeURIComponent(id)}`;
 export const channelUrl = (id) => `profile.html?c=${encodeURIComponent(id)}`;
 export const videoStats = (video) => `${formatViews(video.views)} · ${timeAgo(video.publishedAt)}`;
 
-// Placeholder colour: hue 0-359 picks one of 6 token gradients in base.css ([data-tone]).
+// 임시 색 (hue 0-359 → base.css data-tone 0-5 중 하나)
 export function setTone(node, hue) {
   node.dataset.tone = String(Math.floor((((hue % 360) + 360) % 360) / 60));
   return node;
 }
 
-// Real thumbnail on top of the placeholder colour; the colour still shows while it loads or if the file is missing.
 export function addThumbImage(box, video) {
   if (typeof video.thumb !== 'string' || !video.thumb) return box;
   const image = el('img', 'thumb-img');
@@ -39,8 +38,8 @@ export function thumb(className, video) {
   return box;
 }
 
-// Decorative because the name is always shown next to it. The picture sits on top of the
-// letter, so a missing or dead image file falls back to the letter on its own.
+// 사진은 글자 위에 얹는 장식 (이름은 옆에 항상 뜸)
+// 파일 없거나 깨지면 글자만 남음 (error에서 img 제거)
 export function avatar(letter, size, extraClass, src) {
   const node = el('span', `avatar avatar-${size}${extraClass ? ' ' + extraClass : ''}`, letter);
   node.setAttribute('aria-hidden', 'true');
@@ -149,13 +148,14 @@ export function subscribeButton(channelId) {
   };
   paint();
   button.addEventListener('click', () => toggleSubscription(channelId));
+  // 좀비 리스너. 버튼은 떠나도 document 리스너는 남음 (그래서 isConnected 확인)
   document.addEventListener('metube:change', (event) => {
     if (event.detail?.key === 'subscriptions' && button.isConnected) paint();
   });
   return button;
 }
 
-// Replies are built on the first click: a page can hold 100 threads and most stay closed.
+// 답글은 첫 클릭 때 만듦 (쓰레드 많고 대부분 안 열림)
 function replyBlock(replies) {
   const toggle = el('button', 'comment-replies-toggle', `답글 ${koCount(replies.length)}개`);
   toggle.type = 'button';
@@ -172,7 +172,8 @@ function replyBlock(replies) {
   return [toggle, list];
 }
 
-// comment: { author, text, time, likes?, avatar?, replies? }. onLike() toggles in the store and returns the new state.
+// 댓글 모양: { author, text, time, likes?, avatar?, replies? }
+// onLike()는 store에서 토글하고 새 상태를 돌려줌
 export function commentItem(comment, liked, onLike) {
   const item = el('li', 'comment');
   const body = el('div', 'comment-body');
@@ -183,6 +184,7 @@ export function commentItem(comment, liked, onLike) {
   like.type = 'button';
   const count = el('span');
   const paint = (on) => {
+    // on이면 일출, off면 영출 (1 or 0 출력)
     const n = (comment.likes ?? 0) + (on ? 1 : 0);
     like.setAttribute('aria-pressed', String(on));
     count.textContent = koCount(n);
@@ -194,6 +196,7 @@ export function commentItem(comment, liked, onLike) {
 
   body.append(head, el('p', 'comment-text', comment.text), like);
   if (comment.replies?.length) body.append(...replyBlock(comment.replies));
+  // [0]은 이모지를 반쪽 냄 (spread면 code point 단위로 쪼갬)
   const letter = [...comment.author.replace(/^@/, '')][0] ?? '?';
   item.append(avatar(letter, 'md', 'comment-avatar', comment.avatar), body);
   return item;

@@ -19,7 +19,8 @@
   transform: translate(-50%, -50%);
 }
 .player-autoplay-next[hidden] { display: none; }
-/* End screen. The overlay is its own size container so the card count follows the player, not the page. */
+/* 엔드 스크린. 자체 size container라 카드 수는 플레이어 크기를 따름 */
+/* backdrop-filter로 뒤의 마지막 프레임을 블러함. 아래는 --bg로 페이드 */
 .player-end {
   position: absolute; inset: 0; z-index: 1; container-type: inline-size;
   display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 16px 16px 72px;
@@ -35,7 +36,8 @@
   display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .player-end-title a { color: var(--text); }
-/* The title link stretches over the whole card, so the tap target is the card, never a 16 px text line. */
+/* 제목 링크가 카드 전체로 늘어남 (터치 영역도 카드 전체) */
+/* 16px 글씨 한 줄만 누르라고 하면 다 빗나감 */
 .player-end-title a::after { position: absolute; inset: 0; content: ''; }
 .player-end-meta { color: var(--text-2); font-size: 14px; line-height: 20px; }
 @container (min-width: 720px) { .player-end-card:nth-child(n+3) { display: block; } }

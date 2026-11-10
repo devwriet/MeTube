@@ -2,9 +2,8 @@ import { el, watchUrl, shortsUrl } from './render.js';
 import { icon } from './icons.js';
 import { isSaved, toggleSaved, isHiddenVideo, setHiddenVideo, isHiddenChannel, setHiddenChannel } from './store.js';
 
-// 1 ⋮ menu + 1 toast for the whole page,
-// every card reuses them. only 1 can be open
-// anyway so 200 hidden menus = dom confetti lmao
+// ⋮ 메뉴, 토스트는 페이지에 1개만
+// 카드마다 만들면 숨은 메뉴가 카드 수만큼 생김
 let menu;
 let toastNode;
 let toastTimer;
@@ -14,8 +13,9 @@ let toastPaused = false;
 let toastUndoButton;
 let activeButton;
 
-// built on first use, like most of my hw ngl
+// 숙제처럼 막판에 만듦 (처음 쓸 때)
 function ensureMenu() {
+  // 이미 있음, 또 만들면 주금 ㅋ
   if (menu) return menu;
   menu = el('div', 'menu');
   menu.setAttribute('role', 'menu');
@@ -33,8 +33,8 @@ function ensureToast() {
   toastNode.addEventListener('pointerenter', pauseToast);
   toastNode.addEventListener('pointerleave', resumeToast);
   toastNode.addEventListener('focusin', pauseToast);
-  // wait a tick bc focus going msg -> undo btn
-  // isnt actually leaving the toast
+  // 눈치 없는 브라우저가 밖으로 나간 걸로 침
+  // (포커스 이동 끝난 뒤에 확인하려고 한 틱 미룸)
   toastNode.addEventListener('focusout', (event) => {
     if (!toastNode.contains(event.relatedTarget)) queueMicrotask(resumeToast);
   });
@@ -43,6 +43,7 @@ function ensureToast() {
 }
 
 function closeMenu(returnFocus = false) {
+  // 안 열려 있으면 퇴근
   if (!menu || menu.hidden) return;
   menu.hidden = true;
   if (activeButton) activeButton.setAttribute('aria-expanded', 'false');
@@ -51,9 +52,8 @@ function closeMenu(returnFocus = false) {
   if (returnFocus) button?.focus();
 }
 
-// 8s timer pauses on hover/focus so slow readers
-// and keyboard ppl still get to hit undo.
-// keeps the time left, doesnt restart it
+// hover나 focus 하면 멈춤 (느린 독자, 키보드 유저도 실행취소 누르게)
+// 남은 시간 저장했다가 거기서 이어 감
 function pauseToast() {
   if (!toastNode || toastNode.hidden || toastPaused) return;
   toastPaused = true;
@@ -84,15 +84,15 @@ export function toast(message, actionLabel, action, afterAction) {
   if (actionLabel && action) {
     const button = el('button', 'toast-action', actionLabel);
     button.type = 'button';
-    // matched by label rn. rename 실행취소 and the
-    // focus fallback below breaks. rename both or get f-ed
+    // 지금은 라벨 글자로 매칭함. 실행취소 글자 바꾸면 아래 focus fallback 깨짐
+    // 둘 다 같이 바꿔라 쓰바 (호출부 문자열 + 여기 비교)
     if (actionLabel === '실행취소') toastUndoButton = button;
     button.addEventListener('click', () => {
       action();
       node.hidden = true;
       clearTimeout(toastTimer);
-      // undo re-renders the grid via metube:change,
-      // the card to focus only exists next frame
+      // 실행취소하면 metube:change로 그리드 다시 그림
+      // 카드는 다음 프레임에나 생김 (rAF로 기다림)
       if (afterAction) requestAnimationFrame(() => {
         const target = afterAction();
         if (target?.isConnected && target.getClientRects().length > 0) target.focus();
@@ -102,19 +102,20 @@ export function toast(message, actionLabel, action, afterAction) {
     node.append(button);
   }
   node.hidden = false;
-  // 8s: long enough to read, short enough to regret
+  // 8초: 읽기엔 충분하고 후회하긴 짧음
   startToastTimer(8000);
+  // 뜰 때 이미 hover나 포커스면 바로 멈춤
   if (node.matches(':hover') || node.contains(document.activeElement)) pauseToast();
 }
 
+// 숨은 카드는 투명카드 취급 (getClientRects()가 display:none이면 빔)
 function firstVisible(selector) {
   return [...document.querySelectorAll(selector)]
     .find((element) => element.isConnected && element.getClientRects().length > 0);
 }
 
-// where focus goes when ur thing got removed
-// (hidden vid, empty list): 1st card title, else
-// page msg/title. never leave focus on <body>
+// body에 포커스 두면 안 됨 ;>(키보드 유저 위치 잃음)
+// 1번 카드 제목 > 페이지 메시지/제목 순
 function focusFallback() {
   const title = firstVisible('.card-title a, .related-title a');
   if (title) {
@@ -123,13 +124,13 @@ function focusFallback() {
   }
   const destination = firstVisible('.page-message:not([hidden])') || firstVisible('.page-title');
   if (!destination) return;
+  // 제목은 링크 아님. tabindex=-1이라 스크립트로만 포커스됨
   if (!destination.hasAttribute('tabindex')) destination.tabIndex = -1;
   destination.focus();
 }
 
-// after a menu action: back to the ⋮ that opened it,
-// else the toast's undo, else focusFallback().
-// microtask + frame bc the action prob just re-rendered the card
+// 포커스 순서: ⋮ 버튼 > 실행취소 > focusFallback
+// 동작이 카드를 다시 그렸을 수 있어서 microtask + 프레임 한 번 기다림
 function restoreActionFocus(button) {
   queueMicrotask(() => requestAnimationFrame(() => {
     if (button?.isConnected) {
@@ -178,9 +179,9 @@ function fillMenu(video) {
   item(node, '재생목록에 저장', 'bookmark', soon);
   item(node, '오프라인 저장', 'download', soon);
   item(node, '공유', 'share', () => {
-    // navigator.clipboard only exists on https or localhost.
-    // demo from a classroom ip over plain http and u land
-    // in the catch below. how do i know? idk yet, hope it stays that way
+    // navigator.clipboard는 https나 localhost에서만 있음
+    // 교실 IP로 http 데모하면 아래 catch로 떨어짐
+    // 어떻게 아냐고? 아직 ㅁㄹ. 이대로 안 걸렸으면 좋겠음
     try {
       const link = new URL(video.type === 'short' ? shortsUrl(video.id) : watchUrl(video.id), location.href).href;
       Promise.resolve(navigator.clipboard.writeText(link))
@@ -191,8 +192,8 @@ function fillMenu(video) {
     }
   });
   item(node, '관심 없음', 'block', () => {
-    // undo restores the old state, not jst false,
-    // in case it was already hidden
+    // 실행취소는 이전 값으로 (그냥 false 아님)
+    // 원래 숨겨져 있던 거면 그대로 둬야 함
     const previous = isHiddenVideo(video.id);
     setHiddenVideo(video.id, true);
     toast('동영상을 숨겼습니다.', '실행취소', () => setHiddenVideo(video.id, previous), restoredVideoFocus(video.id));
@@ -206,10 +207,9 @@ function fillMenu(video) {
   return node;
 }
 
-// the 1 place style.* gets written (house-rule exception):
-// menu follows its btn, flips up when no room below.
-// phones use the css bottom sheet so inline values get cleared
+// style.* 직접 쓰는 유일한 곳 (규칙 예외, 쩔 수 없음)
 function positionMenu(button, node) {
+  // 폰은 CSS 바텀시트라 inline 값 비움
   if (matchMedia('(max-width: 650px)').matches) {
     node.style.left = '';
     node.style.top = '';
@@ -243,10 +243,9 @@ function onMenuKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     closeMenu(true);
-    // menu lives at the end of <body>, way off from its card
-    // in tab order, so tab closes it and goes back to ⋮
   } else if (event.key === 'Tab') {
     event.preventDefault();
+    // 메뉴가 body 맨 끝이라 Tab으로 못 넘어감, 그래서 닫고 ⋮로 복귀
     const button = activeButton;
     closeMenu();
     button?.focus();
@@ -254,7 +253,6 @@ function onMenuKeydown(event) {
     next = (index + 1) % items.length;
   } else if (event.key === 'ArrowUp') {
     next = (index - 1 + items.length) % items.length;
-    // home/end: for the 3 ppl on earth who know menus do this
   } else if (event.key === 'Home') {
     next = 0;
   } else if (event.key === 'End') {
@@ -271,14 +269,13 @@ document.addEventListener('pointerdown', (event) => {
   if (menu.contains(event.target) || activeButton?.contains(event.target)) return;
   closeMenu();
 });
-// resized window = menu floating where the btn used to be
+
 window.addEventListener('resize', () => closeMenu());
 
 export function cardMenu(video) {
   const button = el('button', 'card-menu');
   button.type = 'button';
-  // screen readers get the full title, everyone else
-  // gets three dots and a dream
+  // 스크린리더는 aria-label로 전체 제목 읽음
   button.setAttribute('aria-label', `작업 메뉴: ${video.title}`);
   button.setAttribute('aria-haspopup', 'menu');
   button.setAttribute('aria-expanded', 'false');
@@ -290,10 +287,11 @@ export function cardMenu(video) {
       openMenu(button, video);
     }
   });
+  // 버튼 찍어냈음, 카드 퇴근  ㄱㄱ
   return button;
 }
 
-// four menu items, one excuse lmao
+// 미구현 메뉴는 다 이걸로 때움 (준비 중 토스트)
 export function soon() {
   toast('준비 중인 기능입니다.');
 }

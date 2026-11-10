@@ -1,4 +1,3 @@
-// Profile tabs: show one panel, hide the rest. Panels are matched by aria-controls.
 const tabs = document.querySelectorAll('.tabs [role="tab"]');
 
 function select(tab) {
@@ -11,6 +10,7 @@ function select(tab) {
   });
 }
 
+// 뭐... 이게 전부임. 생각보다 짧누
 tabs.forEach((t, i) => {
   t.addEventListener('click', () => select(t));
   t.addEventListener('keydown', (e) => {

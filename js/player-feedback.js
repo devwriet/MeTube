@@ -120,6 +120,7 @@ export function installFeedback(ctx) {
       if (event.pointerType === 'mouse' || event.pointerType === 'pen') showTip(button, binding.key);
     });
     button.addEventListener('pointerleave', hideTip);
+    // 마우스 클릭도 focus 됨. 그래서 :focus-visible일 때만 툴팁
     button.addEventListener('focus', () => {
       if (button.matches(':focus-visible')) showTip(button, binding.key);
     });
@@ -128,10 +129,12 @@ export function installFeedback(ctx) {
     button.addEventListener('click', hideTip);
   }
 
+  // 호출마다 훅 걸기 귀차늠 -> class 감시 (player-idle은 player.js에서 토글됨)
   const idleObserver = new MutationObserver(() => {
     if (player.classList.contains('player-idle')) hideTip();
   });
   idleObserver.observe(player, { attributes: true, attributeFilter: ['class'] });
 
+  // 밖으로 내보내는 건 세 개뿐 ;>
   return { bezel: showBezel, text: showText, tooltip };
 }

@@ -3,6 +3,7 @@ import { icon } from './icons.js';
 import { soon } from './card-menu.js';
 
 const PRESETS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+// store.js cleanPlayerPrefs랑 범위 같음. 둘 다 같이 바꿀 것
 const MIN_RATE = 0.25;
 const MAX_RATE = 2;
 const roundRate = (rate) => Math.round(rate * 100) / 100;
@@ -79,6 +80,7 @@ export function installSettings(ctx) {
   speedPanel.append(backButton, currentRate, stepRow, presets);
 
   let submenuOpen = false;
+  // 패널 바꿀 때 focusout 뜸. 그때 메뉴 닫히는 거 막음
   let changingPanel = false;
   let playerPointerDown = false;
 
@@ -147,11 +149,11 @@ export function installSettings(ctx) {
   }
 
   button.addEventListener('click', (event) => {
+    // detail 0이면 키보드로 누른 거임 (이게 되네..?)
     if (menu.hidden) open(event.detail === 0);
     else close();
   });
-  // A mouse-opened menu keeps focus on the gear or wherever the viewer clicked next (clicks inside the
-  // player keep it open), so Escape is caught page-wide; keys inside the menu use the handler below.
+  // 마우스로 열면 포커스가 메뉴 밖에 있어서 Escape를 document에서 잡음
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || menu.hidden || menu.contains(event.target)) return;
     event.preventDefault();
@@ -159,7 +161,9 @@ export function installSettings(ctx) {
   });
   speedRow.addEventListener('click', openSpeed);
   backButton.addEventListener('click', returnToMain);
+  // TODO: 화질 만들기(?) ㅈㄴ 귀찮음. 일단은 soon()으로 때움
   qualityRow.addEventListener('click', () => soon());
+  // float 구림 (0.05 더하면 오차 쌓임, 매번 반올림)
   slower.addEventListener('click', () => {
     ctx.media.playbackRate = Math.max(MIN_RATE, roundRate(roundRate(ctx.media.playbackRate) - 0.05));
     syncRate();
@@ -211,6 +215,7 @@ export function installSettings(ctx) {
   document.addEventListener('pointerdown', (event) => {
     if (!ctx.player.contains(event.target)) close();
   });
+  // 플레이어 클릭하면 포커스 옮겨감. focusout에서 메뉴 닫히는 것 막음
   ctx.player.addEventListener('pointerdown', () => {
     playerPointerDown = true;
     setTimeout(() => { playerPointerDown = false; }, 0);

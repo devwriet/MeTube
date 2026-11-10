@@ -38,7 +38,7 @@ The look is the exact inverse (255 minus each channel) of YouTube's light theme,
 ## Brand Commitments
 
 - Name **MeTube**, team name **deepfake**.
-- UI copy in Korean; code identifiers and comments in English.
+- UI copy and code comments in Korean; code identifiers in English.
 - Accent `#0013de` is Srit's choice and binding; the inverse palette concept is binding.
 
 ## Evidence on Hand

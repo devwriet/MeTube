@@ -1,4 +1,5 @@
-// Material Symbols path data, copied from media/icons/*.svg (see media/icons/SOURCE.md). Only icons in use; add more the same way.
+// Material Symbols path, media/icons/*.svg에서 복사함 (출처: media/icons/SOURCE.md)
+// 쓰는 아이콘만 넣음 (욕심 부리면 파일만 비대해짐). 추가도 같은 방식으로
 const PATHS = {
   "fullscreen_exit": "M240-120v-120H120v-80h200v200h-80Zm400 0v-200h200v80H720v120h-80ZM120-640v-80h120v-120h80v200H120Zm520 0v-200h80v120h120v80H640Z",
   "settings": "m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z",
@@ -54,10 +55,12 @@ const PATHS = {
   "volume_down": "M200-360v-240h160l200-200v640L360-360H200Zm440 40v-322q45 21 72.5 65t27.5 97q0 53-27.5 96T640-320ZM480-606l-86 86H280v80h114l86 86v-252ZM380-480Z"
 };
 
+// createElementNS에 이걸 넣어야 SVG로 인식됨
 const NS = "http://www.w3.org/2000/svg";
 
-// <svg class="icon"> for a name in media/icons; decorative (aria-hidden).
 export function icon(name) {
+  // 이달의 우수 프로그래머: 나
+  // 이유: 코드에 오타냄 ;> (PATHS에 없는 이름이면 여기서 터짐)
   if (!PATHS[name]) throw new Error("unknown icon: " + name);
   const svg = document.createElementNS(NS, "svg");
   svg.setAttribute("class", "icon");
@@ -66,6 +69,7 @@ export function icon(name) {
   svg.setAttribute("height", "24");
   svg.setAttribute("fill", "currentColor");
   svg.setAttribute("aria-hidden", "true");
+  // path 하나면 충분. 여러 개 필요해지면 여기 고치기ㄱㄱ
   const path = document.createElementNS(NS, "path");
   path.setAttribute("d", PATHS[name]);
   svg.append(path);

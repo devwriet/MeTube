@@ -10,7 +10,7 @@ const isFiniteDuration = (media) => Number.isFinite(media.duration) && media.dur
 const secondsText = (seconds) => formatDuration(Math.max(0, Math.floor(Number.isFinite(seconds) ? seconds : 0)));
 
 export function attachControls(player, media, video) {
-  if (player.classList.contains('player-custom')) return; // attach once per player
+  if (player.classList.contains('player-custom')) return; // 한 플레이어에 한 번만 붙음 (두 번 붙으면 리스너 중복)
   player.setAttribute('role', 'group');
   player.setAttribute('tabindex', '0');
   player.setAttribute('aria-label', video.title);
@@ -35,8 +35,8 @@ export function attachControls(player, media, video) {
   const fill = el('span', 'player-progress-fill');
   const thumb = el('span', 'player-progress-thumb');
   const tooltip = el('span', 'player-tooltip');
-  // Frame preview above the time tooltip, like youtube.com. Its video is a second silent copy of the clip,
-  // created the first time somebody hovers or drags the bar.
+  // 시간 툴팁 위 프레임 미리보기. youtube.com 베낌
+  // 소리 없는 video 복사본은 hover 처음 할 때 만듦 (showHover)
   const preview = el('div', 'player-preview');
   preview.hidden = true;
   progress.append(buffered, fill, thumb, preview, tooltip);
@@ -72,7 +72,7 @@ export function attachControls(player, media, video) {
   const prefs = playerPrefs();
   media.volume = prefs.volume;
   media.muted = prefs.muted;
-  // defaultPlaybackRate too: setting src later (clip.js) re-runs the load algorithm, which resets playbackRate to it.
+  // src 늦게 넣으면 rate 리셋됨 ;; defaultPlaybackRate도 같이 넣음
   media.defaultPlaybackRate = media.playbackRate = prefs.rate;
   let dragging = false;
   let volumeDragging = false;
@@ -129,7 +129,8 @@ export function attachControls(player, media, video) {
   function scheduleHide() {
     clearHideTimer();
     const focused = document.activeElement;
-    // Only keyboard focus keeps the controls up; a mouse click leaves focus on the control but should not.
+    // 마우스 클릭 포커스는 무시함. 키보드 포커스일 때만 컨트롤 유지
+    // (마우스 클릭은 포커스가 남아도 숨겨져야 함)
     const keyboardFocus = player.contains(focused) && focused !== player && focused.matches(':focus-visible');
     if (media.paused || media.ended || settings?.isOpen() || controlsHeld || dragging || keyboardFocus) return;
     hideTimer = setTimeout(() => player.classList.add('player-idle'), 3000);
@@ -145,6 +146,7 @@ export function attachControls(player, media, video) {
   }
   function canHandleKey(event) {
     const target = event.target;
+    // 단축키 검문소 (입력창, dialog, 팝업이면 컷)
     if (event.ctrlKey || event.metaKey || event.altKey) return false;
     if (target instanceof Element && target.matches('input, textarea, select, [contenteditable], [contenteditable="true"]')) return false;
     if (document.querySelector('dialog[open], .menu:not([hidden])')) return false;
@@ -154,7 +156,7 @@ export function attachControls(player, media, video) {
   async function togglePlayback() {
     if (media.ended) media.currentTime = 0;
     if (media.paused) {
-      try { await media.play(); } catch { /* unavailable media remains paused */ }
+      try { await media.play(); } catch { /* 재생 실패하면 그냥 paused로 남음 (media 사용 불가) */ }
     } else media.pause();
     updatePlay();
   }
@@ -166,6 +168,7 @@ export function attachControls(player, media, video) {
   }
   function eventValue(event, element, max) {
     const rect = element.getBoundingClientRect();
+    // 너비 0이면 나눗셈 터짐 ;>(NaN 나옴)
     if (rect.width <= 0) return 0;
     const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
     return ratio * max;
@@ -188,7 +191,7 @@ export function attachControls(player, media, video) {
     tooltip.textContent = secondsText(value);
     tooltip.style.setProperty('--hover-position', position);
     preview.style.setProperty('--hover-position', position);
-    if (!media.currentSrc) return; // the clip is still loading
+    if (!media.currentSrc) return; // 클립 아직 로딩 중 (currentSrc 없음). 곧 옴
     if (!previewVideo) {
       previewVideo = el('video', 'player-preview-video');
       previewVideo.muted = true;
@@ -211,15 +214,15 @@ export function attachControls(player, media, video) {
   }
   function toggleMute() {
     if (!media.muted && media.volume > 0) { media.muted = true; return; }
-    if (media.volume === 0) media.volume = 0.5; // unmuting at zero volume would stay silent
+    if (media.volume === 0) media.volume = 0.5; // 볼륨 0에서 음소거 풀면 소리 안 남. 그래서 0.5로 올림
     media.muted = false;
   }
   function onDocumentKey(event) {
     if (!canHandleKey(event)) return;
     const key = event.key.toLowerCase();
     const slider = event.target.closest?.('[role="slider"]');
-    // Space keeps its own job on controls that use it (buttons, sliders, menu items, switches);
-    // everywhere else, links included, it plays/pauses instead of scrolling the page.
+    // Space는 버튼, 슬라이더, 메뉴, 스위치에선 제 기능이 있음 (그쪽이 우선)
+    // 그 밖엔 링크 포함 전부 재생/정지. 안 그러면 페이지가 스크롤됨
     if (key === ' ' && event.target.closest?.('button, [role="button"], [role="slider"], [role^="menuitem"], [role="switch"], [role="tab"]')) return;
     if (['k', ' '].includes(key)) { event.preventDefault(); togglePlaybackWithFeedback(); return; }
     if (key === 'j' || key === 'l') { event.preventDefault(); seekTo(media.currentTime + (key === 'j' ? -10 : 10)); ctx.feedback.text(`${key === 'j' ? '-10' : '+10'}초`); return; }
@@ -247,7 +250,7 @@ export function attachControls(player, media, video) {
     try {
       if (document.fullscreenElement === player) await document.exitFullscreen();
       else await player.requestFullscreen();
-    } catch { /* fullscreen may be denied by the browser */ }
+    } catch { /* 브라우저가 전체 화면을 막을 수도 있음 */ }
   }
   function onError() {
     clearHideTimer();
@@ -272,6 +275,7 @@ export function attachControls(player, media, video) {
     canHandleKey,
     feedback: null,
   };
+  // 순서 바꾸면 터짐 ;>(settings, extras가 ctx.feedback 부름)
   ctx.feedback = installFeedback(ctx);
   const settings = installSettings(ctx);
   installExtras(ctx);
@@ -283,8 +287,8 @@ export function attachControls(player, media, video) {
     const active = document.fullscreenElement === player;
     fullscreen.replaceChildren(icon(active ? 'fullscreen_exit' : 'fullscreen'));
     fullscreen.setAttribute('aria-label', active ? '전체 화면 종료' : '전체 화면');
-    // Chrome re-applies :focus-visible to the clicked button when the window refocuses for fullscreen, which
-    // pins the controls open forever. A mouse-driven toggle drops that focus; keyboard users keep theirs.
+    // 크롬 쓰바, 전체 화면 들어가면 창 포커스가 돌아오며 누른 버튼에 :focus-visible을 다시 붙임
+    // 그래서 컨트롤이 영원히 떠 있음. 마우스면 포커스 버리고, 키보드는 유지
     const focused = document.activeElement;
     if (!usedKeyboard && player.contains(focused) && focused !== player) focused.blur();
     activity();
@@ -334,7 +338,8 @@ export function attachControls(player, media, video) {
     if (dragging) updatePreview(event);
     else if (duration()) showHover(eventValue(event, progress, duration()));
   });
-  // Drag ends on pointerup (seek), or on cancel / lost capture (no seek, so the preview cannot get stuck).
+  // pointerup이면 seek, cancel이나 lost capture면 seek 없이 끝냄
+  // (미리보기가 안 얼어붙게)
   function endScrub(commit) {
     if (!dragging) return;
     if (commit) media.currentTime = Number(progress.dataset.preview || 0);
@@ -369,6 +374,7 @@ export function attachControls(player, media, video) {
   player.addEventListener('pointerdown', onPointerDown);
   player.addEventListener('keydown', () => { usedKeyboard = true; activity(); });
   player.addEventListener('focusin', () => { clearHideTimer(); player.classList.remove('player-idle'); });
+  // focusout 중엔 새 포커스 대상이 아직 안 정해짐. 그래서 tick 뒤에 확인
   player.addEventListener('focusout', () => setTimeout(() => { if (!player.contains(document.activeElement)) scheduleHide(); }, 0));
   document.addEventListener('keydown', onDocumentKey);
   media.addEventListener('timeupdate', () => { updateTime(); updateBuffered(); });
@@ -376,24 +382,25 @@ export function attachControls(player, media, video) {
   media.addEventListener('durationchange', updateTime);
   media.addEventListener('progress', updateBuffered);
   media.addEventListener('play', () => { updatePlay(); scheduleHide(); });
-  // Like youtube.com, the big center button is only there before the first play.
+  // youtube.com처럼 가운데 큰 버튼은 첫 재생 전에만 있음
   media.addEventListener('play', () => player.classList.add('player-started'), { once: true });
-  // Start by itself 1 s after the clip can play, unless the autoplay switch is off or the viewer already pressed play or pause.
-  // Browsers block sound autoplay on a page nobody clicked yet; then it stays paused on the big play button.
+  // canplay 1초 뒤 자동재생. 자동재생 스위치가 꺼졌거나 이미 재생/정지 누른 경우엔 안 함
+  // 소리 자동재생은 아무도 안 누른 페이지에서 브라우저가 막음 ㅠㅠ -> 큰 재생 버튼에서 멈춤
   media.addEventListener('canplay', () => {
     setTimeout(() => {
-      if (playerPrefs().autoplay && !player.classList.contains('player-started') && media.paused) media.play().catch(() => {});
+      if (playerPrefs().autoplay && !player.classList.contains('player-started') && media.paused) media.play().catch(() => { });
     }, 1000);
   }, { once: true });
   media.addEventListener('pause', () => { clearHideTimer(); player.classList.remove('player-idle'); updatePlay(); });
   media.addEventListener('ended', () => { clearHideTimer(); player.classList.remove('player-idle'); updatePlay(); });
   media.addEventListener('waiting', () => { loading.hidden = false; clearHideTimer(); player.classList.remove('player-idle'); });
-  // Play pressed while the clip is still downloading (no src yet): 'waiting' never fires, so show the spinner here.
+  // 클립 다운로드 중(src 아직 없음)에 재생 누름. 'waiting'은 안 뜨니까 여기서 로딩 띄움
   media.addEventListener('play', () => { if (!media.currentSrc) loading.hidden = false; });
   media.addEventListener('canplay', () => { loading.hidden = true; });
   media.addEventListener('playing', () => { loading.hidden = true; scheduleHide(); });
   media.addEventListener('volumechange', () => { updateVolume(); setPlayerPrefs({ volume: media.volume, muted: media.muted }); });
   media.addEventListener('ratechange', () => setPlayerPrefs({ rate: media.playbackRate }));
+  // 에러 처리는 이 줄 하나로 끝. 그냥 박고 봐, 안되면 나중에 고쳐 제길
   media.addEventListener('error', onError);
   document.addEventListener('fullscreenchange', onFullscreenChange);
   fullscreen.replaceChildren(icon('fullscreen'));

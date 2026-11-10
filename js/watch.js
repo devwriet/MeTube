@@ -23,6 +23,7 @@ function showMessage(text, link = false) {
     const home = el('a', '', '홈으로 돌아가기');
     home.href = 'home.html';
     message.append(home);
+    // ?v= 손으로 고쳤냐..? 그럼 여기로 옴
     document.title = '동영상을 찾을 수 없음 - MeTube';
   }
 }
@@ -47,7 +48,7 @@ try {
     const player = setTone(el('div', 'player'), video.hue);
     if (typeof video.src === 'string' && video.src.trim()) {
       const media = el('video');
-      // Whole clip as a Blob (see clip.js): seekable even on a server without range requests.
+      // 클립 전체를 Blob으로 받음 (clip.js 참고). range 요청 안 되는 서버에서도 seek 됨
       media.preload = 'auto';
       clipUrl(video.src).then((url) => { media.src = url; });
       if (video.thumb) media.poster = video.thumb;
@@ -76,9 +77,11 @@ try {
     const [save, saveLabel] = actionButton('schedule', '');
     actions.append(like, dislike, share, save);
     const paintReaction = (value) => {
+      // 내 좋아요 1개는 화면에서만 더함 (json은 안 바뀜). 일단 됨(애초에 오프 전용임)
       const likes = video.likes + (value === 'like' ? 1 : 0);
       const dislikes = video.dislikes + (value === 'dislike' ? 1 : 0);
       likeCount.textContent = koCount(likes);
+      // 유튜브는 싫어요 숫자 숨기는데 우린 걍 보여줌 (이걸로 metube 승리 ㅅㄱ)
       dislikeCount.textContent = koCount(dislikes);
       like.setAttribute('aria-label', `좋아요 ${koCount(likes)}개`);
       dislike.setAttribute('aria-label', `싫어요 ${koCount(dislikes)}개`);
@@ -96,11 +99,11 @@ try {
     save.addEventListener('click', () => paintSave(toggleSaved(video.id)));
     share.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(location.href); // throws if clipboard is missing or denied
+        await navigator.clipboard.writeText(location.href); // clipboard는 https/localhost에서만 있음. 없거나 거부되면 throw
         shareLabel.textContent = '복사됨';
         setTimeout(() => { shareLabel.textContent = '공유'; }, 2000);
       } catch {
-        try { window.prompt('아래 링크를 복사하세요', location.href); } catch { /* prompt unavailable */ }
+        try { window.prompt('아래 링크를 복사하세요', location.href); } catch { /* prompt 사용 불가 */ }
       }
     });
     const channelRow = el('div', 'channel-row');
@@ -127,6 +130,7 @@ try {
     }
     primary.append(description);
     const guestComments = comments(video.id);
+    // 복사본 정렬. 그냥 sort하면 공유 캐시 순서가 바뀜 ;;
     const seedComments = [...video.comments].sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
     const allComments = [...guestComments, ...seedComments];
     const heading = el('h2', 'comments-count', `${koCount(allComments.length)}개의 댓글`);
@@ -141,6 +145,7 @@ try {
     section.setAttribute('aria-labelledby', heading.id);
     const form = el('form', 'comment-form');
     const input = el('input', 'comment-input');
+    // 500자 넘게 쓸 정성이면 블로그 ㄱㄱ
     Object.assign(input, { type: 'text', name: 'comment', maxLength: 500, placeholder: '댓글 추가...', autocomplete: 'off', required: true });
     input.setAttribute('aria-label', '댓글 추가');
     const submit = el('button', 'button button-secondary', '댓글');
@@ -174,6 +179,7 @@ try {
     function renderRelated() {
       const hiddenVideoIds = new Set(hiddenVideos());
       const hiddenChannelIds = new Set(hiddenChannels());
+      // 전부 가져옴. slice 먼저 하면 숨긴 만큼 10개 안 채워짐
       const candidates = relatedVideos(data, video, data.videos.length);
       const visible = candidates
         .filter((item) => !hiddenVideoIds.has(item.id) && !hiddenChannelIds.has(item.channelId))
@@ -188,7 +194,7 @@ try {
     });
     secondary.append(related);
     layout.append(primary, secondary);
-    // Keep related videos above comments on narrow screens.
+    // 좁은 화면은 관련 동영상이 댓글 위로 올라옴
     const narrow = matchMedia('(max-width: 999px)');
     const moveSecondary = () => narrow.matches ? section.before(secondary) : layout.append(secondary);
     moveSecondary();

@@ -1,7 +1,8 @@
-// Loads data/videos.json once and offers lookups and filters.
+// data/videos.json 한 번만 읽고 캐시함
+// 캐시되는 건 데이터가 아니라 promise임. 실패도 캐시됨 ;;(새로고침 전까진 계속 실패)
 let cached;
 
-// Resolves to { channels, videos, channel(id), video(id) }. Rejects if the file cannot be loaded.
+// 못 읽으면 reject. resolve값: { channels, videos, channel(id), video(id) }
 export function loadData() {
   cached ??= fetch('data/videos.json')
     .then((res) => {
@@ -21,18 +22,19 @@ export function loadData() {
   return cached;
 }
 
-// Categories in first-seen order.
+// 카테고리 처음 나온 순서대로 (정렬은 안 함)
 export const categories = (videos) => [...new Set(videos.map((v) => v.category))];
 
-// Case-insensitive match on title or channel name; empty query matches all.
 export function matchesQuery(video, channel, q) {
   const needle = q.trim().toLowerCase();
+  // 검색어 없음 -> 전원 합격
   if (!needle) return true;
   return [video.title, channel?.name ?? '', channel?.handle ?? ''].some((s) => s.toLowerCase().includes(needle));
 }
 
-// Up to n other regular videos: same category first, then newest.
 export function relatedVideos(data, video, n = 10) {
+  // 이뭔..? 불리언 빼기임 (true=1, false=0, 같은 카테고리가 앞으로)
+  // publishedAt이 YYYY-MM-DD라 localeCompare만으로 날짜순 됨
   return data.videos
     .filter((v) => v.id !== video.id && v.type === 'video')
     .sort((a, b) => (b.category === video.category) - (a.category === video.category) || b.publishedAt.localeCompare(a.publishedAt))

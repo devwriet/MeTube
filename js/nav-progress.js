@@ -7,10 +7,12 @@ export function startNavProgress() {
   if (started) return;
   started = true;
 
+  // 로딩 바 하나 만듦 (기다리는 사람 위로용)
   const bar = document.createElement('div');
   bar.className = 'nav-progress nav-progress-no-transition';
   bar.setAttribute('aria-hidden', 'true');
   bar.style.setProperty('--nav-progress', '0');
+  // 바 붙이고 출근 ㄱㄱ
   document.body.append(bar);
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -32,9 +34,10 @@ export function startNavProgress() {
     setProgress(0);
   };
   const markNavigationStart = () => {
+    // 시크릿 모드에선 여기서 throw함 (바는 뜨고 handoff만 날아감)
     try {
       sessionStorage.setItem(HANDOFF_KEY, String(Date.now()));
-    } catch {}
+    } catch { }
     show(0.3, 'nav-progress-fast');
     if (!reducedMotion.matches) {
       finishTimer = setTimeout(() => {
@@ -45,7 +48,7 @@ export function startNavProgress() {
     }
   };
 
-  // Document clicks catch real page navigations while allowing page handlers to cancel first.
+  // 페이지 핸들러가 먼저 취소할 수 있게 defaultPrevented부터 봄
   document.addEventListener('click', (event) => {
     if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
@@ -61,22 +64,24 @@ export function startNavProgress() {
     markNavigationStart();
   });
 
-  // The header search form navigates through a normal same-origin submit.
+  // 검색 폼도 같은 origin submit으로 이동함, 여기서 잡음
   document.addEventListener('submit', (event) => {
     if (event.defaultPrevented) return;
     const form = event.target;
     if (!(form instanceof HTMLFormElement) || form.target.toLowerCase() === '_blank' || form.method.toLowerCase() === 'dialog') return;
     try {
       if (new URL(form.action, location.href).origin === location.origin) markNavigationStart();
-    } catch {}
+    } catch { }
   });
 
-  // sessionStorage hands the loading state to the next full page.
+  // sessionStorage로 로딩 상태를 다음 풀 페이지에 넘김 (바통 터치 ㅇㅇ)
   let handoffTime = null;
   try {
     handoffTime = Number(sessionStorage.getItem(HANDOFF_KEY));
     sessionStorage.removeItem(HANDOFF_KEY);
-  } catch {}
+  } catch { }
+  // 10초 넘은 handoff는 늙크크 거라 무시
+  // (옛날 이동 때문에 바가 60%로 시작하면 안 됨)
   const handedOff = Number.isFinite(handoffTime) && handoffTime > 0 && Date.now() - handoffTime < 10_000;
   show(handedOff ? 0.6 : 0.15, 'nav-progress-no-transition');
   if (!reducedMotion.matches) {
@@ -87,8 +92,8 @@ export function startNavProgress() {
     });
   }
 
-  // The shared cached data promise is the page-ready signal for every route.
-  const dataReady = loadData().then(() => {}, () => {});
+  // loadData promise가 모든 라우트 공통 준비 신호
+  const dataReady = loadData().then(() => { }, () => { });
   const documentReady = document.readyState === 'complete'
     ? Promise.resolve()
     : new Promise((resolve) => window.addEventListener('load', resolve, { once: true }));
@@ -106,6 +111,7 @@ export function startNavProgress() {
     }, 200);
   });
 
+  // bfcache가 바 반쯤 간 채로 복원함 -> pageshow에서 reset
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) reset();
   });

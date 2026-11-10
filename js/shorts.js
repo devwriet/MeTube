@@ -15,14 +15,15 @@ renderLayout('shorts');
 const page = document.querySelector('.shorts-page');
 const message = document.querySelector('.page-message');
 const requestedId = new URLSearchParams(location.search).get('v');
+// 멀미 나는 사람 배려. 설정 켜면 smooth 말고 바로 점프
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const commentsWide = matchMedia('(min-width: 1100px)');
 let current = null;
 let openComments = null;
 let entries = [];
 let navButtons;
-// Browsers only autoplay muted video, so every Short starts muted. One flag for the whole feed:
-// unmuting once (a click, which also counts as the user gesture) keeps the next Shorts unmuted.
+// 브라우저가 ㅈㅉ 소심함 (음소거 영상만 자동재생 허용, 그래서 음소거로 시작)
+// 소리 켜면 (클릭 = 제스처) 다음 쇼츠도 계속 켜짐. flag는 전체 공유
 let soundMuted = true;
 const muteRepaints = new Set();
 
@@ -126,6 +127,7 @@ function makeComments(entry) {
   close.focus();
 }
 
+// 쇼츠 하나 = section 하나. 이 함수 욜라 김 (rip 나)
 function makeEntry(video, channel) {
   const item = el('section', 'short-item');
   item.dataset.video = video.id;
@@ -135,7 +137,7 @@ function makeEntry(video, channel) {
   let media = null;
   if (typeof video.src === 'string' && video.src.trim()) {
     media = el('video', 'short-video');
-    // No src yet: loadClip() below fills it in for the current Short and its neighbours only.
+    // src 아직 없음 (loadClip이 현재랑 옆 쇼츠만 채움)
     if (video.thumb) media.setAttribute('poster', video.thumb);
     media.setAttribute('loop', '');
     media.setAttribute('playsinline', '');
@@ -172,7 +174,7 @@ function makeEntry(video, channel) {
     });
     paintMute();
 
-    // A real range input gives keyboard, touch and mouse seeking for free; CSS just thins it down.
+    // 공짜 seek은 range input이 줌 (키보드/터치/마우스 됨, 모양만 CSS로 깎음)
     const progress = el('input', 'short-progress');
     progress.type = 'range';
     progress.min = '0';
@@ -190,8 +192,8 @@ function makeEntry(video, channel) {
       if (media.duration > 0) media.currentTime = (Number(progress.value) / 1000) * media.duration;
       paintProgress();
     });
-    // Preview bubble above the bar, like youtube.com: a frame from a second silent copy of the clip, plus the time.
-    // That copy is only made the first time somebody hovers or drags, so idle Shorts decode nothing extra.
+    // 유튜브처럼 바 위 미리보기 (음소거 복사본에서 프레임 + 시간)
+    // 복사본은 hover/드래그 때 처음 만듦 (안 그러면 노는 쇼츠도 디코딩함)
     const preview = el('div', 'short-scrub');
     preview.hidden = true;
     const previewTime = el('span', 'short-scrub-time', '0:00');
@@ -225,12 +227,11 @@ function makeEntry(video, channel) {
       if (!scrubbing) return;
       scrubbing = false;
       player.classList.remove('short-player-scrubbing');
-      if (wasPlaying && current === entry) media.play().catch(() => {});
+      if (wasPlaying && current === entry) media.play().catch(() => { });
       if (!progress.matches(':hover')) hidePreview();
     };
     progress.addEventListener('pointermove', (event) => { if (!scrubbing) showPreview(ratioAt(event)); });
     progress.addEventListener('pointerleave', () => { if (!scrubbing) hidePreview(); });
-    // Like youtube.com, playback holds still while the bar is being dragged and resumes on release.
     progress.addEventListener('pointerdown', (event) => {
       scrubbing = true;
       wasPlaying = !media.paused;
@@ -238,9 +239,10 @@ function makeEntry(video, channel) {
       player.classList.add('short-player-scrubbing');
       showPreview(ratioAt(event));
     });
+    // 쇼츠마다 하나씩 붙음, 구리게 썼누 ;;(document라 바 밖에서 놔도 끝남, 각자 flag만 봄)
     document.addEventListener('pointerup', endScrub);
     document.addEventListener('pointercancel', endScrub);
-    // Keyboard seeking has no pointer, so the bubble shows for a moment after each arrow key.
+    // 키보드 seek엔 포인터 없음. 화살표 누르면 말풍선 1초 띄움
     progress.addEventListener('input', () => {
       showPreview(Number(progress.value) / 1000);
       if (!scrubbing && !progress.matches(':hover')) {
@@ -250,7 +252,6 @@ function makeEntry(video, channel) {
     });
     player.append(muteButton, progress, preview);
 
-    // Missing or unplayable clip: same status as a Short without a clip, and no dead play button.
     media.addEventListener('error', () => {
       muteRepaints.delete(paintMute);
       muteButton.remove();
@@ -319,26 +320,26 @@ function makeEntry(video, channel) {
   });
   item.append(stage);
   let loadPromise = null;
-  // Whole clip into a Blob (see clip.js) so the progress bar can seek on any server. It autoplays once it is in,
-  // unless the viewer paused this Short while it was still downloading.
+  // 클립 통째로 Blob에 받음 (Range 없는 서버도 seek되게, clip.js 참고)
+  // 다 받으면 자동재생 (현재 쇼츠고 일시정지 안 했을 때만)
   function loadClip() {
     if (!media) return Promise.resolve();
     loadPromise ??= clipUrl(video.src).then((url) => {
       if (!media) return;
       media.src = url;
       media.preload = 'auto';
-      if (current === entry && !entry.userPaused) media.play().catch(() => {});
+      if (current === entry && !entry.userPaused) media.play().catch(() => { });
     });
     return loadPromise;
   }
+  // 오 TDZ 안 걸림 (클로저가 entry 쓰는데 이 줄 뒤에서만 불림)
   const entry = { item, stage, video, media, commentButton: comment, commentCount, dialogCount: null, load: loadClip, userPaused: false };
   function togglePlayback() {
     if (!media) return;
     entry.userPaused = !media.paused;
-    if (media.paused) media.play().catch(() => {});
+    if (media.paused) media.play().catch(() => { });
     else media.pause();
   }
-  // Dialog handlers close over the completed entry object.
   return entry;
 }
 
@@ -356,19 +357,19 @@ function setCurrent(entry) {
   addHistory(entry.video.id);
   entries.forEach(({ media }) => {
     if (!media) return;
-    if (media === entry.media) media.play().catch(() => {});
+    if (media === entry.media) media.play().catch(() => { });
     else media.pause();
   });
-  // Load the current Short first, then its neighbours, so they do not share its bandwidth; the rest stay empty.
+  // 현재 먼저, 옆 쇼츠는 그다음 (동시에 받으면 대역폭 나눠 먹음)
   entry.userPaused = false;
   const index = entries.indexOf(entry);
   entry.load().then(() => { entries[index + 1]?.load(); entries[index - 1]?.load(); });
   updateNavigation(entries.indexOf(entry));
 }
 
-// Returns false at the first and last Short, where there is nothing to scroll to.
 function navigate(direction) {
   const target = entries[entries.indexOf(current) + direction];
+  // 첫/끝 쇼츠면 갈 데 없음 (너는 못 지나간다)
   if (!target) return false;
   target.item.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start' });
   return true;
@@ -380,6 +381,7 @@ document.addEventListener('keydown', (event) => {
     return;
   }
   const target = event.target;
+  // range는 입력창 아님. 위/아래 키로 쇼츠 이동되게 예외 둠
   if (target instanceof HTMLTextAreaElement || (target instanceof HTMLInputElement && target.type !== 'range')) return;
   if (document.querySelector('.menu:not([hidden])') || document.querySelector('dialog[open]')) return;
   if (event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.metaKey && !event.altKey && current?.media) {
@@ -423,9 +425,9 @@ try {
     nav.append(previous, next);
     page.append(feed, nav);
 
-    // Mouse wheel: one gesture moves one Short. Native snap scrolling bounces a single notch back to the same Short.
-    // Small trackpad deltas add up until they pass 40px. The lock covers the scroll animation and extends while
-    // trackpad inertia keeps sending events; it only starts when a Short was actually scrolled to.
+    // 휠 한 제스처 = 쇼츠 한 개 (네이티브 snap은 한 칸 튕기고 같은 쇼츠로 돌아옴)
+    // 트랙패드 작은 delta는 40px 넘을 때까지 합산
+    // 잠금은 스크롤 중 + 트랙패드 관성 동안 연장, 도착했을 때만 걸림
     let wheelLockUntil = 0;
     let wheelSum = 0;
     let wheelTimer = 0;
@@ -437,7 +439,7 @@ try {
         wheelLockUntil = Math.max(wheelLockUntil, now + 150);
         return;
       }
-      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? feed.clientHeight : 1; // pixels, lines, pages
+      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? feed.clientHeight : 1; // px, 줄, 페이지 단위
       const dy = event.deltaY * scale;
       if (Math.abs(event.deltaX * scale) > Math.abs(dy)) return;
       wheelSum += dy;

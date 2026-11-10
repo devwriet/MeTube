@@ -1,129 +1,465 @@
-/* Watch page: player, info, comments, related. Load after base.css.
-   Comment and related styles come from from-team/components.html. */
+/* Watch 페이지. base.css 다음에 로드.
+   댓글, 관련 영상 스타일은 팀원에서 가져옴. */
 
-/* two columns; one column below 1000px like youtube.com */
-.watch-layout { display: flex; gap: 24px; max-width: 1754px; margin: 0 auto; padding-top: 24px; }
-.watch-primary { flex: 1; min-width: 0; }
-.watch-secondary { flex: 0 0 max(402px, 27.5vw); min-width: 0; }
+/* 2단. 1000px 미만이면 1단 (youtube.com처럼) */
+.watch-layout {
+  display: flex;
+  gap: 24px;
+  max-width: 1754px;
+  margin: 0 auto;
+  padding-top: 24px;
+}
+
+.watch-primary {
+  flex: 1;
+  min-width: 0;
+}
+
+.watch-secondary {
+  flex: 0 0 max(402px, 27.5vw);
+  min-width: 0;
+}
+
 @media (max-width: 999px) {
-  .watch-layout { flex-direction: column; }
-  .watch-secondary { flex-basis: auto; margin: 24px 0; }
+  .watch-layout {
+    flex-direction: column;
+  }
+
+  .watch-secondary {
+    flex-basis: auto;
+    margin: 24px 0;
+  }
 }
 
-/* player: 16:9; placeholder until the clip exists */
+/* 플레이어: 16:9. 클립 생기기 전까진 자리표시 */
 .player {
-  position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
-  display: grid; place-items: center;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
 }
-.player video { width: 100%; height: 100%; display: block; object-fit: contain; background: var(--bg); }
+
+.player video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: var(--bg);
+}
+
 .player p {
-  display: flex; align-items: center; gap: 8px; padding: 8px 16px 8px 12px;
-  border-radius: 999px; background: var(--scrim); color: var(--on-scrim); font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 12px;
+  border-radius: 999px;
+  background: var(--scrim);
+  color: var(--on-scrim);
+  font-weight: 500;
 }
 
-.watch-title { margin-top: 12px; font-size: 20px; line-height: 28px; font-weight: 700; overflow-wrap: anywhere; }
-
-/* channel row; the action buttons sit at its right end and wrap below on narrow screens */
-.channel-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
-.channel-row > div:not(.watch-actions) { min-width: 0; }
-.channel-name { font-size: 16px; line-height: 22px; font-weight: 500; }
-.channel-subs { color: var(--text-2); font-size: 12px; line-height: 18px; }
-.watch-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
-.action-button, .comment-like {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: 0; border-radius: 999px; white-space: nowrap;
-  background: var(--chip); color: var(--text); font-weight: 500;
+.watch-title {
+  margin-top: 12px;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
-.action-button { height: 36px; padding: 0 16px 0 12px; }
-.action-button:hover, .comment-like:hover { background: var(--hover); }
-.action-button[aria-pressed="true"], .comment-like[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+
+.channel-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.channel-row>div:not(.watch-actions) {
+  min-width: 0;
+}
+
+.channel-name {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.channel-subs {
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.watch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.action-button,
+.comment-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: var(--chip);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.action-button {
+  height: 36px;
+  padding: 0 16px 0 12px;
+}
+
+.action-button:hover,
+.comment-like:hover {
+  background: var(--hover);
+}
+
+.action-button[aria-pressed="true"],
+.comment-like[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--bg);
+}
+
 @media (max-width: 650px) {
   .watch-actions {
-    flex-wrap: nowrap; width: 100%; margin-left: 0; overflow-x: auto; scrollbar-width: none;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-left: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
-  .watch-actions::-webkit-scrollbar { display: none; }
-  .action-button { min-height: 44px; flex: 0 0 auto; }
-  .comment-like { min-height: 44px; }
+
+  .watch-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .action-button {
+    min-height: 44px;
+    flex: 0 0 auto;
+  }
+
+  .comment-like {
+    min-height: 44px;
+  }
 }
 
-/* description: clamped to 3 lines until opened */
-.description-box { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--chip); line-height: 20px; }
-.description-box p:first-child { font-weight: 500; }
-.description-box p + p { margin-top: 4px; white-space: pre-line; overflow-wrap: anywhere; }
-.description-box:not([data-open]) p + p {
-  display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+.description-box {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--chip);
+  line-height: 20px;
 }
-.description-box button { margin-top: 8px; padding: 0; border: 0; background: none; font-weight: 500; }
+
+.description-box p:first-child {
+  font-weight: 500;
+}
+
+.description-box p+p {
+  margin-top: 4px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.description-box:not([data-open]) p+p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.description-box button {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 500;
+}
+
 .comments-jump {
-  display: none; align-items: center; gap: 6px; width: fit-content; min-height: 36px;
-  margin-top: 8px; padding: 0 12px; border-radius: 18px; background: var(--chip);
-  color: var(--text); font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 36px;
+  margin-top: 8px;
+  padding: 0 12px;
+  border-radius: 18px;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  text-decoration: none;
 }
-.comments-jump .icon { width: 18px; height: 18px; }
-.comments-jump:hover { background: var(--hover); }
-@media (max-width: 999px) { .comments-jump { display: inline-flex; } }
-@media (max-width: 650px) { .comments-jump { min-height: 44px; } }
 
-/* comments */
-.comments { margin-top: 24px; }
-.comments-count { scroll-margin-top: 64px; font-size: 20px; line-height: 28px; font-weight: 700; }
-.comment-form { display: flex; align-items: center; gap: 12px; margin: 24px 0 32px; }
-.comment-input {
-  flex: 1; min-width: 0; height: 32px; padding: 0;
-  border: 0; border-bottom: 1px solid var(--field-line); background: transparent;
+.comments-jump .icon {
+  width: 18px;
+  height: 18px;
 }
-.comment-list { display: flex; flex-direction: column; gap: 16px; }
-.comment { display: flex; gap: 12px; }
-.comment-body { flex: 1; min-width: 0; }
-.comment-author { font-size: 13px; font-weight: 500; }
-.comment-time { margin-left: 8px; color: var(--text-2); font-size: 12px; }
-.comment-text { margin-top: 4px; line-height: 20px; overflow-wrap: anywhere; white-space: pre-line; }
-.comment-like { margin-top: 8px; height: 32px; padding: 0 12px 0 8px; font-size: 12px; }
-.comment-like .icon { width: 18px; height: 18px; }
-.comment-replies-toggle {
-  display: block; min-height: 32px; margin-top: 4px; padding: 0 12px; border: 0; border-radius: 16px;
-  background: none; color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer;
-}
-.comment-replies-toggle:hover { background: var(--hover); }
-.comment-replies { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-.comment-replies[hidden] { display: none; }
-.comment-replies .avatar { width: 24px; height: 24px; font-size: 12px; }
-@media (max-width: 650px) { .comment-replies-toggle { min-height: 44px; } }
 
-/* related list */
-.related-list { display: flex; flex-direction: column; gap: 8px; }
-.related-card { position: relative; display: flex; gap: 12px; min-width: 0; border-radius: 8px; }
-.related-card:hover { background: var(--hover); }
-.related-card > .card-link { flex: 0 0 min(62%, 235px); max-width: none; align-self: flex-start; }
-.related-card > div { flex: 1; min-width: 0; padding-right: 24px; }
-.related-card > .card-menu { position: absolute; top: 0; right: 0; margin: 0; }
-.related-thumb {
-  position: relative; width: 100%; aspect-ratio: 16 / 9;
-  border-radius: 8px; /* colour from [data-tone] in base.css */
+.comments-jump:hover {
+  background: var(--hover);
 }
-.related-title {
-  margin-bottom: 4px; font-size: 14px; line-height: 20px; font-weight: 500;
-  display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-}
-.related-channel, .related-stats { color: var(--text-2); font-size: 12px; line-height: 18px; }
 
-/* below 1000px: card grid above the comments (2 columns, 1 at 650px or less), like youtube.com */
 @media (max-width: 999px) {
-  .related-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 24px; }
-  .related-card { flex-wrap: wrap; flex-direction: row; gap: 12px; }
-  .related-card > .card-link { flex: 0 0 100%; width: 100%; max-width: none; }
-  .related-card > div { flex: 1; padding-right: 0; }
-  .related-card > .card-menu { position: relative; margin: 0 -8px 0 0; }
-}
-@media (max-width: 650px) { .related-list { grid-template-columns: 1fr; } }
-
-/* Theater mode: wide centered player, with related videos below the primary column. */
-@media (min-width: 1000px) {
-  .watch-layout.watch-theater { flex-direction: column; }
-  .watch-layout.watch-theater .watch-primary { width: 100%; }
-  .watch-layout.watch-theater .watch-primary > .player {
-    width: min(100%, calc((100vh - 80px) * 16 / 9)); max-height: calc(100vh - 56px - 24px);
-    aspect-ratio: 16 / 9; margin-inline: auto; background: var(--bg);
+  .comments-jump {
+    display: inline-flex;
   }
-  .watch-layout.watch-theater .watch-secondary { flex: 0 0 auto; width: 100%; margin: 0; }
+}
+
+@media (max-width: 650px) {
+  .comments-jump {
+    min-height: 44px;
+  }
+}
+
+.comments {
+  margin-top: 24px;
+}
+
+.comments-count {
+  scroll-margin-top: 64px;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
+
+.comment-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 32px;
+}
+
+.comment-input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--field-line);
+  background: transparent;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comment {
+  display: flex;
+  gap: 12px;
+}
+
+.comment-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-author {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.comment-time {
+  margin-left: 8px;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.comment-text {
+  margin-top: 4px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.comment-like {
+  margin-top: 8px;
+  height: 32px;
+  padding: 0 12px 0 8px;
+  font-size: 12px;
+}
+
+.comment-like .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.comment-replies-toggle {
+  display: block;
+  min-height: 32px;
+  margin-top: 4px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 16px;
+  background: none;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.comment-replies-toggle:hover {
+  background: var(--hover);
+}
+
+.comment-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.comment-replies[hidden] {
+  display: none;
+}
+
+.comment-replies .avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+@media (max-width: 650px) {
+  .comment-replies-toggle {
+    min-height: 44px;
+  }
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.related-card {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+  border-radius: 8px;
+}
+
+.related-card:hover {
+  background: var(--hover);
+}
+
+.related-card>.card-link {
+  flex: 0 0 min(62%, 235px);
+  max-width: none;
+  align-self: flex-start;
+}
+
+.related-card>div {
+  flex: 1;
+  min-width: 0;
+  padding-right: 24px;
+}
+
+.related-card>.card-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+
+.related-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+}
+
+.related-title {
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.related-channel,
+.related-stats {
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* 1000px 미만: 관련 영상이 댓글 위로 올라감 (2열, 650px 이하 1열) */
+@media (max-width: 999px) {
+  .related-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 24px;
+  }
+
+  .related-card {
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .related-card>.card-link {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: none;
+  }
+
+  .related-card>div {
+    flex: 1;
+    padding-right: 0;
+  }
+
+  .related-card>.card-menu {
+    position: relative;
+    margin: 0 -8px 0 0;
+  }
+}
+
+@media (max-width: 650px) {
+  .related-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 시어터: 가운데 맞춘 넓은 플레이어. 관련 영상은 메인 컬럼 아래 */
+@media (min-width: 1000px) {
+  .watch-layout.watch-theater {
+    flex-direction: column;
+  }
+
+  .watch-layout.watch-theater .watch-primary {
+    width: 100%;
+  }
+
+  .watch-layout.watch-theater .watch-primary>.player {
+    width: min(100%, calc((100vh - 80px) * 16 / 9));
+    max-height: calc(100vh - 56px - 24px);
+    aspect-ratio: 16 / 9;
+    margin-inline: auto;
+    background: var(--bg);
+  }
+
+  .watch-layout.watch-theater .watch-secondary {
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0;
+  }
 }
